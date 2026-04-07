@@ -36,13 +36,13 @@
          style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 display: flex; flex-direction: column; justify-content: center; align-items: center;
                 background: radial-gradient(circle at center, #2b2e33 0%, #0f1115 100%);
-                z-index: 10; opacity: 1; transition: z-index 0.5s, opacity 0.5s;">
+                z-index: 10; opacity: 1; transition: z-index 0.5s, opacity 0.5s; overflow: hidden;">
         
         <!-- Canvas for Dynamic Smoke Effect -->
-        <canvas id="smokeCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; filter: blur(6px);"></canvas>
+        <canvas id="smokeCanvas" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none;"></canvas>
         
         <img src="fennfox.png" class="center-image" alt=""
-             style="width: 150px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(68, 125, 155, 0.5));">
+             style="width: 150px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(68, 125, 155, 0.5)); position: relative;">
         <input type="text" id="foxInput" placeholder="..." class="fox-box"
                style="width: 150px; text-align: center; z-index: 1; position: relative;
                       background: rgba(20, 20, 20, 0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
@@ -76,7 +76,7 @@
         reset() {
             this.x = Math.random() * canvas.width;
             this.y = canvas.height + 100;
-            this.size = Math.random() * 120 + 80;
+            this.size = Math.random() * 120 + 100; // Increased size slightly to replace CSS blur
             this.speedX = Math.random() * 1.5 - 0.75;
             this.speedY = Math.random() * -1.5 - 0.5; // Drift upwards
             this.life = 0;
@@ -87,6 +87,11 @@
             this.x += this.speedX;
             this.y += this.speedY;
             this.life++;
+            
+            // Allow wrapping around edges so resizing window doesn't leave blank sides
+            if (this.x > canvas.width + this.size) this.x = -this.size;
+            if (this.x < -this.size) this.x = canvas.width + this.size;
+
             if (this.life >= this.maxLife || this.y < -this.size) this.reset();
         }
         draw() {
@@ -106,7 +111,7 @@
     }
 
     const particles = [];
-    for(let i = 0; i < 30; i++) particles.push(new Particle()); // Spawn 30 smoke clouds
+    for(let i = 0; i < 40; i++) particles.push(new Particle()); // Spawning particles
 
     function animateSmoke() {
         const foxScreen = document.getElementById('foxScreen');
