@@ -39,7 +39,7 @@
                 z-index: 10; opacity: 1; transition: z-index 0.5s, opacity 0.5s; overflow: hidden;">
         
         <!-- Canvas for Dynamic Smoke Effect -->
-        <canvas id="smokeCanvas" style="position: absolute; top: 0; left: 0; width: 100vw !important; height: 100vh !important; max-width: none !important; border: none !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; margin: 0 !important; z-index: 0; pointer-events: none;"></canvas>
+        <canvas id="smokeCanvas"></canvas>
         
         <img src="fennfox.png" class="center-image" alt=""
              style="width: 150px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(68, 125, 155, 0.5)); position: relative;">
@@ -60,23 +60,44 @@
     const ctx = canvas.getContext('2d');
     
     function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const parent = document.getElementById('foxScreen');
+        // strictly bond to the parents physical size
+        const rect = parent.getBoundingClientRect();
+        const cw = rect.width || window.innerWidth;
+        const ch = rect.height || window.innerHeight;
+        
+        // set memory size
+        canvas.width = cw;
+        canvas.height = ch;
+        
+        // nuke any global css styles directly via javascript
+        canvas.style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; ' + 
+                               'width: ' + cw + 'px !important; height: ' + ch + 'px !important; ' + 
+                               'max-width: none !important; max-height: none !important; ' + 
+                               'margin: 0 !important; padding: 0 !important; border: none !important; ' + 
+                               'background: transparent !important; box-shadow: none !important; ' + 
+                               'z-index: 0 !important; pointer-events: none !important; outline: none !important;';
     }
+    
     window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', resize);
     resize();
+    
+    // Safety check just in case DOM paints later
+    setTimeout(resize, 100);
+    setTimeout(resize, 500);
 
     class Particle {
         constructor() {
             this.reset();
-            // Start at random lifecycle so smoke populates instantly rather than starting from the bottom
-            this.life = Math.random() * this.maxLife;
+            // Start scattered fully across the screen on instantiation
             this.y = Math.random() * canvas.height;
+            this.life = Math.random() * this.maxLife;
         }
         reset() {
             this.x = Math.random() * canvas.width;
-            this.y = canvas.height + 100;
-            this.size = Math.random() * 120 + 100; // Increased size slightly to replace CSS blur
+            this.y = canvas.height + 150;
+            this.size = Math.random() * 150 + 100;
             this.speedX = Math.random() * 1.5 - 0.75;
             this.speedY = Math.random() * -1.5 - 0.5; // Drift upwards
             this.life = 0;
@@ -88,22 +109,22 @@
             this.y += this.speedY;
             this.life++;
             
-            // Allow wrapping around edges so resizing window doesn't leave blank sides
+            // Loop sides strictly dynamically to the alive canvas width
             if (this.x > canvas.width + this.size) this.x = -this.size;
             if (this.x < -this.size) this.x = canvas.width + this.size;
 
             if (this.life >= this.maxLife || this.y < -this.size) this.reset();
         }
         draw() {
-            // Fade in and out organically across lifecycle
-            let envelope = 1 - (Math.abs(this.life - this.maxLife/2) / (this.maxLife/2));
+            let limit = this.maxLife / 2;
+            let envelope = 1 - (Math.abs(this.life - limit) / limit);
             if (envelope < 0) envelope = 0;
             let opacity = envelope * this.opacityMultiplier;
             
             ctx.beginPath();
             let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-            gradient.addColorStop(0, `rgba(180, 190, 200, ${opacity})`);
-            gradient.addColorStop(1, 'rgba(180, 190, 200, 0)');
+            gradient.addColorStop(0, 'rgba(200, 220, 240, ' + opacity + ')');
+            gradient.addColorStop(1, 'rgba(200, 220, 240, 0)');
             ctx.fillStyle = gradient;
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
@@ -111,11 +132,11 @@
     }
 
     const particles = [];
-    for(let i = 0; i < 40; i++) particles.push(new Particle()); // Spawning particles
+    for(let i = 0; i < 40; i++) particles.push(new Particle());
 
     function animateSmoke() {
         const foxScreen = document.getElementById('foxScreen');
-        if(foxScreen && foxScreen.style.opacity === '0') return; // Pause drawing when screen fades away
+        if(foxScreen && foxScreen.style.opacity === '0') return; // Pause drawing when faded
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for(let p of particles) {
