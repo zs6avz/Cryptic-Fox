@@ -3,19 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Steganography Tool</title>
+  <title>Video Steganography Tool — Cryptic Fox</title>
   <link rel="stylesheet" href="style.css" />
   <!-- Favicon Links -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
+
+  <meta name="description" content="Extract hidden data from video frames using LSB analysis, color manipulation, OCR text extraction, and WebGL-powered processing.">
+  <link rel="canonical" href="https://cryptic-fox.com/red.html">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cryptic-fox.com/red.html">
+  <meta property="og:title" content="Video Steganography Tool — Cryptic Fox">
+  <meta property="og:description" content="Extract hidden data from video frames using LSB analysis, color tools, and OCR.">
+  <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Video Steganography Tool — Cryptic Fox">
+  <meta name="twitter:description" content="Extract hidden data from video frames using LSB analysis, color tools, and OCR.">
+  <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
   <script src="script.js" defer></script>
 
 </head>
 <body>
-  <div class="dropdown">
-    <button class="dropbtn">⨀Ξ〄⋑</button>
+  <div class="dropdown" role="navigation" aria-label="Site navigation">
+    <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
     <div class="dropdown-content">
       <a href="index.html">Home</a>
       <a href="about.html">About</a>
@@ -23,12 +40,10 @@
       <a href="decrypt.html">Encrypt/Decrypt</a>
       <a href="red.html">Video Steganography</a>
       <a href="cryptography.html">Cryptography</a>
-      <!--<a href="blog.html">Blog</a>-->
-      <!--<a href="echoes.html">The Threshold of Echoes</a>-->
     </div>
   </div>
 
-  <h1>Video Steganography Tool</h1><img src="/fennfox.png" class="center-image" alt=""
+  <h1>Video Steganography Tool</h1><img src="fennfox.png" class="center-image" alt="Cryptic Fox logo"
     style="width: 150px; height: auto;">
   <h3>Upload a video to detect frames, adjust color and contrast, extract subtitles, and extract the least significant bits (lsb)</h3>
 
@@ -180,12 +195,12 @@
   </section>
 
   <!-- JS Modules -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous"></script>
   <script type="module" src="main.js"></script>
 
   <footer>
-    <p>&copy; 2025 ⚲⎐⚷⎔⌖∷⚲ ⌬◎⊗</p>
+    <p>&copy; 2025 Cryptic Fox</p>
   </footer>
 </body>
 </html>

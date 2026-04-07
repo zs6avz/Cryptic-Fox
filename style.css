@@ -1,52 +1,150 @@
-/* Primary button style used for Start Analysis and Reset All*/
-.primary-btn {
-    font-size: 18px;
-    padding: 12px 24px;
-    background-color: #FE7743;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-}
-.primary-btn:hover { box-shadow: 0px 4px 8px rgba(68, 125, 155, 0.5); }
+/* ============================================
+   CRYPTIC FOX — STYLESHEET
+   ============================================
+   Sections:
+   1. Custom Properties & Font Import
+   2. Reset & Base Styles
+   3. Typography
+   4. Utilities
+   5. Navigation (Dropdown)
+   6. Buttons & Form Controls
+   7. Layout Components (Sections, Methods, Cards)
+   8. Home Page
+   9. Cipher Translator Page
+   10. Decrypt Page
+   11. Video Steganography Page
+   12. Cryptography Page
+   13. Blog
+   14. Echoes Game
+   15. About Page
+   16. Responsive Breakpoints
+   ============================================ */
 
-/* --- Page styles --- */
-/* home-page */
-.home-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    opacity: 1;
+/* ============================================
+   1. CUSTOM PROPERTIES & FONT IMPORT
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors */
+    --color-primary: #447D9B;
+    --color-accent: #FE7743;
+    --color-primary-rgb: 68, 125, 155;
+
+    /* Surfaces */
+    --color-bg: #0a0a0a;
+    --color-surface: #2a2a2a;
+    --color-surface-hover: #3a3a3a;
+    --color-surface-deep: #0f0f0f;
+    --color-surface-alt: #2e2e2e;
+
+    /* Text */
+    --color-text: #e1e1e1;
+    --color-text-muted: #b0b0b0;
+
+    /* Borders */
+    --color-border: #666;
+    --color-border-primary: var(--color-primary);
+
+    /* Gradient */
+    --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+
+    /* Shadows */
+    --shadow-card: 0 4px 8px rgba(var(--color-primary-rgb), 0.4);
+    --shadow-card-hover: 0 6px 12px var(--color-primary);
+    --shadow-glow: 0 10px 30px rgba(var(--color-primary-rgb), 0.6);
+
+    /* Spacing */
+    --radius-sm: 5px;
+    --radius-md: 8px;
+    --radius-lg: 15px;
+    --radius-pill: 25px;
+
+    /* Transitions */
+    --transition-base: 0.3s ease;
 }
 
-/* About Page */
-.about-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
-}
 
-/* Decrypt Page */
-.decrypt-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
+/* ============================================
+   2. RESET & BASE STYLES
+   ============================================ */
+body {
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    text-align: center;
+    margin: 0;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background-color: var(--color-surface-alt);
+    color: var(--color-text);
 }
 
-/* Cryptography Page */
-.cryptography-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
+img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: var(--radius-sm);
 }
 
-/* ---General Styles--- */
+
+/* ============================================
+   3. TYPOGRAPHY
+   ============================================ */
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+h1, h2, h3 {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+p {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Base link style */
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: color var(--transition-base);
+}
+
+a:active {
+    color: var(--color-primary);
+}
+
+
+/* ============================================
+   4. UTILITIES
+   ============================================ */
+.gradient-text {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
 
 /* Centered image styling */
 .center-image {
@@ -56,110 +154,40 @@
     position: relative;
 }
 
-/* General body styling */
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 20px;
-    /*background-image: url(foxy.png);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-color: #447D9B;
-    opacity: 0.95;*/
-}
-
-/* Header styles */
-h1 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 30px;
-}
-
-h2 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 20px;
-}
-
-/* Textarea styling */
-textarea {
-    width: 80%;
-    height: 100px;
-    margin: 10px;
-    font-size: large;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
-}
-
-/* Button styling */
-button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
+/* Primary button style used for Start Analysis and Reset All */
+.primary-btn {
+    font-size: 18px;
+    padding: 12px 24px;
+    background-color: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
     cursor: pointer;
+    -webkit-text-fill-color: white;
 }
 
-button:hover {
-    background-color: #3a3a3a;
-    box-shadow: 0px 4px 6px #447D9B
+.primary-btn:hover {
+    box-shadow: 0px 4px 8px rgba(var(--color-primary-rgb), 0.5);
 }
 
-/* Button container styling */
-.button-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-    margin: 10px 0;
+
+/* ============================================
+   5. NAVIGATION (DROPDOWN)
+   ============================================ */
+.dropdown {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    z-index: 1000;
 }
 
-/* Keyboard buttons within the panel */
-#keyboardPanel button {
-    font-size: 16px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    padding: 10px;
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#keyboardPanel button:hover {
-    background-color: #3a3a3a;
-    box-shadow: 0px 4px 6px #447D9B
-}
-
-#keyboardPanel {
-    margin: 20px auto;
-    width: 300px;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 5px;
-}
-
-/* Alternative translation textarea differentiation */
-textarea#alternativeOutputText {
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-}
-
-/* Footer styling */
-footer {
-    margin-top: 20px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 14px;
-}
-
-/* Dropdown Button */
 .dropbtn {
-    background: #447D9B;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    background: var(--color-primary);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     padding: 10px;
     font-size: 16px;
     border: none;
@@ -171,559 +199,169 @@ footer {
     transform: scale(1.05);
 }
 
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: inline-block;
-    z-index: 1000;
-}
-
-/* Dropdown Content */
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #2a2a2a;
+    background-color: var(--color-surface);
     min-width: 120px;
     z-index: 1;
     right: 0;
     border-radius: 4px;
-    box-shadow: 0px 4px 6px #447D9B;
+    box-shadow: 0px 4px 6px var(--color-primary);
 }
 
-/* Links inside the dropdown */
+.dropdown-content.active {
+    display: block;
+}
+
 .dropdown-content a {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
-/* Method container */
-.method {
-    background: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(69, 104, 130, 0.4);
-    padding: 20px;
+.dropdown-content a:hover {
+    background-color: var(--color-surface-hover);
+    box-shadow: 0px 4px 6px var(--color-primary);
+}
+
+
+/* ============================================
+   6. BUTTONS & FORM CONTROLS
+   ============================================ */
+button {
+    margin: 8px 6px;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-primary);
+    background-color: var(--color-surface);
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+    transition: background-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+button:hover {
+    background-color: var(--color-primary);
+    box-shadow: 0px 4px 8px var(--color-primary);
+}
+
+/* Focus styles for keyboard accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.button-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 90%;
-    max-width: 800px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px 0;
 }
 
-.method:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px #447D9B;
+/* Text inputs */
+input[type="text"],
+input[type="number"] {
+    width: 40%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    box-sizing: border-box;
+    transition: background-color var(--transition-base);
 }
 
-/* Selector styling */
+input[type="text"]:hover,
+input[type="number"]:hover {
+    background-color: var(--color-primary);
+}
+
+/* Select dropdowns */
 select {
     width: 40%;
     margin: 10px 0;
     padding: 10px;
     font-size: 1rem;
-    border-radius: 5px;
-    background-color: #2a2a2a;
-    color: #e1e1e1;
-    border: 1px solid #666;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
     cursor: pointer;
     appearance: none;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition-base);
 }
 
 select:hover {
-    background-color: #447D9B;
+    background-color: var(--color-primary);
 }
 
-/* Styling for text inputs like vigenere-key */
-input[type="text"], input[type="number"] {
-    width: 40%;
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    background-color: #2a2a2a;
-    color: #e1e1e1;
-    border: 1px solid #666;
-    box-sizing: border-box;
-    transition: background-color 0.3s ease;
-}
-
-/* Add hover effects for inputs */
-input[type="text"]:hover, input[type="number"]:hover {
-    background-color: #447D9B;
-}
-
-.binary-base {
-    width: 40%;
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    background-color: #2a2a2a;
-    color: #e1e1e1;
-    border: 1px solid #666;
-    cursor: pointer;
-    appearance: none;
-    transition: background-color 0.3s ease;
-}
-
-.binary-base:hover {
-    background-color: #447D9B;
-}
-
-/* Make the decrypted output text lighter */
-p.decrypt-output,
-p.binary-output,
-p.jacquard-output,
-p.caesar-output,
-p.vigenere-output,
-p.atbash-output,
-p.base64-output,
-p.morse-output{
-    font-size: 18px;
-    font-weight: lighter;
-    color: #447D9B;
-    margin-top: 10px;
-}
-
-/* Styling for section headings */
-section h2 {
-    font-size: 1.5rem;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    margin-bottom: 15px;
-    text-align: center;
-}
-
-/* Styling for list items */
-section ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0 auto;
-    text-align: center;
-}
-
-/* Styling for links to look like buttons */
-section ul li a {
-    display: inline-block;
-    margin: 10px 5px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-/* Hover effect for links styled as buttons */
-section ul li a:hover {
-    background-color: #3a3a3a;
-}
-
-/* Section container styling */
-section {
-    margin: 20px auto;
-    padding: 20px;
-    max-width: 800px;
-    background: #2a2a2a;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(69, 104, 130, 0.4);
-    text-align: center;
-}
-
-/* Image Decryption Section */
-.image-decryption-page {
-    background-color: #2e2e2e;
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* Container for image decryption methods */
-.image-decryption {
-    background: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(69, 104, 130, 0.4);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-    width: 90%;
-    max-width: 800px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.image-decryption:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 12px #447D9B;
-}
-
-/* Sub-method container */
-.sub-method {
-    background: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 6px;
-    padding: 15px;
-    margin: 15px 0;
+/* Textarea */
+textarea {
     width: 80%;
-    text-align: center;
-}
-
-/* Image inputs */
-input[type="file"], textarea {
-    width: 80%;
-    height: 40px;
+    height: 100px;
     margin: 10px;
     font-size: large;
-    color: rgb(225, 225, 225);
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
 }
 
-/* Buttons for decryption */
-.sub-method button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    color: rgb(225, 225, 225);
-    background-color: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.sub-method button:hover {
-    background-color: #3a3a3a;
-}
-
-/* Styling for decrypted images */
-img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 10px;
-    border-radius: 5px;
-}
-
-/* Canvas styling */
-canvas {
-    border: 1px solid #777;
-    background-color: #333;
+/* File inputs */
+input[type="file"] {
+    margin: 18px 0;
+    padding: 8px;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
     width: 80%;
-    max-width: 600px;
-    margin-top: 10px;
+    height: 40px;
 }
 
-/* Make video and canvas preview the same size when used side-by-side */
-.preview-media {
-    width: 100%;
-    height: 360px; /* fixed display height for matching previews */
-    max-width: 100%;
-    object-fit: contain;
-    border-radius: 8px;
-    background: #333;
-}
-
-/* Small timer shown under output preview canvas */
-.output-timer {
-    margin-top: 8px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-family: monospace;
-    font-size: 1rem;
-    text-align: center;
-}
-
-@media (max-width: 700px) {
-    .preview-media {
-        height: auto; /* allow natural sizing on small screens */
-    }
-}
-
-audio {
-    margin-top: 10px;
-    width: 80%;
-    max-width: 600px;
-    color: #fff;
-}
-
-/* Headings */
-h2 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 24px;
-}
-
-h3 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 20px;
-}
-
-/* Base link style */
-a {
-    color: #447D9B;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* Hover effect */
-a:hover {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    transition: color 0.3s ease;
-}
-
-/* Active link style*/
-a:active {
-    color: #447D9B;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content a:hover {
-    background-color: #3a3a3a;
-    box-shadow: 0px 4px 6px #447D9B;
-}
-
-.dropdown-content {
-    display: none;
-}
-
-.dropdown-content.active {
-    display: block; /* Show dropdown when .active class is applied via JavaScript */
-}
-
-/* Name-to-Color Section */
-.name-to-color-section {
-    background: #2a2a2a;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-/* Input Fields */
-input[type="text"] {
-    margin: 10px;
-    padding: 10px;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    border: 1px solid #666;
-    background-color: #2a2a2a;
-    color: white;
-}
-
-/* Buttons */
-button {
-    margin: 5px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: none;
-    color: white;
-    background-color: #444;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #666;
-}
-
-/* Single Output Box */
-.colorBox {
-    width: 150px;
-    height: 150px;
-    margin: 20px auto;
-    border-radius: 10px;
-    border: 1px solid #666;
-    box-shadow: 0 4px 8px #447D9B;
-}
-
-#outputRGB {
-    margin-top: 10px;
-    font-size: 1rem;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-#outputName {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-top: 10px;
-    text-align: center;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-/* Blog Page Styles */
-.blog-posts {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin: 32px 0;
-}
-
-.blog-post-preview {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    background: #2a2a2a;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(69, 104, 130, 0.4);
-}
-
-.blog-thumbnail {
-    width: 120px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-    box-shadow: 0 1px 4px #447D9B;
-    transition: transform 0.2s;
-}
-.blog-thumbnail:hover {
-    transform: scale(1.05);
-}
-
-.blog-preview-content h3 {
-    margin: 0 0 8px 0;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-.blog-preview-content p {
-    margin: 0 0 8px 0;
-}
-
-.blog-date {
-    font-size: 0.9em;
-    color: #447D9B;
-}
-
-.blog-post-full {
-    max-width: 700px;
-    margin: 40px auto;
-    background: #2a2a2a;
-    border-radius: 8px;
-    padding: 32px;
-    box-shadow: 0 2px 8px rgba(69, 104, 130, 0.4);
-}
-
-.blog-thumbnail-full {
-    width: 100%;
-    max-width: 400px;
-    height: auto;
-    display: block;
-    margin: 0 auto 24px auto;
-    border-radius: 8px;
-}
-
-p {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-.blog-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
-}
-
-.blog-post-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
-}
-
-.blog-video {
-    margin: 32px 0;
-    text-align: center;
-}
-
-.blog-video iframe {
-    max-width: 100%;
-    height: 315px;
-    border-radius: 8px;
-}
-
-.echoes-page {
-    background: #0a0a0a;
-    background-size: cover;
-    background-position: center;
-    min-height: 100vh;
-}
-
-.game-container {
-    max-width: 700px;
-    margin: 60px auto;
-    background: #2a2a2a;
-    border: 1px solid #447D9B;
-    border-radius: 8px;
-    padding: 32px 24px;
-    box-shadow: 0 4px 12px rgba(69, 104, 130, 0.4);
-    text-align: center;
-}
-
-.game-container h1 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    margin-bottom: 18px;
-}
-
-.game-container p {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    margin-bottom: 18px;
-}
-
-/* --- Video Color Mixer Page --- */
-body {
-    background-color: #2e2e2e;
-    color: #e1e1e1;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    padding: 30px;
-}
-
-h1 {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    font-size: 2.2rem;
-    margin-bottom: 24px;
-    letter-spacing: 1px;
-}
-
-label {
-    display: inline-block;
-    margin: 10px 15px;
-    font-size: 1.1rem;
-    color: #447D9B;
-}
-
+/* Range sliders */
 input[type="range"] {
     width: 120px;
     margin-left: 8px;
-    accent-color: #447D9B;
+    accent-color: var(--color-primary);
     -webkit-appearance: none;
     appearance: none;
     height: 8px;
-    background: linear-gradient(#3a3a3a, #2b2b2b);
+    background: linear-gradient(var(--color-surface-hover), #2b2b2b);
     border-radius: 6px;
     outline: none;
 }
 
-/* Unified custom range slider styling for consistent appearance */
 input[type="range"]::-webkit-slider-runnable-track {
     height: 8px;
-    background: linear-gradient(#3a3a3a, #2b2b2b);
+    background: linear-gradient(var(--color-surface-hover), #2b2b2b);
     border-radius: 6px;
 }
+
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -732,290 +370,178 @@ input[type="range"]::-webkit-slider-thumb {
     height: 16px;
     border-radius: 50%;
     background: #fcad79;
-    border: 2px solid rgba(255,255,255,0.9);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     cursor: pointer;
 }
+
 input[type="range"]::-moz-range-track {
     height: 8px;
-    background: linear-gradient(#3a3a3a, #2b2b2b);
+    background: linear-gradient(var(--color-surface-hover), #2b2b2b);
     border-radius: 6px;
 }
+
 input[type="range"]::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: #447D9B;
-    border: 2px solid rgba(255,255,255,0.9);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    background: var(--color-primary);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
     cursor: pointer;
 }
-input[type="range"]:focus { outline: none; }
 
-input[type="file"] {
-    margin: 18px 0;
-    padding: 8px;
-    background-color: #2a2a2a;
-    color: #e1e1e1;
-    border: 1px solid #666;
-    border-radius: 5px;
-    font-size: 1rem;
+input[type="range"]:focus {
+    outline: none;
 }
 
-video {
-    display: block;
-    margin: 20px auto 10px auto;
-    max-width: 600px;
-    width: 80%;
-    border-radius: 8px;
-    background: #333;
-    box-shadow: 0 2px 8px #447D9B;
-}
-
-canvas {
-    display: block;
-    margin: 10px auto 20px auto;
-    max-width: 600px;
-    width: 80%;
-    border-radius: 8px;
-    background: #333;
-    box-shadow: 0 2px 8px #447D9B;
-    border: 1px solid #777;
-}
-
-button {
-    margin: 8px 6px;
-    padding: 10px 24px;
-    font-size: 1rem;
-    border-radius: 5px;
-    border: 1px solid #447D9B;
-    background-color: #2a2a2a;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    cursor: pointer;
-    transition: background-color 0.3s, box-shadow 0.3s;
-}
-
-button:hover {
-    background-color: #447D9B;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    box-shadow: 0px 4px 8px #447D9B;
-}
-
-/* Responsive adjustments */
-@media (max-width: 700px) {
-    video, canvas {
-        width: 98%;
-        max-width: 98vw;
-    }
-    label {
-        display: block;
-        margin: 12px auto;
-    }
-}
-
-.loading-box {
-  text-align: center;
-  color: #fff;
-  font-family: 'Courier New', monospace;
-  font-size: 1.2rem;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  margin: 0 auto 15px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #FE7743;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-sticky {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(0, 0, 0, 0.85);
-  color: #fff;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-family: 'Courier New', monospace;
-  font-size: 0.95rem;
-  z-index: 1000;
-  box-shadow: 0 0 6px rgba(0,0,0,0.3);
-}
-.signal-panel {
-  border: 1px solid #447D9B;
-  padding: 12px;
-  margin-top: 20px;
-  background: #2a2a2a;
-  background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  font-family: 'Courier New', monospace;
-  border-radius: 6px;
-}
-
-.signal-panel select,
-.signal-panel input {
-  margin: 6px 0;
-  padding: 4px;
-  background-color: #222;
-  color: #fff;
-  border: 1px solid #555;
-}
-
-#signalCanvas {
-  margin-top: 12px;
-  border: 1px solid #333;
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-}
-
-#lsbOutputDisplay {
-  white-space: pre-wrap;
-  max-height: 400px;
-  overflow-y: auto;
-  border: 1px solid #333;
-  padding: 8px;
-  background: #0f0f0f;
-  color: #eaeaea;
-  font-family: 'Courier New', monospace;
-  margin-top: 12px;
-}
-
-#copyLSBBtn {
-  margin: 5px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background: linear-gradient(135deg, #FE7743 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  background-color: #2a2a2a;
-  border: 1px solid #FE7743;
-  border-radius: 5px;
-  cursor: pointer;
-}
-#copyLSBBtn:hover {
-  background-color: #3a3a3a;
-  box-shadow: 0px 4px 6px #FE7743;
-}
-.loading-sticky {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: #fff;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-      font-size: 0.95rem;
-      z-index: 1000;
-      box-shadow: 0 0 6px rgba(0,0,0,0.3);
-    }
-    .signal-panel {
-      margin-top: 20px;
-      padding: 12px;
-      background: #2a2a2a;
-      background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      border-radius: 6px;
-      font-family: 'Courier New', monospace;
-    }
-    .signal-panel select,
-    .signal-panel input {
-      margin: 6px 0;
-      padding: 4px;
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #555;
-    }
-    #signalCanvas {
-      margin-top: 12px;
-      border: 1px solid #333;
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-    }
-    #lsbFilterPanel {
-      margin-top: 16px;
-    }
-    #lsbOutputDisplay {
-      white-space: pre-wrap;
-      max-height: 400px;
-      overflow-y: auto;
-      border: 1px solid #333;
-      padding: 8px;
-      background: #0f0f0f;
-      color: #eaeaea;
-      font-family: 'Courier New', monospace;
-    }
-    section label { display: inline-block; margin: 6px 10px 6px 0; }
-    /* numeric display for sliders */
-    .slider-value {
-        display: inline-block;
-        min-width: 46px;
-        margin-left: 8px;
-        text-align: right;
-        background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        font-family: 'Courier New', monospace;
-    }
-
-    /* Stack Color & Contrast controls vertically */
-    #colorContrast label {
-        display: block;
-        width: 100%;
-        text-align: left;
-        margin: 8px 0;
-    }
-
-    #colorContrast input[type="range"] {
-        width: 100% !important;
-        margin-top: 6px;
-        display: block;
-    }
-
-    #colorContrast .slider-value {
-        display: block;
-        margin-top: 6px;
-        text-align: right;
-    }
-
-/* Align the play/pause button and playback speed label/select */
-.preview-controls {
-    align-items: center;
-}
-.preview-controls .playback-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 8px;
-    font-size: 1rem;
-}
-.preview-controls #playPauseBtn {
+/* Labels */
+label {
+    display: inline-block;
+    margin: 10px 15px;
     font-size: 1.1rem;
-    padding: 6px 10px;
-}
-.preview-controls .playback-label select {
-    margin: 0;
+    color: var(--color-primary);
 }
 
-/* Smaller Open Preview button for compact layout */
-#openWindowBtn {
-    padding: 6px 8px;
-    font-size: 0.9rem;
-    margin-left: 6px;
-    border-radius: 4px;
+/* Numeric display for sliders */
+.slider-value {
+    display: inline-block;
+    min-width: 46px;
+    margin-left: 8px;
+    text-align: right;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'Courier New', monospace;
 }
+
+/* Footer styling */
+footer {
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+footer p {
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 
 /* ============================================
-   HOME PAGE STYLES
+   7. LAYOUT COMPONENTS
    ============================================ */
 
-/* Home page background */
-.home-page-new {
-    background: #0a0a0a;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+/* Section container */
+section {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 800px;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+section h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+section ul li a {
+    display: inline-block;
+    margin: 10px 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color var(--transition-base);
+}
+
+section ul li a:hover {
+    background-color: var(--color-surface-hover);
+}
+
+section label {
+    display: inline-block;
+    margin: 6px 10px 6px 0;
+}
+
+/* Method container (used on decrypt page) */
+.method {
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 800px;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.method:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-card-hover);
+}
+
+/* Sub-method container */
+.sub-method {
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: 6px;
+    padding: 15px;
+    margin: 15px 0;
+    width: 80%;
+    text-align: center;
+}
+
+.sub-method button {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    -webkit-text-fill-color: var(--color-text);
+}
+
+.sub-method button:hover {
+    background-color: var(--color-surface-hover);
+}
+
+
+/* ============================================
+   8. HOME PAGE
+   ============================================ */
+.home-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* Hero Section */
@@ -1040,16 +566,12 @@ button:hover {
 .hero-title {
     font-size: 3.5rem;
     margin: 20px 0 10px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
     letter-spacing: 2px;
 }
 
 .hero-subtitle {
     font-size: 1.5rem;
-    color: #447D9B;
+    color: var(--color-primary);
     margin: 10px 0 20px;
     letter-spacing: 1px;
 }
@@ -1058,7 +580,7 @@ button:hover {
     font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
-    color: #b0b0b0;
+    color: var(--color-text-muted);
     line-height: 1.6;
 }
 
@@ -1067,10 +589,6 @@ button:hover {
     text-align: center;
     font-size: 2rem;
     margin: 60px 0 40px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
     letter-spacing: 1px;
 }
 
@@ -1090,35 +608,33 @@ button:hover {
 
 /* Feature Cards */
 .feature-card {
-    background: #2a2a2a;
-    border: 2px solid #447D9B;
-    border-radius: 15px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-lg);
     padding: 30px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
 }
 
 .feature-card:hover {
     transform: translateY(-5px);
-    border-color: #447D9B;
-    box-shadow: 0 10px 30px rgba(69, 104, 130, 0.6);
-    background: #2a2a2a;
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+    background: var(--color-surface);
 }
 
 .card-icon {
     font-size: 3rem;
     margin-bottom: 20px;
-    color: #447D9B;
+    color: var(--color-primary);
 }
 
 .feature-card h3 {
     font-size: 1.5rem;
     margin: 15px 0;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 
 .feature-card p {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     line-height: 1.6;
     margin-bottom: 20px;
 }
@@ -1126,106 +642,52 @@ button:hover {
 .card-link {
     display: inline-block;
     padding: 10px 25px;
-    background: #447D9B;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-decoration: none;
-    border-radius: 25px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-pill);
+    transition: all var(--transition-base);
     font-weight: bold;
 }
 
 .card-link:hover {
     transform: scale(1.05);
-    box-shadow: 0 5px 15px rgba(69, 104, 130, 0.6);
+    box-shadow: 0 5px 15px rgba(var(--color-primary-rgb), 0.6);
 }
 
-/* Blog Preview Section */
-.blog-preview-section {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
 
-.blog-preview-grid {
+/* ============================================
+   9. CIPHER TRANSLATOR PAGE
+   ============================================ */
+
+/* Keyboard panel for cipher buttons */
+#keyboardPanel {
+    margin: 20px auto;
+    width: 300px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 5px;
 }
 
-.blog-preview-card {
-    background: #2a2a2a;
-    border: 2px solid #447D9B;
-    border-radius: 15px;
-    overflow: hidden;
-    transition: all 0.3s ease;
+#keyboardPanel button {
+    font-size: 16px;
+    padding: 10px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
 }
 
-.blog-preview-card:hover {
-    transform: translateY(-5px);
-    border-color: #447D9B;
-    box-shadow: 0 10px 30px rgba(69, 104, 130, 0.6);
+#keyboardPanel button:hover {
+    background-color: var(--color-surface-hover);
+    box-shadow: 0px 4px 6px var(--color-primary);
 }
 
-.blog-thumbnail {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-
-.blog-content {
-    padding: 20px;
-}
-
-.blog-date {
-    font-size: 0.9rem;
-    color: #447D9B;
-    display: block;
-    margin-bottom: 10px;
-}
-
-.blog-preview-card h3 {
-    font-size: 1.3rem;
-    margin: 10px 0;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-}
-
-.blog-preview-card p {
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    line-height: 1.6;
-    margin-bottom: 15px;
-}
-
-.read-more {
-    color: #447D9B;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-}
-
-.read-more:hover {
-    color: #447D9B;
-}
-
-.view-all-link {
-    display: block;
-    text-align: center;
-    padding: 15px;
-    background: #2a2a2a;
-    border: 2px solid #447D9B;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #447D9B 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-    max-width: 300px;
-    margin: 0 auto;
-}
-
-.view-all-link:hover {
-    background: #447D9B;
-    transform: scale(1.05);
+textarea#alternativeOutputText {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-primary);
 }
 
 /* Quick Translator Section */
@@ -1237,8 +699,8 @@ button:hover {
 
 .translator-container {
     background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(68, 125, 155, 0.3);
-    border-radius: 15px;
+    border: 2px solid rgba(var(--color-primary-rgb), 0.3);
+    border-radius: var(--radius-lg);
     padding: 30px;
     backdrop-filter: blur(10px);
 }
@@ -1255,35 +717,576 @@ button:hover {
     margin: 5px;
     padding: 10px 20px;
     font-size: 16px;
-    background: linear-gradient(135deg, #FE7743 0%, #FE7743 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    background-color: #2a2a2a;
-    border: 1px solid #FE7743;
-    border-radius: 5px;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-base);
 }
 
 .translator-buttons button:hover {
-    background-color: #3a3a3a;
-    box-shadow: 0px 4px 6px #FE7743;
+    background-color: var(--color-surface-hover);
+    box-shadow: 0px 4px 6px var(--color-accent);
 }
 
-/* Responsive Design */
+
+/* ============================================
+   10. DECRYPT PAGE
+   ============================================ */
+.decrypt-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.binary-base {
+    width: 40%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    appearance: none;
+    transition: background-color var(--transition-base);
+}
+
+.binary-base:hover {
+    background-color: var(--color-primary);
+}
+
+/* Decrypt output text */
+p.decrypt-output,
+p.binary-output,
+p.jacquard-output,
+p.caesar-output,
+p.vigenere-output,
+p.atbash-output,
+p.hex-output,
+p.base64-output,
+p.morse-output {
+    font-size: 18px;
+    font-weight: lighter;
+    color: var(--color-primary);
+    margin-top: 10px;
+    -webkit-text-fill-color: var(--color-primary);
+}
+
+/* Name-to-Color Section */
+.name-to-color-section {
+    background: var(--color-surface);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.colorBox {
+    width: 150px;
+    height: 150px;
+    margin: 20px auto;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 8px var(--color-primary);
+}
+
+#outputRGB {
+    margin-top: 10px;
+    font-size: 1rem;
+}
+
+#outputName {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+}
+
+/* Image Decryption Section */
+.image-decryption-page {
+    background-color: var(--color-surface-alt);
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.image-decryption {
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 90%;
+    max-width: 800px;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.image-decryption:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-card-hover);
+}
+
+
+/* ============================================
+   11. VIDEO STEGANOGRAPHY PAGE
+   ============================================ */
+video {
+    display: block;
+    margin: 20px auto 10px auto;
+    max-width: 600px;
+    width: 80%;
+    border-radius: var(--radius-md);
+    background: #333;
+    box-shadow: 0 2px 8px var(--color-primary);
+}
+
+canvas {
+    display: block;
+    margin: 10px auto 20px auto;
+    max-width: 600px;
+    width: 80%;
+    border-radius: var(--radius-md);
+    background: #333;
+    box-shadow: 0 2px 8px var(--color-primary);
+    border: 1px solid #777;
+}
+
+audio {
+    margin-top: 10px;
+    width: 80%;
+    max-width: 600px;
+    color: #fff;
+}
+
+/* Match video and canvas preview sizes */
+.preview-media {
+    width: 100%;
+    height: 360px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: #333;
+}
+
+/* Small timer shown under output preview canvas */
+.output-timer {
+    margin-top: 8px;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: monospace;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Stack Color & Contrast controls vertically */
+#colorContrast label {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 8px 0;
+}
+
+#colorContrast input[type="range"] {
+    width: 100% !important;
+    margin-top: 6px;
+    display: block;
+}
+
+#colorContrast .slider-value {
+    display: block;
+    margin-top: 6px;
+    text-align: right;
+}
+
+/* Playback controls */
+.preview-controls {
+    align-items: center;
+}
+
+.preview-controls .playback-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 8px;
+    font-size: 1rem;
+}
+
+.preview-controls #playPauseBtn {
+    font-size: 1.1rem;
+    padding: 6px 10px;
+}
+
+.preview-controls .playback-label select {
+    margin: 0;
+}
+
+/* Loading indicator */
+.loading-box {
+    text-align: center;
+    color: #fff;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 15px;
+    border: 4px solid #ccc;
+    border-top: 4px solid var(--color-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-sticky {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    z-index: 1000;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Signal panel */
+.signal-panel {
+    border: 1px solid var(--color-primary);
+    padding: 12px;
+    margin-top: 20px;
+    background: var(--color-surface);
+    font-family: 'Courier New', monospace;
+    border-radius: 6px;
+    color: var(--color-text);
+}
+
+.signal-panel select,
+.signal-panel input {
+    margin: 6px 0;
+    padding: 4px;
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+#signalCanvas {
+    margin-top: 12px;
+    border: 1px solid #333;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+}
+
+/* LSB output */
+#lsbFilterPanel {
+    margin-top: 16px;
+}
+
+#lsbOutputDisplay {
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #333;
+    padding: 8px;
+    background: var(--color-surface-deep);
+    color: #eaeaea;
+    font-family: 'Courier New', monospace;
+    margin-top: 12px;
+}
+
+#copyLSBBtn {
+    margin: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+#copyLSBBtn:hover {
+    background-color: var(--color-surface-hover);
+    box-shadow: 0px 4px 6px var(--color-accent);
+}
+
+
+/* ============================================
+   12. CRYPTOGRAPHY PAGE
+   ============================================ */
+.cryptography-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+}
+
+
+/* ============================================
+   13. BLOG
+   ============================================ */
+.blog-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+}
+
+.blog-post-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+}
+
+.blog-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 32px 0;
+}
+
+.blog-post-preview {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-card);
+}
+
+.blog-thumbnail {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px var(--color-primary);
+    transition: transform 0.2s;
+}
+
+.blog-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.blog-preview-content h3 {
+    margin: 0 0 8px 0;
+}
+
+.blog-preview-content p {
+    margin: 0 0 8px 0;
+}
+
+.blog-date {
+    font-size: 0.9em;
+    color: var(--color-primary);
+    -webkit-text-fill-color: var(--color-primary);
+}
+
+.blog-post-full {
+    max-width: 700px;
+    margin: 40px auto;
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
+}
+
+.blog-thumbnail-full {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    display: block;
+    margin: 0 auto 24px auto;
+    border-radius: var(--radius-md);
+}
+
+.blog-video {
+    margin: 32px 0;
+    text-align: center;
+}
+
+.blog-video iframe {
+    max-width: 100%;
+    height: 315px;
+    border-radius: var(--radius-md);
+}
+
+/* Blog preview cards (home page variant) */
+.blog-preview-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.blog-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.blog-preview-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-primary);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.blog-preview-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.blog-content {
+    padding: 20px;
+}
+
+.blog-preview-card h3 {
+    font-size: 1.3rem;
+    margin: 10px 0;
+}
+
+.blog-preview-card p {
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.read-more {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color var(--transition-base);
+}
+
+.read-more:hover {
+    color: var(--color-primary);
+}
+
+.view-all-link {
+    display: block;
+    text-align: center;
+    padding: 15px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all var(--transition-base);
+    max-width: 300px;
+    margin: 0 auto;
+}
+
+.view-all-link:hover {
+    background: var(--color-primary);
+    transform: scale(1.05);
+}
+
+
+/* ============================================
+   14. ECHOES GAME
+   ============================================ */
+.echoes-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.game-container {
+    max-width: 700px;
+    margin: 60px auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: 32px 24px;
+    box-shadow: 0 4px 12px rgba(var(--color-primary-rgb), 0.4);
+    text-align: center;
+}
+
+.game-container h1 {
+    margin-bottom: 18px;
+}
+
+.game-container p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+
+/* ============================================
+   15. ABOUT PAGE
+   ============================================ */
+.about-page {
+    background: var(--color-bg);
+    background-size: cover;
+    background-position: center;
+}
+
+
+/* ============================================
+   16. RESPONSIVE BREAKPOINTS
+   ============================================ */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2.5rem;
     }
-    
+
     .hero-subtitle {
         font-size: 1.2rem;
     }
-    
+
     .card-grid,
     .blog-preview-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .section-title {
         font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 700px) {
+    video, canvas {
+        width: 98%;
+        max-width: 98vw;
+    }
+
+    label {
+        display: block;
+        margin: 12px auto;
+    }
+
+    .preview-media {
+        height: auto;
     }
 }

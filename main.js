@@ -560,26 +560,30 @@ document.getElementById('frameStep').addEventListener('change', function () {
 
 // Copy LSB output button
 const copyLSBBtn = document.getElementById("copyLSBBtn");
-copyLSBBtn.addEventListener("click", () => {
-  const range = document.createRange();
-  range.selectNodeContents(lsbOutputDisplay);
-
-  const selection = window.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
-
-  try {
-    const successful = document.execCommand("copy");
-    if (successful) {
+if (copyLSBBtn) {
+  copyLSBBtn.addEventListener("click", async () => {
+    const text = lsbOutputDisplay ? lsbOutputDisplay.textContent : '';
+    try {
+      await navigator.clipboard.writeText(text);
       copyLSBBtn.textContent = "Copied!";
       setTimeout(() => copyLSBBtn.textContent = "Copy All", 1500);
-    } else {
-      alert("Copy failed. Try manually.");
+    } catch (err) {
+      // Fallback for older browsers
+      try {
+        const range = document.createRange();
+        range.selectNodeContents(lsbOutputDisplay);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand("copy");
+        copyLSBBtn.textContent = "Copied!";
+        setTimeout(() => copyLSBBtn.textContent = "Copy All", 1500);
+      } catch (fallbackErr) {
+        alert("Copy failed. Try manually selecting the text.");
+      }
     }
-  } catch (err) {
-    alert("Copy error: " + err);
-  }
-});
+  });
+}
 
 // Update displayed LSB output when the channel selector changes
 if (lsbChannel) lsbChannel.addEventListener("change", () => {

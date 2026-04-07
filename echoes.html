@@ -3,18 +3,36 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Threshold of Echoes</title>
+    <title>Threshold of Echoes — Cryptic Fox</title>
     <link rel="stylesheet" href="style.css" />
+
     <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description" content="An interactive logic puzzle game. Three characters, one passcode — can you deduce who holds it with a single question?">
+    <link rel="canonical" href="https://cryptic-fox.com/echoes.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/echoes.html">
+    <meta property="og:title" content="Threshold of Echoes — Cryptic Fox">
+    <meta property="og:description" content="An interactive logic puzzle. Three characters, one passcode — deduce who holds it.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Threshold of Echoes — Cryptic Fox">
+    <meta name="twitter:description" content="An interactive logic puzzle. Three characters, one passcode — deduce who holds it.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
     <script src="script.js" defer></script>
 </head>
 <body class="echoes-page">
-    <div class="dropdown">
-        <button class="dropbtn">⨀Ξ〄⋑</button>
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
         <div class="dropdown-content">
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
@@ -22,8 +40,6 @@
             <a href="decrypt.html">Encrypt/Decrypt</a>
             <a href="red.html">Video Steganography</a>
             <a href="cryptography.html">Cryptography</a>
-            <!--<a href="blog.html">Blog</a>-->
-            <!--<a href="echoes.html">The Threshold of Echoes</a>-->
         </div>
     </div>
     <div class="game-container">
@@ -31,8 +47,8 @@
     <p>Three stand before you. Only one holds the passcode. But none will answer plainly.</p>
     <p>
         <ul>Ada always tells the truth.</ul>
-        <ul>B25Y tells the truth only when Ada is lying.</ul>
-        <ul>Charles answers randomly-truth or lie, you won't know.</ul>
+        <ul>B25Y always lies.</ul>
+        <ul>Charles answers randomly—truth or lie, you won't know.</ul>
     You may ask one question to one person only. (The puzzle will automatically reset after 10 seconds, and each round will have a new passcode holder.)
     What question will you ask to discover who holds the passcode?
     </p>
@@ -58,11 +74,11 @@
 <div id="response" class="response"></div>
 <div id="result" class="result"></div>
 <div id="deduction" class="deduction"></div>
-    
-    <div id="actualHolder" class="actual-holder"></div>
-    <div id="response" class="response"></div>
-    <div id="result" class="result"></div>
     </div>
+
+    <footer>
+        <p>&copy; 2025 Cryptic Fox</p>
+    </footer>
 
     <script src="echoes.js"></script>
 </body>

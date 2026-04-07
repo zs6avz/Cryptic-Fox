@@ -44,13 +44,7 @@ function clearBinaryFields() {
     if (baseSelect) baseSelect.selectedIndex = 0; // Reset dropdown
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-    const clearButton = document.getElementById('clearBinaryFieldsBtn');
-    if (clearButton) {
-        clearButton.addEventListener('click', clearBinaryFields);
-    }
-});
+
 
 // Hexadecimal Encryption & Decryption
 function encryptHex() {
@@ -86,13 +80,7 @@ function clearHexFields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-    const clearButton = document.getElementById('clearHexFieldsBtn');
-    if (clearButton) {
-        clearButton.addEventListener('click', clearHexFields);
-    }
-});
+
 
 // Ensure cipher mappings are loaded when the page loads
 loadJacquard();
@@ -121,7 +109,7 @@ async function loadJacquard() {
             alphabetToJacquard[alphabet] = cipher;
         }
 
-        console.log("Mappings loaded successfully:", cipherToAlphabet, alphabetToCipher);
+        console.log("Mappings loaded successfully:", jacquardToAlphabet, alphabetToJacquard);
     } catch (error) {
         console.error("Error loading mappings:", error);
     }
@@ -164,13 +152,7 @@ function clearJacquardFields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-    const clearButton = document.getElementById('clearJacquardFieldsBtn');
-    if (clearButton) {
-        clearButton.addEventListener('click', clearJacquardFields);
-    }
-});
+
 
 // Caesar Cipher Encryption & Decryption
 function encryptCaesar(shift) {
@@ -226,13 +208,7 @@ function clearCaesarFields() {
     if (shiftElement) shiftElement.value = 3; // Reset shift to default value
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-    const clearCaesarButton = document.getElementById('clearCaesarFieldsBtn');
-    if (clearCaesarButton) {
-        clearCaesarButton.addEventListener('click', clearCaesarFields);
-    }
-});
+
 
 // Vigenère Cipher Encryption & Decryption
 document.querySelector('.encrypt-btn').addEventListener('click', function () {
@@ -316,13 +292,7 @@ function clearVigenereFields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-const clearVigenereButton = document.getElementById('clearVigenereFieldsBtn');
-    if (clearVigenereButton) {
-        clearVigenereButton.addEventListener('click', clearVigenereFields);
-    }
-});
+
 
 // Atbash Cipher Encryption & Decryption
 function encryptAtbash() {
@@ -369,12 +339,7 @@ function clearAtbashFields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-const clearAtbashButton = document.getElementById('clearAtbashFieldsBtn');
-    if (clearAtbashButton) {
-        clearAtbashButton.addEventListener('click', clearAtbashFields);
-    }
-});
+
 
 // Base64 Encoding
 function encryptBase64() {
@@ -425,16 +390,7 @@ function clearBase64Fields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
-// Attach event listeners
-document.addEventListener('DOMContentLoaded', () => {
-    const encryptButton = document.getElementById('encryptBase64Btn');
-    const decryptButton = document.getElementById('decryptBase64Btn');
-    const clearButton = document.getElementById('clearBase64FieldsBtn');
 
-    if (encryptButton) encryptButton.addEventListener('click', encryptBase64);
-    if (decryptButton) decryptButton.addEventListener('click', decryptBase64);
-    if (clearButton) clearButton.addEventListener('click', clearBase64Fields);
-});
 
 // Morse Code Encryption & Decryption
 const morseCodeMap = {
@@ -446,24 +402,26 @@ const morseCodeMap = {
     "Z": "--..", " ": "/"
 };
 
-function encryptMorse() {
+function encryptMorse(separator) {
+    separator = separator || ' ';
     const inputElement = document.querySelector('.morse-input');
     const outputElement = document.querySelector('.morse-output');
     const text = inputElement.value.trim().toUpperCase();
 
     const morseCode = text.split('')
         .map(char => morseCodeMap[char] || '?')
-        .join(' ');
+        .join(separator);
 
     outputElement.textContent = morseCode || "Invalid input!";
 }
 
-function decryptMorse() {
+function decryptMorse(separator) {
+    separator = separator || ' ';
     const inputElement = document.querySelector('.morse-input');
     const outputElement = document.querySelector('.morse-output');
     const morseString = inputElement.value.trim();
 
-    const text = morseString.split(' ')
+    const text = morseString.split(separator)
         .map(symbol => Object.keys(morseCodeMap).find(key => morseCodeMap[key] === symbol) || '?')
         .join('');
 
@@ -481,52 +439,9 @@ function clearMorseFields() {
     if (separatorElement) separatorElement.selectedIndex = 0; // Reset separator to default
 }
 
-// Attach event listener
-document.addEventListener('DOMContentLoaded', () => {
-const clearMorseButton = document.getElementById('clearMorseFieldsBtn');
-    if (clearMorseButton) {
-        clearMorseButton.addEventListener('click', clearMorseFields);
-    }
-});
 
-/* 🔵 Function to encrypt using selected cipher & mode
-function encryptCipher(method, mode) {
-    const inputElement = document.querySelector(`.${method}-input`);
-    const keyElement = document.querySelector(`.${method}-key`);
-    const outputElement = document.querySelector(`.${method}-output`);
-    const text = inputElement.value.trim();
-    const key = CryptoJS.enc.Utf8.parse(keyElement.value.trim() || "defaultkey123456");
 
-    const encrypted = CryptoJS[method].encrypt(text, key, {
-        mode: CryptoJS.mode[mode],
-        padding: CryptoJS.pad.Pkcs7
-    });
 
-    outputElement.textContent = encrypted.toString();
-}
-
-// 🔴 Function to decrypt using selected cipher & mode
-function decryptCipher(method, mode) {
-    const inputElement = document.querySelector(`.${method}-input`);
-    const keyElement = document.querySelector(`.${method}-key`);
-    const outputElement = document.querySelector(`.${method}-output`);
-    const encryptedText = inputElement.value.trim();
-    const key = CryptoJS.enc.Utf8.parse(keyElement.value.trim() || "defaultkey123456");
-
-    const decrypted = CryptoJS[method].decrypt(encryptedText, key, {
-        mode: CryptoJS.mode[mode],
-        padding: CryptoJS.pad.Pkcs7
-    });
-
-    outputElement.textContent = decrypted.toString(CryptoJS.enc.Utf8) || "Invalid input!";
-}
-
-// Function to get selected encryption mode
-function getSelectedMode(method) {
-    return document.querySelector(`.${method}-mode`).value;
-}*/
-
-const CryptoJS = require("crypto-js");
 
 /* Canvas-Based Image Decryption
 function encryptCanvasImage() {
@@ -645,7 +560,7 @@ function encryptAESAudio() {
         const outputField = document.querySelector('.aes-encrypted-output');
         outputField.value = encryptedData; // Display encrypted audio data
     };
-    reader.readAsText(fileInput); // Read audio file as text
+    reader.readAsDataURL(fileInput); // Read audio file as data URL
 }
 
 function decryptAESAudio() {
@@ -667,107 +582,25 @@ function decryptAESAudio() {
 }
 
 function encryptRSAAudio() {
-    const fileInput = document.querySelector('.rsa-audio-input').files[0];
-    const publicKey = document.querySelector('.rsa-public-key').value;
-
-    if (!fileInput || !publicKey) {
-        alert('Please select an audio file and provide an RSA public key.');
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        const encryptedData = rsaEncrypt(event.target.result, publicKey); // RSA encryption logic
-        const outputField = document.querySelector('.rsa-encrypted-output');
-        outputField.value = encryptedData; // Display encrypted audio data
-    };
-    reader.readAsText(fileInput); // Read audio file as text
-}
-
-// RSA encryption logic
-function rsaEncrypt(data, publicKey) {
-    // Add RSA encryption logic here (use libraries like NodeRSA or others)
-    return data; // Placeholder
+    alert('RSA audio encryption is not yet implemented. A browser-compatible RSA library (e.g. Web Crypto API) is needed for this feature.');
 }
 
 function decryptRSAAudio() {
-    const encryptedData = document.querySelector('.rsa-audio-input-decrypt').value;
-    const privateKey = document.querySelector('.rsa-private-key').value;
-
-    if (!encryptedData || !privateKey) {
-        alert('Please provide the RSA encrypted data and private key.');
-        return;
-    }
-
-    const decryptedData = rsaDecrypt(encryptedData, privateKey); // RSA decryption logic
-    const audioElement = document.getElementById('rsa-audio-output');
-    audioElement.src = decryptedData; // Set decrypted data as audio source
-
-    const downloadLink = document.getElementById('rsa-audio-download-link');
-    downloadLink.href = decryptedData; // Allow downloading decrypted audio
-    downloadLink.style.display = 'inline-block'; // Make link visible
+    alert('RSA audio decryption is not yet implemented. A browser-compatible RSA library (e.g. Web Crypto API) is needed for this feature.');
 }
 
-// RSA decryption logic
-function rsaDecrypt(data, privateKey) {
-    // Add RSA decryption logic here (use libraries like NodeRSA or others)
-    return data; // Placeholder
-}
-
-// Function to calculate RGB values based on names
-function calculateRGB(names) {
-    // Combine all names into one string
-    const fullName = names.join('').toUpperCase();
-
-    // Convert letters to numerical values (A=1, B=2, ..., Z=26)
-    const letterValues = Array.from(fullName)
-        .filter(char => char >= 'A' && char <= 'Z') // Only process letters
-        .map(char => char.charCodeAt(0) - 64); // Convert letters to numbers
-
-    // Calculate the sum of all letter values
-    const sum = letterValues.reduce((acc, val) => acc + val, 0);
-
-    // Scale RGB components proportionally (not exceeding 255)
-    const red = (sum % 255); // Modulus to wrap within 0-255 range
-    const green = ((sum * 2) % 255); // Example scaling factor
-    const blue = ((sum * 3) % 255); // Another scaling factor
-
-    return { red, green, blue };
-}
-
-function generateSingleColor() {
-    // Input Fields
-    const firstName = document.getElementById('firstName').value || "";
-    const middleName = document.getElementById('middleName').value || "";
-    const lastName = document.getElementById('lastName').value || "";
-
-    // Output Elements
-    const outputBox = document.getElementById('outputBox');
-    const outputRGB = document.getElementById('outputRGB');
-    const outputName = document.getElementById('outputName');
-
-    // Calculate RGB values
-    const { red, green, blue } = calculateRGB([firstName, middleName, lastName]);
-    const color = `rgb(${red}, ${green}, ${blue})`;
-
-    // Apply the color to the output box and display RGB values
-    outputBox.style.backgroundColor = color;
-    outputRGB.textContent = `Generated RGB Color: ${color}`;
-
-    // Display the full name in the generated color
-    const fullName = `${firstName} ${middleName} ${lastName}`.trim(); // Combine names
-    outputName.textContent = fullName || "No name provided";
-    outputName.style.color = color; // Set text color to match the generated color
-}
-
-function clearFields() {
-    // Clear input fields
-    document.getElementById('firstName').value = '';
-    document.getElementById('middleName').value = '';
-    document.getElementById('lastName').value = '';
-
-    // Clear output
-    document.getElementById('outputBox').style.backgroundColor = '';
-    document.getElementById('outputRGB').textContent = '';
-    document.getElementById('outputName').textContent = '';
-}
+// ── Consolidated Event Listeners ──────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const bind = (id, fn) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('click', fn);
+    };
+    bind('clearBinaryFieldsBtn', clearBinaryFields);
+    bind('clearHexFieldsBtn', clearHexFields);
+    bind('clearJacquardFieldsBtn', clearJacquardFields);
+    bind('clearCaesarFieldsBtn', clearCaesarFields);
+    bind('clearVigenereFieldsBtn', clearVigenereFields);
+    bind('clearAtbashFieldsBtn', clearAtbashFields);
+    bind('clearBase64FieldsBtn', clearBase64Fields);
+    bind('clearMorseFieldsBtn', clearMorseFields);
+});

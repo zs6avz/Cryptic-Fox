@@ -1,0 +1,9 @@
+# OS System Files
+.DS_Store
+Thumbs.db
+
+# Live Server / VS Code generated files
+.vscode/
+
+# Ignore specific large images if not needed (e.g. uncomment line below)
+# a_la_mc3a9moire_de_j-m-_jacquard.jpg

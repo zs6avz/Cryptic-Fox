@@ -12,6 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     dropdownBtn.addEventListener('click', (event) => {
         event.stopPropagation(); // Prevent click events from propagating
         dropdownContent.classList.toggle('active'); // Add or remove the "active" class for visibility
+        dropdownBtn.setAttribute('aria-expanded', dropdownContent.classList.contains('active'));
+    });
+
+    // Keyboard support: Enter/Space to toggle, Escape to close
+    dropdownBtn.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            dropdownContent.classList.toggle('active');
+            dropdownBtn.setAttribute('aria-expanded', dropdownContent.classList.contains('active'));
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && dropdownContent.classList.contains('active')) {
+            dropdownContent.classList.remove('active');
+            dropdownBtn.setAttribute('aria-expanded', 'false');
+            dropdownBtn.focus();
+        }
     });
 
     // Optional: Close dropdown menu if clicking outside the dropdown button or menu
@@ -31,14 +49,20 @@ loadMappings();
 // Function to verify the fox input
 async function checkFox() {
     try {
-        const response = await fetch('fox.xml'); // Fetch fox.xml file
-        if (!response.ok) throw new Error(`Failed to load fox file: ${response.statusText}`);
-        const xml = await response.text();
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xml, "application/xml");
+        let correctFox = "fox"; // Default fallback
+        try {
+            const response = await fetch('fox.xml'); // Fetch fox.xml file
+            if (response.ok) {
+                const xml = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xml, "application/xml");
+                correctFox = xmlDoc.getElementsByTagName("fox")[0].textContent.toLowerCase().trim();
+            }
+        } catch (e) {
+            console.warn("Failed to fetch fox.xml (likely a local file:// CORS issue). Using fallback.");
+        }
 
-        const correctFox = xmlDoc.getElementsByTagName("fox")[0].textContent.toLowerCase(); // Convert to lowercase
-        const userFox = document.getElementById("foxInput").value.toLowerCase(); // Convert to lowercase
+        const userFox = document.getElementById("foxInput").value.toLowerCase().trim();
 
         if (userFox === correctFox) {
             hideFoxScreen(); // Hide `foxScreen`
@@ -78,12 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const foxInput = document.getElementById("foxInput");
     const submitFox = document.getElementById("submitFox");
 
-    foxInput.addEventListener("keypress", (event) => {
-        if (event.key === "Enter") {
-            event.preventDefault(); // Prevent default form submission behavior
-            submitFox.click(); // Trigger the button's click event
-        }
-    });
+    if (foxInput && submitFox) {
+        foxInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Prevent default form submission behavior
+                submitFox.click(); // Trigger the button's click event
+            }
+        });
+    }
 });
 
 // Function to hide the dropdown menu (specific to the fox screen)
@@ -132,6 +158,7 @@ async function loadMappings() {
 // Function to populate cipher buttons dynamically in the keyboard panel
 function populateCipherButtons() {
     const keyboardPanel = document.getElementById("keyboardPanel");
+    if (!keyboardPanel) return; // not on cipher translator page
     keyboardPanel.innerHTML = ""; // Clear previous buttons
 
     for (let cipher in cipherToAlphabet) {

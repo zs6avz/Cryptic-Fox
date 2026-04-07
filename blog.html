@@ -3,17 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ϟ⌇◎⌁</title>
+    <title>Blog — Cryptic Fox</title>
     <link rel="stylesheet" href="style.css">
+
     <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description" content="Insights on rationalism, computation, classical music, poetry, and the intersection of art, logic, and cryptography from The End Project.">
+    <link rel="canonical" href="https://cryptic-fox.com/blog.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/blog.html">
+    <meta property="og:title" content="Blog — Cryptic Fox">
+    <meta property="og:description" content="Insights on rationalism, computation, classical music, and the intersection of art and logic.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Blog — Cryptic Fox">
+    <meta name="twitter:description" content="Insights on rationalism, computation, classical music, and the intersection of art and logic.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
     <script src="script.js" defer></script>
 </head>
 <body class="blog-page">
-    <h1>ϟ⌇◎⌁</h1><img src="/fennfox.png" class="center-image" alt=""
+    <h1>Blog</h1>
+    <img src="fennfox.png" class="center-image" alt="Cryptic Fox logo"
     style="width: 150px; height: auto;">
     <h2>Insights</h2>
     <h3>This blog reflects interpretive and speculative insights based on the themes examined
@@ -22,8 +41,8 @@
         and mechanized minds, this blog traces the dialogue between reason and imagination.</h3>
     
     <!-- Menu Button -->
-    <div class="dropdown">
-        <button class="dropbtn">⨀Ξ〄⋑</button>
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
         <div class="dropdown-content">
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
@@ -31,8 +50,6 @@
             <a href="decrypt.html">Encrypt/Decrypt</a>
             <a href="red.html">Video Steganography</a>
             <a href="cryptography.html">Cryptography</a>
-            <!--<a href="blog.html">Blog</a>-->
-            <!--<a href="echoes.html">The Threshold of Echoes</a>-->
         </div>
     </div>
 
@@ -41,7 +58,7 @@
 
     <!-- Footer Section -->
     <footer>
-        <p>&copy; 2025 ⚲⎐⚷⎔⌖∷⚲ ⌬◎⊗</p>
+        <p>&copy; 2025 Cryptic Fox</p>
     </footer>
 
     <script>
@@ -62,7 +79,7 @@
         const html = `
             <div class="blog-post-preview">
             <a href="${link}">
-                <img src="${thumbnail}" alt="${title}" class="blog-thumbnail">
+                <img src="${thumbnail}" alt="${title}" class="blog-thumbnail" loading="lazy">
             </a>
             <div class="blog-preview-content">
                 <a href="${link}"><h3>${title}</h3></a>
