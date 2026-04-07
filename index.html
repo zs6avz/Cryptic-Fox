@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,24 +13,28 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
 
-    <meta name="description" content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze video steganography, and explore cryptographic theory.">
+    <meta name="description"
+        content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze video steganography, and explore cryptographic theory.">
     <link rel="canonical" href="https://cryptic-fox.com/">
 
     <!-- Open Graph / Facebook / Discord -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://tepcipher.online/">
     <meta property="og:title" content="Cryptic Fox — Cryptography Toolkit">
-    <meta property="og:description" content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze video steganography, and explore cryptographic theory.">
+    <meta property="og:description"
+        content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze video steganography, and explore cryptographic theory.">
     <meta property="og:image" content="https://tepcipher.online/Fox-Thumbnail.png">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cryptic Fox — Cryptography Toolkit">
-    <meta name="twitter:description" content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, and analyze video steganography.">
+    <meta name="twitter:description"
+        content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, and analyze video steganography.">
     <meta name="twitter:image" content="https://tepcipher.online/Fox-Thumbnail.png">
 
     <script src="script.js" defer></script>
 </head>
+
 <body class="home-page">
 
     <!-- Menu Button -->
@@ -54,7 +59,7 @@
 
     <!-- Feature Cards Grid -->
     <section class="features-grid">
-        
+
         <div class="card-grid">
             <!-- Cipher Translator Card -->
             <div class="feature-card" data-keywords="cipher translate alphabet symbols encrypt decrypt">
@@ -94,7 +99,7 @@
                 <h3>Blog</h3>
                 <p>Insights on rationalism, computation, classical music, poetry, and the intersection of art and logic.</p>
                 <a href="blog.html" class="card-link">Enter ⟶</a>
-            </div> -->
+            </div>
 
             <!-- About Card -->
             <div class="feature-card" data-keywords="about contact aeon logic information">
@@ -113,7 +118,7 @@
         // Make entire card clickable
         document.querySelectorAll('.feature-card').forEach(card => {
             card.style.cursor = 'pointer';
-            card.addEventListener('click', function(e) {
+            card.addEventListener('click', function (e) {
                 const link = this.querySelector('.card-link');
                 if (link && e.target.tagName !== 'A') {
                     window.location.href = link.href;
@@ -122,6 +127,5 @@
         });
     </script>
 </body>
+
 </html>
-
-
