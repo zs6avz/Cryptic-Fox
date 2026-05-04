@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Threshold of Echoes — Cryptic Fox</title>
+    <link rel="stylesheet" href="../style.css" />
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description"
+        content="An interactive logic puzzle game. Three characters, one passcode — can you deduce who holds it with a single question?">
+    <link rel="canonical" href="https://cryptic-fox.com/echoes.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/echoes.html">
+    <meta property="og:title" content="Threshold of Echoes — Cryptic Fox">
+    <meta property="og:description"
+        content="An interactive logic puzzle. Three characters, one passcode — deduce who holds it.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Threshold of Echoes — Cryptic Fox">
+    <meta name="twitter:description"
+        content="An interactive logic puzzle. Three characters, one passcode — deduce who holds it.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <script src="../js/script.js" defer></script>
+</head>
+
+<body class="echoes-page">
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+            <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
+        </div>
+    </div>
+    <div class="game-container">
+        <h1>The Threshold of Echoes</h1>
+        <p>Three stand before you. Only one holds the passcode. But none will answer plainly.</p>
+        <p>
+        <ul>Ada always tells the truth.</ul>
+        <ul>B25Y always lies.</ul>
+        <ul>Charles answers randomly—truth or lie, you won't know.</ul>
+        You may ask one question to one person only. (The puzzle will automatically reset after 10 seconds, and each
+        round will have a new passcode holder.)
+        What question will you ask to discover who holds the passcode?
+        </p>
+
+        <select id="questionSelect">
+            <option value="0">Is the passcode held by Ada?</option>
+            <option value="1">Is the passcode held by B25Y?</option>
+            <option value="2">Is the passcode held by Charles?</option>
+            <option value="3">Who holds the passcode?</option>
+        </select>
+
+        <div class="characters">
+            <button onclick="askAda()">Ask Ada</button>
+            <button onclick="askB25Y()">Ask B25Y</button>
+            <button onclick="askCharles()">Ask Charles</button>
+        </div>
+
+        <div class="controls">
+            <button onclick="resetGame()" class="reset-button">Reset</button>
+        </div>
+
+        <div id="actualHolder" class="actual-holder"></div>
+        <div id="response" class="response"></div>
+        <div id="result" class="result"></div>
+        <div id="deduction" class="deduction"></div>
+    </div>
+
+    <!-- Ad Placement Scaffolding
+    <div class="ad-scaffold">
+        <span class="ad-label">Sponsored Placement</span>
+    </div>-->
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+
+    <script src="../js/echoes.js"></script>
+</body>
+
+</html>

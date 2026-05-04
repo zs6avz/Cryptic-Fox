@@ -102,7 +102,9 @@ h3 {
     font-size: 20px;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     background: var(--gradient-brand);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -559,8 +561,15 @@ section label {
 }
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .hero-title {
@@ -957,7 +966,9 @@ audio {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .loading-sticky {
@@ -1276,7 +1287,9 @@ audio {
 }
 
 @media (max-width: 700px) {
-    video, canvas {
+
+    video,
+    canvas {
         width: 98%;
         max-width: 98vw;
     }
@@ -1288,5 +1301,200 @@ audio {
 
     .preview-media {
         height: auto;
+    }
+}
+
+/* ============================================
+   17. MONETIZATION
+   ============================================ */
+.ad-scaffold {
+    max-width: 728px;
+    height: 90px;
+    margin: 40px auto;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    color: var(--color-text-muted);
+}
+
+.ad-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.support-link {
+    color: var(--color-accent);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.support-link:hover {
+    text-shadow: 0 0 8px rgba(254, 119, 67, 0.4);
+    background: none;
+    -webkit-text-fill-color: var(--color-accent);
+}
+
+.pro-link {
+    font-weight: bold;
+    color: #ffd700 !important;
+    background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    border: none !important;
+}
+
+.pro-link:hover {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* ============================================
+   17. PUZZLES & GAMES
+   ============================================ */
+
+/* Puzzles Hub Styles */
+.puzzles-page {
+    background: var(--color-bg);
+}
+
+.puzzles-title {
+    font-size: 3rem;
+    margin-top: 40px;
+}
+
+.puzzles-subtitle {
+    font-size: 1.2rem;
+    color: var(--color-text-muted);
+}
+
+/* Frequency Chamber Specifics */
+.frequency-page .map-card input {
+    border-bottom: 2px solid var(--color-accent);
+    color: var(--color-text);
+}
+
+/* Gauntlet Specifics */
+.gauntlet-page .puzzle-box {
+    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.gauntlet-page .cipher-text {
+    text-shadow: 0 0 10px rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* Success Animations */
+@keyframes success-glow {
+    0% {
+        box-shadow: 0 0 5px #7bd389;
+    }
+
+    50% {
+        box-shadow: 0 0 20px #7bd389;
+    }
+
+    100% {
+        box-shadow: 0 0 5px #7bd389;
+    }
+}
+
+.correct-animation {
+    animation: success-glow 1s ease-in-out;
+}
+
+/* Scroll to Top Button */
+#scrollToTopBtn {
+    display: none;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 99;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+
+#scrollToTopBtn:hover {
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    #scrollToTopBtn {
+        bottom: 5px;
+        right: 5px;
+        padding: 10px;
+        font-size: 24px;
+    }
+}
+
+/* Back Button */
+#backBtn {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+/* Ensure arrows in spans match parent text color */
+#backBtn span, 
+#scrollToTopBtn span,
+.card-link span,
+.back-to-puzzles span,
+a span {
+    color: inherit;
+    -webkit-text-fill-color: inherit;
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+#backBtn:hover {
+    transform: scale(1.05);
+}
+
+/* Global Back Link Styling (matches menu button) */
+.back-to-puzzles {
+    display: inline-block;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.back-to-puzzles:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    #backBtn {
+        top: 0;
+        left: 0;
+        padding: 10px;
+        font-size: 16px;
     }
 }

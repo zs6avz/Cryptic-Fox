@@ -1,1 +1,22 @@
-{"name":"Cryptic Fox","short_name":"CrypticFox","icons":[{"src":"/android-chrome-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/android-chrome-512x512.png","sizes":"512x512","type":"image/png"}],"theme_color":"#0a0a0a","background_color":"#0a0a0a","display":"standalone"}
+{
+    "name": "Cryptic Fox — Cryptography Toolkit",
+    "short_name": "CrypticFox",
+    "description": "A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze steganography, and explore cryptographic theory.",
+    "start_url": "/html/index.html",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "/images/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#0a0a0a",
+    "background_color": "#0a0a0a",
+    "display": "standalone"
+}

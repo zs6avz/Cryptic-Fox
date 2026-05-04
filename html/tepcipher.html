@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cipher Translator — Cryptic Fox</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description"
+        content="Translate between the standard alphabet and the TEP Cipher — a custom 26-symbol substitution cipher used in The End Project.">
+    <link rel="canonical" href="https://cryptic-fox.com/tepcipher.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/tepcipher.html">
+    <meta property="og:title" content="Cipher Translator — Cryptic Fox">
+    <meta property="og:description" content="Translate between the alphabet and the TEP Cipher.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cipher Translator — Cryptic Fox">
+    <meta name="twitter:description" content="Translate between the alphabet and the TEP Cipher.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <script src="../js/script.js" defer></script>
+</head>
+
+<body class="home-page">
+    <!-- Foxy Input Screen -->
+    <div id="foxScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                display: flex; flex-direction: column; justify-content: center; align-items: center;
+                background: radial-gradient(circle at center, #2b2e33 0%, #0f1115 100%);
+                z-index: 10; opacity: 1; transition: z-index 0.5s, opacity 0.5s; overflow: hidden;">
+
+        <!-- Canvas for Dynamic Smoke Effect -->
+        <canvas id="smokeCanvas"></canvas>
+
+        <img src="../images/fennfox.png" class="center-image" alt=""
+            style="width: 150px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(68, 125, 155, 0.5)); position: relative;">
+        <input type="text" id="foxInput" placeholder="..." class="fox-box"
+            style="width: 150px; text-align: center; z-index: 1; position: relative;
+                      background: rgba(20, 20, 20, 0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+                      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+
+        <button id="submitFox" onclick="checkFox()"
+            style="width: 120px; z-index: 1; position: relative; margin-top: 10px;">
+            Submit
+        </button>
+
+        <script>
+            // Smoke Effect Logic
+            (function () {
+                const canvas = document.getElementById('smokeCanvas');
+                const ctx = canvas.getContext('2d');
+
+                function resize() {
+                    const parent = document.getElementById('foxScreen');
+                    // strictly bond to the parents physical size
+                    const rect = parent.getBoundingClientRect();
+                    const cw = rect.width || window.innerWidth;
+                    const ch = rect.height || window.innerHeight;
+
+                    // set memory size
+                    canvas.width = cw;
+                    canvas.height = ch;
+
+                    // nuke any global css styles directly via javascript
+                    canvas.style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; ' +
+                        'width: ' + cw + 'px !important; height: ' + ch + 'px !important; ' +
+                        'max-width: none !important; max-height: none !important; ' +
+                        'margin: 0 !important; padding: 0 !important; border: none !important; ' +
+                        'background: transparent !important; box-shadow: none !important; ' +
+                        'z-index: 0 !important; pointer-events: none !important; outline: none !important;';
+                }
+
+                window.addEventListener('resize', resize);
+                window.addEventListener('orientationchange', resize);
+                resize();
+
+                // Safety check just in case DOM paints later
+                setTimeout(resize, 100);
+                setTimeout(resize, 500);
+
+                class Particle {
+                    constructor() {
+                        this.reset();
+                        // Start scattered fully across the screen on instantiation
+                        this.y = Math.random() * canvas.height;
+                        this.life = Math.random() * this.maxLife;
+                    }
+                    reset() {
+                        this.x = Math.random() * canvas.width;
+                        this.y = canvas.height + 150;
+                        this.size = Math.random() * 150 + 100;
+                        this.speedX = Math.random() * 1.5 - 0.75;
+                        this.speedY = Math.random() * -1.5 - 0.5; // Drift upwards
+                        this.life = 0;
+                        this.maxLife = Math.random() * 400 + 200; // Particle lifespan
+                        this.opacityMultiplier = Math.random() * 0.15 + 0.05; // Light mist opacity
+                    }
+                    update() {
+                        this.x += this.speedX;
+                        this.y += this.speedY;
+                        this.life++;
+
+                        // Loop sides strictly dynamically to the alive canvas width
+                        if (this.x > canvas.width + this.size) this.x = -this.size;
+                        if (this.x < -this.size) this.x = canvas.width + this.size;
+
+                        if (this.life >= this.maxLife || this.y < -this.size) this.reset();
+                    }
+                    draw() {
+                        let limit = this.maxLife / 2;
+                        let envelope = 1 - (Math.abs(this.life - limit) / limit);
+                        if (envelope < 0) envelope = 0;
+                        let opacity = envelope * this.opacityMultiplier;
+
+                        ctx.beginPath();
+                        let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                        gradient.addColorStop(0, 'rgba(200, 220, 240, ' + opacity + ')');
+                        gradient.addColorStop(1, 'rgba(200, 220, 240, 0)');
+                        ctx.fillStyle = gradient;
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+                const particles = [];
+                for (let i = 0; i < 40; i++) particles.push(new Particle());
+
+                function animateSmoke() {
+                    const foxScreen = document.getElementById('foxScreen');
+                    if (foxScreen && foxScreen.style.opacity === '0') return; // Pause drawing when faded
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    for (let p of particles) {
+                        p.update();
+                        p.draw();
+                    }
+                    requestAnimationFrame(animateSmoke);
+                }
+                animateSmoke();
+            })();
+        </script>
+    </div>
+
+    <!-- Menu Button -->
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+            <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
+        </div>
+    </div>
+
+    <!-- Quick Translator Section -->
+    <section class="quick-translator" id="translator">
+        <img src="../images/fennfox.png" class="hero-logo" alt="AEON LOGIC">
+        <h1 class="section-title">⏁⋑∷⚲Ϟ ⌖⎐⟒〄Ϩ⌇⟒⌖◎⎐</h1>
+        <div class="translator-container">
+            <textarea id="inputText" placeholder="Enter text here..."></textarea>
+            <div id="keyboardPanel"></div>
+            <div class="translator-buttons">
+                <button onclick="translateToAlphabet()">⟶ To Alphabet</button>
+                <button onclick="translateToCipher()">⟶ To Cipher</button>
+                <button onclick="clearFields()">Clear</button>
+            </div>
+            <textarea id="outputText" readonly placeholder="Translation..."></textarea>
+            <textarea id="alternativeOutputText" readonly placeholder="Alternative Translation..."></textarea>
+        </div>
+    </section>
+
+    <!-- Ad Placement Scaffolding 
+    <div class="ad-scaffold">
+        <span class="ad-label">Sponsored Placement</span>
+    </div>-->
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+</body>
+
+</html>

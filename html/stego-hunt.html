@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phantom Pixels — Cryptic Fox</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../js/script.js" defer></script>
+    <script src="../js/stego-hunt.js" defer></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description"
+        content="Find hidden flags buried inside images using LSB bit-plane extraction, XOR noise filtering, and entropy mapping. A steganography puzzle challenge.">
+    <link rel="canonical" href="https://cryptic-fox.com/stego-hunt.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/stego-hunt.html">
+    <meta property="og:title" content="Phantom Pixels — Cryptic Fox">
+    <meta property="og:description"
+        content="Find hidden flags buried inside images using steganography analysis tools.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Phantom Pixels — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Find hidden flags buried inside images using steganography analysis tools.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <style>
+        .stego-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .challenge-area {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .challenge-area {
+                grid-template-columns: 3fr 2fr;
+            }
+        }
+
+        .viewer-box {
+            background: #000;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        #stegoCanvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .tools-panel {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+
+        .control-group select,
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .flag-input-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(235, 63, 123, 0.05);
+            border: 1px dashed var(--color-accent);
+            border-radius: var(--radius-md);
+            text-align: center;
+        }
+
+        .success-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: #7bd389;
+            z-index: 5;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hint-text {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            font-style: italic;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body class="stego-page">
+
+    <!-- Menu Button -->
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+        </div>
+    </div>
+
+    <div class="stego-container">
+        <h1>Phantom Pixels</h1>
+        <p>Information is hidden in plain sight. Use the signal analysis tools to isolate the payload. Look for
+            bit-plane anomalies.</p>
+
+        <div class="challenge-area">
+            <div class="viewer-box">
+                <canvas id="stegoCanvas"></canvas>
+                <div id="successOverlay" class="success-overlay">
+                    <h2>SYSTEM DECIPHERED</h2>
+                    <p>You found the hidden flag!</p>
+                    <button onclick="location.reload()" class="primary-btn">Next Image</button>
+                </div>
+            </div>
+
+            <div class="tools-panel">
+                <h3>Signal Analysis</h3>
+
+                <div class="control-group">
+                    <label>Analysis Mode</label>
+                    <select id="analysisMode" onchange="processImage()">
+                        <option value="normal">Normal View</option>
+                        <option value="bitplane">Bit-Plane Extraction</option>
+                        <option value="xor">XOR Noise Filter</option>
+                        <option value="entropy">Entropy Mapping</option>
+                    </select>
+                </div>
+
+                <div id="bitplaneControls" class="control-group" style="display:none;">
+                    <label>Select Bit Layer (0-7)</label>
+                    <input type="range" id="bitLayer" min="0" max="7" value="0" step="1" oninput="processImage()">
+                    <div style="display:flex; justify-content:space-between; font-size:0.7rem;">
+                        <span>LSB</span>
+                        <span>MSB</span>
+                    </div>
+                </div>
+
+                <div id="channelControls" class="control-group">
+                    <label>Color Channel</label>
+                    <select id="colorChannel" onchange="processImage()">
+                        <option value="0">Red</option>
+                        <option value="1">Green</option>
+                        <option value="2">Blue</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label>Brightness Boost</label>
+                    <input type="range" id="brightness" min="1" max="50" value="1" step="1" oninput="processImage()">
+                </div>
+
+                <div class="hint-section">
+                    <button onclick="showHint()"
+                        style="background:transparent; border:none; color:var(--color-accent); cursor:pointer; font-size:0.8rem;">[
+                        Request Hint ]</button>
+                    <p id="hintBox" class="hint-text" style="display:none;"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flag-input-section">
+            <label for="flagInput">Target Flag:</label>
+            <input type="text" id="flagInput" placeholder="FLAG{...}"
+                style="background:transparent; border:none; border-bottom:1px solid var(--color-accent); color:var(--color-text); text-align:center; width:200px; outline:none;">
+            <button onclick="checkFlag()" class="primary-btn"
+                style="padding: 5px 15px; font-size: 0.9rem; margin-left: 10px;">Verify</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+
+</body>
+
+</html>

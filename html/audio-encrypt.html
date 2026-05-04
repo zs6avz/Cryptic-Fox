@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Encryption & Decryption — Cryptic Fox</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../js/script.js" defer></script>
+    <script src="../js/audio-encrypt.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+        integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+        crossorigin="anonymous"></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description"
+        content="Encrypt and decrypt audio files using AES and RSA encryption methods. Securely encode audio data with password-based encryption.">
+    <link rel="canonical" href="https://cryptic-fox.com/audio-encrypt.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/audio-encrypt.html">
+    <meta property="og:title" content="Audio Encryption & Decryption — Cryptic Fox">
+    <meta property="og:description"
+        content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Audio Encryption & Decryption — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+</head>
+
+<body class="decrypt-page">
+    <h1>Audio Encryption & Decryption</h1>
+
+    <!-- AES Audio Encryption -->
+    <div class="method">
+        <h2>AES Audio Encryption</h2>
+        <div class="sub-method">
+            <h3>Encrypt Audio</h3>
+            <input type="file" class="aes-audio-input">
+            <input type="text" class="aes-audio-key" placeholder="Enter key">
+            <button onclick="encryptAESAudio()">Encrypt</button>
+            <textarea class="aes-encrypted-output" readonly placeholder="Encrypted audio data..."></textarea>
+
+            <h3>Decrypt Audio</h3>
+            <textarea class="aes-audio-input-decrypt" placeholder="Enter AES encrypted audio data..."></textarea>
+            <input type="text" class="aes-audio-key-decrypt" placeholder="Enter key">
+            <button onclick="decryptAESAudio()">Decrypt</button>
+            <audio id="aes-audio-output" controls></audio>
+            <a id="aes-audio-download-link" style="display: none;">Download Decrypted Audio</a>
+        </div>
+    </div>
+
+    <!-- RSA Audio Encryption -->
+    <div class="method">
+        <h2>RSA Audio Encryption</h2>
+        <div class="sub-method">
+            <h3>Encrypt Audio</h3>
+            <input type="file" class="rsa-audio-input">
+            <textarea class="rsa-public-key" placeholder="Enter RSA public key"></textarea>
+            <button onclick="encryptRSAAudio()">Encrypt</button>
+            <textarea class="rsa-encrypted-output" readonly placeholder="Encrypted audio data..."></textarea>
+
+            <h3>Decrypt Audio</h3>
+            <textarea class="rsa-audio-input-decrypt" placeholder="Enter RSA encrypted audio data..."></textarea>
+            <textarea class="rsa-private-key" placeholder="Enter RSA private key"></textarea>
+            <button onclick="decryptRSAAudio()">Decrypt</button>
+            <audio id="rsa-audio-output" controls></audio>
+            <a id="rsa-audio-download-link" style="display: none;">Download Decrypted Audio</a>
+        </div>
+    </div>
+
+    <!-- Footer and Navigation -->
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+            <!--<a href="echoes.html">The Threshold of Echoes</a>-->
+            <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
+        </div>
+    </div>
+    <!-- Ad Placement Scaffolding 
+    <div class="ad-scaffold">
+        <span class="ad-label">Sponsored Placement</span>
+    </div>-->
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+
+</body>
+
+</html>

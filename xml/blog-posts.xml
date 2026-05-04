@@ -1,0 +1,107 @@
+<blog>
+    <post>
+        <id>1</id>
+        <title>Foundations of Rationalism and Computation</title>
+        <date>August 22, 2025</date>
+        <thumbnail>Charles-Babbage-Analytical-Engine.webp</thumbnail>
+        <excerpt>From calculus to code: the architecture of reason</excerpt>
+        <link>blog-post-1.html</link>
+    </post>
+
+    <post>
+        <id>5</id>
+        <title>What is a VPN and Why You Need One in 2026</title>
+        <date>April 15, 2026</date>
+        <thumbnail>vpn_privacy_guide_1777638536419.png</thumbnail>
+        <excerpt>A comprehensive guide to VPNs: what they are, how they work, and why a VPN is essential for protecting your privacy and security online.</excerpt>
+        <link>blog-post-5.html</link>
+    </post>
+    <!--<post>
+        <id>6</id>
+        <title>Kickstart Your Cybersecurity Career: Why TryHackMe is the Ultimate Training Ground</title>
+        <date>April 8, 2026</date>
+        <thumbnail>https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5</thumbnail>
+        <excerpt>Discover why TryHackMe is the absolute best platform for learning ethical hacking, cryptography, and penetration testing.</excerpt>
+        <link>blog-post-6.html</link>
+    </post>-->
+    <!--<post>
+        <id>7</id>
+        <title>Beyond Built-in Security: Why Malwarebytes is Essential in 2026</title>
+        <date>April 8, 2026</date>
+        <thumbnail>malwarebytes_security.png.png</thumbnail>
+        <excerpt>A deep dive into endpoint security and why upgrading to Malwarebytes is essential for protecting against ransomware.</excerpt>
+        <link>blog-post-7.html</link>
+    </post>-->
+    <!--<post>
+        <id>8</id>
+        <title>Top 5 Privacy Tools Every Developer Should Use in 2026</title>
+        <date>April 8, 2026</date>
+        <thumbnail>top_5_privacy_tools_1777371392696.png</thumbnail>
+        <excerpt>Discover the top 5 privacy tools every developer and power user needs in 2026, from password managers to zero-knowledge storage.</excerpt>
+        <link>blog-post-8.html</link>
+    </post>-->
+    <!--<post>
+        <id>9</id>
+        <title>Zero-Knowledge Encryption Explained for Beginners</title>
+        <date>April 8, 2026</date>
+        <thumbnail>zero_knowledge.png.png</thumbnail>
+        <excerpt>What is Zero-Knowledge encryption and why does it matter? Learn the cryptography basics and the best secure cloud storage providers.</excerpt>
+        <link>blog-post-9.html</link>
+    </post>-->  
+    <!--<post>
+        <id>10</id>
+        <title>Best Encrypted Email Providers for Professionals</title>
+        <date>April 8, 2026</date>
+        <thumbnail>encrypted_email.png.png</thumbnail>
+        <excerpt>A comparison of the best encrypted email providers: ProtonMail, Tuta, and StartMail. Stop giving away your private communications.</excerpt>
+        <link>blog-post-10.html</link>
+    </post>-->
+    <post>
+        <id>11</id>
+        <title>History and Fundamentals of Modern Cryptography</title>
+        <date>April 15, 2026</date>
+        <thumbnail>cryptography_fundamentals_1777370401485.png</thumbnail>
+        <excerpt>Trace the 4,000-year history of secret communication and explore the mathematical models and security services that power the modern web.</excerpt>
+        <link>blog-post-11.html</link>
+    </post>
+    <post>
+        <id>12</id>
+        <title>Digital Rabbitholes: Beyond the Cipher</title>
+        <date>May 3, 2026</date>
+        <thumbnail>cicada_puzzle_theme_1777370465513.png</thumbnail>
+        <excerpt>5 Surprising Truths Behind the Internet’s Most Elaborate Mystery. From QR codes in Seoul to the dark philosophy of ego destruction.</excerpt>
+        <link>blog-post-12.html</link>
+    </post>
+    <post>
+        <id>13</id>
+        <title>The Cyber Defense Blueprint: A Beginner’s Guide to Security</title>
+        <date>April 15, 2026</date>
+        <thumbnail>cybersecurity_essentials_1777367689228.png</thumbnail>
+        <excerpt>Master the fundamentals of digital defense—from the CIA Triad and the evolution of encryption to modern hacker personas and future-tech like Quantum security.</excerpt>
+        <link>blog-post-13.html</link>
+    </post>
+    <post>
+        <id>14</id>
+        <title>Why Your AI is Blind to Poetry: The "Verse" Vulnerability</title>
+        <date>May 1, 2026</date>
+        <thumbnail>adversarial_poetry_jailbreak_1777640287946.png</thumbnail>
+        <excerpt>Frontier LLMs are trapped in a 'Scale Paradox' where poetic sophistication dismantles safety guardrails. Exploring the world of adversarial verse.</excerpt>
+        <link>blog-post-14.html</link>
+    </post>
+    <post>
+        <id>15</id>
+        <title>The SVV Digital Mystery: Light of the Cleansing Fire</title>
+        <date>May 3, 2026</date>
+        <thumbnail>SVV.webp</thumbnail>
+        <excerpt>A descent into Sodalitas Vulturis Volantis. From cryptic Twitter handles to the unsettling hierarchy of the Vulture.</excerpt>
+        <link>blog-post-15.html</link>
+    </post>
+    <post>
+        <id>16</id>
+        <title>The END Project: Architecture of Reason</title>
+        <date>May 3, 2026</date>
+        <thumbnail>redacted.webp</thumbnail>
+        <excerpt>A deep dive into the newest digital mystery. Discover a world where early computation meets romantic poetry and industrial artifacts.</excerpt>
+        <link>blog-post-16.html</link>
+    </post>
+</blog>

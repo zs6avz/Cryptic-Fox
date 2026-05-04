@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Prime Sentinel — Cryptic Fox</title>
+    <link rel="stylesheet" href="../style.css">
+    <script src="../js/script.js" defer></script>
+    <script src="../js/sentinel.js" defer></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+
+    <meta name="description"
+        content="A multi-layered digital trial inspired by Cicada 3301. Solve prime number riddles and cryptographic challenges in a terminal-style interface.">
+    <link rel="canonical" href="https://cryptic-fox.com/sentinel.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/sentinel.html">
+    <meta property="og:title" content="The Prime Sentinel — Cryptic Fox">
+    <meta property="og:description"
+        content="A multi-layered digital trial. Solve prime riddles and cryptographic challenges.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="The Prime Sentinel — Cryptic Fox">
+    <meta name="twitter:description"
+        content="A multi-layered digital trial. Solve prime riddles and cryptographic challenges.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <style>
+        .sentinel-body {
+            background-color: #050505;
+            color: #00ff41; /* Classic Matrix Green for this hard puzzle */
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 800px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            font-size: 0.8rem;
+            color: #555;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .terminal-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .input-line {
+            display: flex;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .prompt {
+            margin-right: 10px;
+            color: #00ff41;
+        }
+
+        .terminal-input {
+            background: transparent;
+            border: none;
+            color: #00ff41;
+            font-family: inherit;
+            font-size: 1.1rem;
+            width: 100%;
+            outline: none;
+        }
+
+        .status-msg {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            min-height: 1.2rem;
+        }
+
+        .error-msg {
+            color: #ff4141;
+        }
+
+        .success-msg {
+            color: #00ff41;
+        }
+
+        .stage-title {
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .hidden-hint {
+            display: none;
+        }
+
+        /* Scanline effect */
+        .terminal-container::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body class="sentinel-body">
+
+    <!-- Puzzle Stage 2 Clue: The Source holds the key -->
+    <!-- KEY_FRAGMENT: L1B_PRIMVS -->
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span>SECURE_SHELL v3.3.0.1</span>
+            <span id="terminalTime">--:--:--</span>
+        </div>
+
+        <div class="terminal-content">
+            <div id="displayText">
+                <p>Welcome, Wanderer.</p>
+                <p>The path to enlightenment is paved with numbers and shadows.</p>
+                <p>To proceed, you must prove your worth.</p>
+            </div>
+
+            <div id="stageContent">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="input-line">
+                <span class="prompt">></span>
+                <input type="text" id="terminalInput" class="terminal-input" autofocus autocomplete="off">
+            </div>
+
+            <div id="statusMsg" class="status-msg"></div>
+        </div>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="puzzles.html" class="back-to-puzzles" style="font-size: 0.9rem;"><span>←</span> Return to Safety</a>
+    </p>
+
+    <!-- Hidden audio element for atmosphere? 
+         Cicada puzzles sometimes had sound files. 
+         I'll skip for now to keep it lightweight but maybe add a CSS pulse. -->
+
+</body>
+
+</html>
