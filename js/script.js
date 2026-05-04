@@ -3,56 +3,117 @@ let alphabetToCipher = {};
 let cipherToAlternative = {};
 let alternativeToAlphabet = {};
 
-// Initialize dropdown button functionality
+console.log("Cryptic Fox Script Loaded");
+
+// Single entry point for all DOM-related initialization
 document.addEventListener('DOMContentLoaded', () => {
-    const dropdownBtn = document.querySelector('.dropbtn'); // Dropdown button
-    const dropdownContent = document.querySelector('.dropdown-content'); // Dropdown content
+    console.log("DOM Content Loaded - Initializing components");
 
-    // Toggle dropdown visibility on button click
-    dropdownBtn.addEventListener('click', (event) => {
-        event.stopPropagation(); // Prevent click events from propagating
-        dropdownContent.classList.toggle('active'); // Add or remove the "active" class for visibility
-        dropdownBtn.setAttribute('aria-expanded', dropdownContent.classList.contains('active'));
-    });
+    // 1. Dropdown Logic
+    const dropdownBtn = document.querySelector('.dropbtn');
+    const dropdownContent = document.querySelector('.dropdown-content');
 
-    // Keyboard support: Enter/Space to toggle, Escape to close
-    dropdownBtn.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
+    if (dropdownBtn && dropdownContent) {
+        dropdownBtn.addEventListener('click', (event) => {
+            event.stopPropagation();
             dropdownContent.classList.toggle('active');
             dropdownBtn.setAttribute('aria-expanded', dropdownContent.classList.contains('active'));
+        });
+
+        dropdownBtn.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                dropdownContent.classList.toggle('active');
+                dropdownBtn.setAttribute('aria-expanded', dropdownContent.classList.contains('active'));
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && dropdownContent.classList.contains('active')) {
+                dropdownContent.classList.remove('active');
+                dropdownBtn.setAttribute('aria-expanded', 'false');
+                dropdownBtn.focus();
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
+                dropdownContent.classList.remove('active');
+            }
+        });
+        
+        dropdownContent.classList.remove('active');
+    } else {
+        console.warn("Dropdown components not found.");
+    }
+
+    // 2. Fox Screen Logic
+    const foxInput = document.getElementById("foxInput");
+    const submitFox = document.getElementById("submitFox");
+
+    if (foxInput && submitFox) {
+        foxInput.addEventListener("keypress", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitFox.click();
+            }
+        });
+    }
+
+    // 3. Navigation Buttons (Back and Scroll-to-Top)
+    // Scroll-to-Top Button
+    const scrollBtn = document.createElement('button');
+    scrollBtn.id = "scrollToTopBtn";
+    scrollBtn.innerHTML = "<span>↑</span>";
+    scrollBtn.title = "Go to top";
+    document.body.appendChild(scrollBtn);
+
+    window.addEventListener('scroll', () => {
+        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+            scrollBtn.style.display = "block";
+        } else {
+            scrollBtn.style.display = "none";
         }
     });
 
-    document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && dropdownContent.classList.contains('active')) {
-            dropdownContent.classList.remove('active');
-            dropdownBtn.setAttribute('aria-expanded', 'false');
-            dropdownBtn.focus();
+    scrollBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Back Button
+    const backBtn = document.createElement('button');
+    backBtn.id = "backBtn";
+    backBtn.innerHTML = "<span>←</span> ϟ⟒⚲Ϟ";
+    backBtn.title = "Go to previous page";
+    document.body.appendChild(backBtn);
+
+    backBtn.addEventListener('click', () => {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';
+            window.location.href = homePath;
         }
     });
 
-    // Optional: Close dropdown menu if clicking outside the dropdown button or menu
-    document.addEventListener('click', (event) => {
-        if (!dropdownBtn.contains(event.target) && !dropdownContent.contains(event.target)) {
-            dropdownContent.classList.remove('active'); // Remove "active" class to hide dropdown
-        }
-    });
+    // 4. Initial Screen Setup
+    const foxScreen = document.getElementById("foxScreen");
+    const menu = document.querySelector('.dropdown');
+    if (menu && foxScreen && getComputedStyle(foxScreen).opacity === '1') {
+        menu.style.display = 'none';
+    }
 
-    // Ensure dropdown is hidden on page load
-    dropdownContent.classList.remove('active');
+    // 5. Load External Data
+    loadMappings();
 });
-
-// Ensure cipher mappings are loaded when the page loads
-loadMappings();
 
 // Function to verify the fox input
 async function checkFox() {
     try {
-        let correctFox = "fox"; // Default fallback
+        let correctFox = "fox";
         try {
             const xmlPath = window.location.pathname.includes('blog-post') ? '../xml/fox.xml' : 'xml/fox.xml';
-            const response = await fetch(xmlPath); // Fetch fox.xml file
+            const response = await fetch(xmlPath);
             if (response.ok) {
                 const xml = await response.text();
                 const parser = new DOMParser();
@@ -60,81 +121,44 @@ async function checkFox() {
                 correctFox = xmlDoc.getElementsByTagName("fox")[0].textContent.toLowerCase().trim();
             }
         } catch (e) {
-            console.warn("Failed to fetch fox.xml (likely a local file:// CORS issue). Using fallback.");
+            console.warn("Failed to fetch fox.xml. Using fallback.");
         }
 
         const userFox = document.getElementById("foxInput").value.toLowerCase().trim();
 
         if (userFox === correctFox) {
-            hideFoxScreen(); // Hide `foxScreen`
-            showMenu(); // Show the dropdown menu
+            hideFoxScreen();
+            showMenu();
         } else {
-            alert("Incorrect! Try again."); // Notify the user
+            alert("Incorrect! Try again.");
         }
     } catch (error) {
-        console.error(error.message); // Log any errors
+        console.error(error);
     }
 }
 
-// Function to hide the fox screen
 function hideFoxScreen() {
     const foxScreen = document.getElementById("foxScreen");
-    foxScreen.style.zIndex = "-1"; // Remove from view
-    foxScreen.style.opacity = "0"; // Make it transparent
-    foxScreen.style.pointerEvents = "none"; // Disable interactions
+    if (!foxScreen) return;
+    foxScreen.style.zIndex = "-1";
+    foxScreen.style.opacity = "0";
+    foxScreen.style.pointerEvents = "none";
 
-    // Ensure menu visibility is restored when the fox screen is hidden
     const menu = document.querySelector('.dropdown');
-    if (menu) {
-        menu.style.display = 'block';
-    }
+    if (menu) menu.style.display = 'block';
 }
 
-// Function to show the dropdown menu
 function showMenu() {
     const menu = document.querySelector('.dropdown');
-    if (menu) {
-        menu.style.display = 'block'; // Make the menu visible
-    }
+    if (menu) menu.style.display = 'block';
 }
-
-// Add event listener for "Enter" key
-document.addEventListener('DOMContentLoaded', () => {
-    const foxInput = document.getElementById("foxInput");
-    const submitFox = document.getElementById("submitFox");
-
-    if (foxInput && submitFox) {
-        foxInput.addEventListener("keypress", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault(); // Prevent default form submission behavior
-                submitFox.click(); // Trigger the button's click event
-            }
-        });
-    }
-});
-
-// Function to hide the dropdown menu (specific to the fox screen)
-function hideMenuForFoxScreen() {
-    const menu = document.querySelector('.dropdown');
-    const foxScreen = document.getElementById("foxScreen");
-
-    // Hide the navigation menu if the fox screen is visible
-    if (menu && foxScreen && getComputedStyle(foxScreen).opacity === '1') {
-        menu.style.display = 'none'; // Prevent menu from showing on foxScreen
-    }
-}
-
-// Initial setup to ensure the dropdown menu is hidden on fox screen
-document.addEventListener('DOMContentLoaded', () => {
-    hideMenuForFoxScreen(); // Hide the navigation menu if foxScreen is active
-});
 
 // Function to load cipher mappings
 async function loadMappings() {
     try {
         const xmlPath = window.location.pathname.includes('blog-post') ? '../xml/cipher_mapping.xml' : 'xml/cipher_mapping.xml';
-        const response = await fetch(xmlPath); // Fetch the mappings XML file
-        if (!response.ok) throw new Error(`Failed to load mappings: ${response.statusText}`);
+        const response = await fetch(xmlPath);
+        if (!response.ok) return;
         const xml = await response.text();
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xml, "application/xml");
@@ -153,38 +177,34 @@ async function loadMappings() {
 
         populateCipherButtons();
     } catch (error) {
-        console.error(error.message);
+        console.warn("Could not load mappings (likely local file access issue).");
     }
 }
 
-// Function to populate cipher buttons dynamically in the keyboard panel
 function populateCipherButtons() {
     const keyboardPanel = document.getElementById("keyboardPanel");
-    if (!keyboardPanel) return; // not on cipher translator page
-    keyboardPanel.innerHTML = ""; // Clear previous buttons
+    if (!keyboardPanel) return;
+    keyboardPanel.innerHTML = "";
 
     for (let cipher in cipherToAlphabet) {
         const button = document.createElement("button");
         button.textContent = cipher;
-        button.onclick = () => addCipherToInput(cipher);
+        button.onclick = () => {
+            const input = document.getElementById("inputText");
+            if (input) input.value += cipher;
+        };
         keyboardPanel.appendChild(button);
     }
 }
 
-// Append cipher to the input field
-function addCipherToInput(cipher) {
-    document.getElementById("inputText").value += cipher;
-}
-
-// Translate text to Alphabet (Standard and Alternative)
+// Global functions for tool pages
 function translateToAlphabet() {
-    const inputText = document.getElementById("inputText").value;
+    const inputText = document.getElementById("inputText")?.value || "";
     let alphabetOutput = "";
     let alternativeOutput = "";
 
     for (let char of inputText) {
         if (char.match(/[.,?!;:'"-]/)) {
-            // Include punctuation directly
             alphabetOutput += char;
             alternativeOutput += char;
         } else {
@@ -193,82 +213,39 @@ function translateToAlphabet() {
         }
     }
 
-    document.getElementById("outputText").value = alphabetOutput;
-    document.getElementById("alternativeOutputText").value = alternativeOutput;
+    const out1 = document.getElementById("outputText");
+    const out2 = document.getElementById("alternativeOutputText");
+    if (out1) out1.value = alphabetOutput;
+    if (out2) out2.value = alternativeOutput;
 }
 
-// Translate text to Cipher (Standard and Alternative)
 function translateToCipher() {
-    const inputText = document.getElementById("inputText").value;
+    const inputText = document.getElementById("inputText")?.value || "";
     let cipherOutput = "";
     let alternativeOutput = "";
 
     for (let char of inputText) {
         if (char.match(/[.,?!;:'"-]/)) {
-            // Include punctuation directly
             cipherOutput += char;
             alternativeOutput += char;
         } else {
-            cipherOutput += char === " " ? " " : alphabetToCipher[char.toUpperCase()] || "?";
-            alternativeOutput += char === " " ? " " : cipherToAlternative[alphabetToCipher[char.toUpperCase()]] || "?";
+            const upperChar = char.toUpperCase();
+            cipherOutput += char === " " ? " " : alphabetToCipher[upperChar] || "?";
+            alternativeOutput += char === " " ? " " : cipherToAlternative[alphabetToCipher[upperChar]] || "?";
         }
     }
 
-    document.getElementById("outputText").value = cipherOutput;
-    document.getElementById("alternativeOutputText").value = alternativeOutput;
+    const out1 = document.getElementById("outputText");
+    const out2 = document.getElementById("alternativeOutputText");
+    if (out1) out1.value = cipherOutput;
+    if (out2) out2.value = alternativeOutput;
 }
 
-// Clear input and output fields
 function clearFields() {
-    document.getElementById("inputText").value = "";
-    document.getElementById("outputText").value = "";
-    document.getElementById("alternativeOutputText").value = "";
+    const inp = document.getElementById("inputText");
+    const out1 = document.getElementById("outputText");
+    const out2 = document.getElementById("alternativeOutputText");
+    if (inp) inp.value = "";
+    if (out1) out1.value = "";
+    if (out2) out2.value = "";
 }
-
-/**
- * Site-wide navigation script.
- * Dynamically creates Back and Scroll-to-Top buttons and manages their behavior globally.
- */
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Create the button
-    const scrollBtn = document.createElement('button');
-    scrollBtn.id = "scrollToTopBtn";
-    scrollBtn.innerHTML = "<span>↑</span>";
-    scrollBtn.title = "Go to top";
-    document.body.appendChild(scrollBtn);
-
-    // Show/hide button on scroll
-    window.addEventListener('scroll', () => {
-        if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
-            scrollBtn.style.display = "block";
-        } else {
-            scrollBtn.style.display = "none";
-        }
-    });
-
-    // Scroll to top on click
-    scrollBtn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    });
-
-    // Create the Back button
-    const backBtn = document.createElement('button');
-    backBtn.id = "backBtn";
-    backBtn.innerHTML = "<span>←</span> ϟ⟒⚲Ϟ";
-    backBtn.title = "Go to previous page";
-    document.body.appendChild(backBtn);
-
-    // Back functionality
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // Fallback if no history (e.g. opened in new tab)
-            const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';
-            window.location.href = homePath;
-        }
-    });
-});

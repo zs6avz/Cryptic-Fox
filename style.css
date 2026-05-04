@@ -152,7 +152,6 @@ a:active {
 .center-image {
     width: 150px;
     height: auto;
-    z-index: -1;
     position: relative;
 }
 

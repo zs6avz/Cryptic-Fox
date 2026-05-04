@@ -28,7 +28,7 @@
 - **Design**: Premium, dark-mode aesthetic with custom CSS micro-animations and responsive layouts.
 
 ## 📂 Project Structure
-- `html/`: Core application pages (Home, About, Tools, Resources).
+- Repository Root: Core application pages (Home, About, Tools, Resources).
 - `blog-posts/`: In-depth articles and dossiers on cryptographic history and mysteries.
 - `js/`: Modular JavaScript logic for encryption algorithms and UI interactions.
 - `images/`: High-resolution assets and AI-generated thematic imagery.

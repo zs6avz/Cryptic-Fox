@@ -2,7 +2,7 @@
     "name": "Cryptic Fox — Cryptography Toolkit",
     "short_name": "CrypticFox",
     "description": "A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze steganography, and explore cryptographic theory.",
-    "start_url": "/html/index.html",
+    "start_url": "/index.html",
     "scope": "/",
     "icons": [
         {
