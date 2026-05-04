@@ -1264,6 +1264,28 @@ audio {
     background-position: center;
 }
 
+.blog-intro {
+    max-width: 800px;
+    margin: 40px auto 60px;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.blog-intro h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    background: var(--gradient-brand);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.blog-intro p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--color-text-muted);
+}
+
 .about-content {
     max-width: 800px;
     margin: 40px auto;

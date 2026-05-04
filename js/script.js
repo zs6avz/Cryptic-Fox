@@ -81,20 +81,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Back Button
-    const backBtn = document.createElement('button');
-    backBtn.id = "backBtn";
-    backBtn.innerHTML = "<span>←</span> ϟ⟒⚲Ϟ";
-    backBtn.title = "Go to previous page";
-    document.body.appendChild(backBtn);
+    if (!document.body.classList.contains('home-page')) {
+        const backBtn = document.createElement('button');
+        backBtn.id = "backBtn";
+        backBtn.innerHTML = "<span>←</span> ϟ⟒⚲Ϟ";
+        backBtn.title = "Go to previous page";
+        document.body.appendChild(backBtn);
 
-    backBtn.addEventListener('click', () => {
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';
-            window.location.href = homePath;
-        }
-    });
+        backBtn.addEventListener('click', () => {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';
+                window.location.href = homePath;
+            }
+        });
+    }
 
     // 4. Initial Screen Setup
     const foxScreen = document.getElementById("foxScreen");
