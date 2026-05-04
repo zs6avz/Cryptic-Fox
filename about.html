@@ -35,13 +35,71 @@
 <body class="about-page">
     <img src="images/fennfox.png" class="center-image" alt="Cryptic Fox logo" style="width: 150px; height: auto;">
     <h1>About</h1>
-    <br>
-    <p>
-        Cryptic-Fox is a web tool created to support cryptography puzzle solvers by providing a suite of utilities for
-        decoding complex clues. Key features include a growing library of encryption and decryption methods, along with
-        a curated collection of cryptography resources such as courses, external tools, and learning materials, helping
-        solvers navigate cryptographic challenges.
-    </p>
+    <div class="about-content">
+        <p>
+            Cryptic-Fox was born out of curiosity and passion for the enigmatic and the complex. In a digital world
+            where information is the most valuable currency, understanding the mechanics of secrecy is a necessity.
+            This platform serves as a central hub for those who find beauty in the hidden, the encrypted, and the
+            unexplained.
+        </p>
+
+        <h2>The Mission</h2>
+        <p>
+            Our mission is simple: to provide puzzle solvers, enthusiasts, and cryptographic explorers with the tools
+            they need to peel back the layers of digital mysteries. Whether you're decoding an ancient cipher, analyzing
+            steganographic artifacts in images, or hunting for hidden frequencies in audio, Cryptic-Fox is designed to
+            be your digital laboratory.
+        </p>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button onclick="toggleContactModal()" class="primary-btn" style="text-decoration: none;">Get in
+                Touch</button>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div id="contactModal" class="modal-overlay">
+        <div class="contact-modal">
+            <button class="modal-close" onclick="toggleContactModal()" aria-label="Close modal">&times;</button>
+            <h2>Contact Me</h2>
+            <p style="text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">Have a question, or a
+                suggestion? Send me a message.</p>
+
+            <form class="contact-form" action="#" method="POST">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Your email address" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="What is this about?">
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Your message here..." required></textarea>
+                </div>
+                <button type="submit" class="primary-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleContactModal() {
+            const modal = document.getElementById('contactModal');
+            modal.classList.toggle('active');
+
+            // Close on click outside
+            if (modal.classList.contains('active')) {
+                modal.onclick = (e) => {
+                    if (e.target === modal) toggleContactModal();
+                };
+            }
+        }
+    </script>
     <br>
 
     <div class="dropdown" role="navigation" aria-label="Site navigation">
