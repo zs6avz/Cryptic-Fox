@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encrypt & Decrypt — Cryptic Fox</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/script.js" defer></script>
+    <script src="js/decrypt.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"
+        integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA=="
+        crossorigin="anonymous"></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <meta name="description"
+        content="Encrypt and decrypt text using Caesar, Vigenère, Atbash, Base64, Morse code, binary encoding, and more. Includes image and audio encryption tools.">
+    <link rel="canonical" href="https://cryptic-fox.com/decrypt.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/decrypt.html">
+    <meta property="og:title" content="Encrypt & Decrypt — Cryptic Fox">
+    <meta property="og:description"
+        content="Encrypt and decrypt text with 10+ cipher methods including Caesar, Vigenère, Atbash, Base64, and Morse code.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Encrypt & Decrypt — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Encrypt and decrypt text with 10+ cipher methods including Caesar, Vigenère, Atbash, Base64, and Morse code.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+</head>
+
+<body class="decrypt-page">
+    <h1>Decrypt Methods</h1>
+
+    <!-- Binary -->
+    <div class="method">
+        <h2>Binary (Base 2, 8, 10, 16)</h2>
+        <textarea class="binary-input" placeholder="Enter text..."></textarea>
+        <select class="binary-base">
+            <option value="2">Binary (Base 2)</option>
+            <option value="8">Octal (Base 8)</option>
+            <option value="10">Decimal (Base 10)</option>
+            <option value="16">Hexadecimal (Base 16)</option>
+        </select>
+        <div class="button-container">
+            <button onclick="encryptBinary(getSelectedBase())">Encrypt</button>
+            <button onclick="decryptBinary(getSelectedBase())">Decrypt</button>
+            <button id="clearBinaryFieldsBtn">Clear</button>
+        </div>
+        <p class="binary-output"></p>
+    </div>
+
+    <!-- Jacquard -->
+    <div class="method">
+        <h2>Jacquard</h2>
+        <textarea class="jacquard-input" placeholder="Enter text..."></textarea>
+        <div class="button-container">
+            <button onclick="encryptJacquard()">Encrypt</button>
+            <button onclick="decryptJacquard()">Decrypt</button>
+            <button id="clearJacquardFieldsBtn">Clear</button>
+        </div>
+        <p class="jacquard-output"></p>
+    </div>
+
+    <!-- Caesar Cipher -->
+    <div class="method">
+        <h2>Caesar Cipher</h2>
+        <textarea class="caesar-input" placeholder="Enter text..."></textarea>
+        <input type="number" class="caesar-shift" value="3" min="1" max="25">
+        <div class="button-container">
+            <button onclick="encryptCaesar(getShiftValue())">Encrypt</button>
+            <button onclick="decryptCaesar(getShiftValue())">Decrypt</button>
+            <button id="clearCaesarFieldsBtn">Clear</button>
+        </div>
+        <p class="caesar-output"></p>
+    </div>
+
+    <!-- Vigenère Cipher -->
+    <div class="method">
+        <h2>Vigenère Cipher</h2>
+        <textarea class="vigenere-input" placeholder="Enter text..."></textarea>
+        <input type="text" class="vigenere-key" placeholder="Enter key">
+        <div class="button-container">
+            <button class="encrypt-btn">Encrypt</button>
+            <button class="decrypt-btn">Decrypt</button>
+            <button id="clearVigenereFieldsBtn">Clear</button>
+        </div>
+        <p class="vigenere-output"></p>
+    </div>
+
+    <!-- Atbash Cipher -->
+    <div class="method">
+        <h2>Atbash Cipher</h2>
+        <textarea class="atbash-input" placeholder="Enter text..."></textarea>
+        <div class="button-container">
+            <button onclick="encryptAtbash()">Encrypt</button>
+            <button onclick="decryptAtbash()">Decrypt</button>
+            <button id="clearAtbashFieldsBtn">Clear</button>
+        </div>
+        <p class="atbash-output"></p>
+    </div>
+
+    <!-- Hexadecimal Cipher -->
+    <div class="method">
+        <h2>Hexadecimal Cipher</h2>
+        <textarea class="hex-input" placeholder="Enter text..."></textarea>
+        <div class="button-container">
+            <button onclick="encryptHex()">Encrypt</button>
+            <button onclick="decryptHex()">Decrypt</button>
+            <button id="clearHexFieldsBtn">Clear</button>
+        </div>
+        <p class="hex-output"></p>
+    </div>
+
+    <!-- Base64 -->
+    <div class="method">
+        <h2>Base64</h2>
+        <textarea class="base64-input" placeholder="Enter text..."></textarea>
+        <div class="button-container">
+            <button onclick="encryptBase64()">Encode</button>
+            <button onclick="decryptBase64()">Decode</button>
+            <button id="clearBase64FieldsBtn">Clear</button>
+        </div>
+        <p class="base64-output"></p>
+    </div>
+
+    <!-- Morse Code -->
+    <div class="method">
+        <h2>Morse Code</h2>
+        <textarea class="morse-input" placeholder="Enter text..."></textarea>
+        <select class="morse-separator">
+            <option value=" ">Space (Standard)</option>
+            <option value="/">Slash Separator</option>
+            <option value="-">Dash Separator</option>
+        </select>
+        <div class="button-container">
+            <button onclick="encryptMorse(document.querySelector('.morse-separator').value)">Encrypt</button>
+            <button onclick="decryptMorse(document.querySelector('.morse-separator').value)">Decrypt</button>
+            <button id="clearMorseFieldsBtn">Clear</button>
+        </div>
+        <p class="morse-output"></p>
+    </div>
+
+    <!-- Image & Audio Encryption Links -->
+    <div class="method">
+        <h2>Media Encryption</h2>
+        <div class="button-container">
+            <a href="image-encrypt.html" class="card-link" style="margin-right: 10px;">Image Encryption ⟶</a>
+            <a href="audio-encrypt.html" class="card-link">Audio Encryption ⟶</a>
+        </div>
+    </div>
+
+    <!-- Footer and Navigation -->
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+            <!--<a href="echoes.html">The Threshold of Echoes</a>-->
+            <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
+        </div>
+    </div>
+    <!-- Ad Placement Scaffolding
+    <div class="ad-scaffold">
+        <span class="ad-label">Sponsored Placement</span>
+    </div>-->
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ import glob
 import re
 import os
 
-html_files = glob.glob('*.html')
+html_files = glob.glob('*.html') + glob.glob('blog-posts/*.html')
 
 pro_link = '            <a href="#" class="pro-link">✦ Upgrade to Pro</a>\n        </div>\n    </div>'
 ad_block = '<!-- Ad Placement Scaffolding -->\n    <div class="ad-scaffold">\n        <span class="ad-label">Sponsored Placement</span>\n    </div>\n\n    <footer>'

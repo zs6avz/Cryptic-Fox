@@ -35,12 +35,6 @@
 - `xml/`: Metadata and sitemaps for content management.
 - `style.css`: Centralized design system and styling tokens.
 
-## 🚀 Getting Started
-Since Cryptic Fox is a static web application, no complex installation is required:
-1. Clone the repository.
-2. Open `html/index.html` in any modern web browser.
-3. Start solving.
-
 ## 🤝 Support & Sponsorship
 Cryptic Fox is an independent project. You can support the development of new tools and blog posts via:
 - **Ko-fi**: [Support me on Ko-fi](https://ko-fi.com/S6S81YLIDM)

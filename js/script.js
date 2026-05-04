@@ -51,7 +51,8 @@ async function checkFox() {
     try {
         let correctFox = "fox"; // Default fallback
         try {
-            const response = await fetch('../xml/fox.xml'); // Fetch fox.xml file
+            const xmlPath = window.location.pathname.includes('blog-post') ? '../xml/fox.xml' : 'xml/fox.xml';
+            const response = await fetch(xmlPath); // Fetch fox.xml file
             if (response.ok) {
                 const xml = await response.text();
                 const parser = new DOMParser();
@@ -131,7 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to load cipher mappings
 async function loadMappings() {
     try {
-        const response = await fetch('../xml/cipher_mapping.xml'); // Fetch the mappings XML file
+        const xmlPath = window.location.pathname.includes('blog-post') ? '../xml/cipher_mapping.xml' : 'xml/cipher_mapping.xml';
+        const response = await fetch(xmlPath); // Fetch the mappings XML file
         if (!response.ok) throw new Error(`Failed to load mappings: ${response.statusText}`);
         const xml = await response.text();
         const parser = new DOMParser();
@@ -261,12 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(backBtn);
 
     // Back functionality
-    backBtn.addEventListener('click', () => {
         if (window.history.length > 1) {
             window.history.back();
         } else {
             // Fallback if no history (e.g. opened in new tab)
-            window.location.href = 'index.html';
+            const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';
+            window.location.href = homePath;
         }
     });
 });

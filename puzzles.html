@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Puzzles — Cryptic Fox</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <meta name="description"
+        content="Test your skills with our cryptographic puzzles. Logic challenges, substitution ciphers, steganography hunts, and speed trials.">
+    <link rel="canonical" href="https://cryptic-fox.com/puzzles.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/puzzles.html">
+    <meta property="og:title" content="Cryptographic Puzzles — Cryptic Fox">
+    <meta property="og:description"
+        content="Test your skills with our cryptographic puzzles. Logic challenges, substitution ciphers, and more.">
+    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cryptographic Puzzles — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Test your skills with our cryptographic puzzles. Logic challenges, substitution ciphers, and more.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+
+    <script src="js/script.js" defer></script>
+</head>
+
+<body class="puzzles-page">
+
+    <!-- Menu Button -->
+    <div class="dropdown" role="navigation" aria-label="Site navigation">
+        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
+        <div class="dropdown-content">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="image-encrypt.html">Image Encryption</a>
+            <a href="audio-encrypt.html">Audio Encryption</a>
+            <a href="red.html">Steganalysis</a>
+            <a href="puzzles.html">Puzzles</a>
+            <a href="cryptography.html">Resources</a>
+            <a href="blog.html">Blog</a>
+            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="puzzles-title">Cryptographic Puzzles</h1>
+        <p class="puzzles-subtitle">Sharpen your mind. Solve the unseen.</p>
+    </section>
+
+    <!-- Puzzle Cards Grid -->
+    <section class="features-grid">
+        <div class="card-grid">
+
+            <!-- Threshold of Echoes -->
+            <div class="feature-card" data-keywords="logic puzzle riddle truth lies characters">
+                <div class="card-icon">⋈</div>
+                <h3>The Threshold of Echoes</h3>
+                <p>One holds the passcode. One tells the truth, one lies, and one is random. Can you deduce the holder?
+                </p>
+                <a href="echoes.html" class="card-link">Enter <span>⟶</span></a>
+            </div>
+
+            <!-- Frequency Chamber -->
+            <div class="feature-card" data-keywords="cipher substitution frequency analysis puzzle decode">
+                <div class="card-icon">⎄</div>
+                <h3>The Frequency Chamber</h3>
+                <p>A scrambled message awaits. Use frequency analysis to break the substitution cipher.</p>
+                <a href="frequency.html" class="card-link">Enter <span>⟶</span></a>
+            </div>
+
+            <!-- Phantom Pixels -->
+            <div class="feature-card" data-keywords="steganography hunt hidden image pixel lsb discovery">
+                <div class="card-icon">◈</div>
+                <h3>Phantom Pixels</h3>
+                <p>Hidden data is buried within these images. Use your steganalysis tools to find the flags.</p>
+                <a href="stego-hunt.html" class="card-link">Enter <span>⟶</span></a>
+            </div>
+
+            <!-- Cipher Gauntlet -->
+            <div class="feature-card" data-keywords="speed challenge rounds caesar atbash encryption">
+                <div class="card-icon">⚔</div>
+                <h3>The Cipher Gauntlet</h3>
+                <p>Race against the clock in a multi-round trial of classical decryption speed.</p>
+                <a href="gauntlet.html" class="card-link">Enter <span>⟶</span></a>
+            </div>
+
+            <!-- Cryptogram Archive -->
+            <div class="feature-card" data-keywords="cryptogram substitution puzzle archive handcrafted">
+                <div class="card-icon">✎</div>
+                <h3>The Cryptogram Archive</h3>
+                <p>Two masterful codes remain uncracked. Can you reveal the hidden messages within?</p>
+                <a href="cryptograms.html" class="card-link">Enter <span>⟶</span></a>
+            </div>
+
+            <!-- Prime Sentinel -->
+            <div class="feature-card" data-keywords="cicada mystery prime riddle hard terminal">
+                <div class="card-icon">🕸</div>
+                <h3>The Prime Sentinel</h3>
+                <p>A multi-layered digital trial for those who seek the deepest secrets.</p>
+                <a href="sentinel.html" class="card-link">Enter ⟶</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
+                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
+                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
+                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
+    </footer>
+
+    <script>
+        // Make entire card clickable
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function (e) {
+                const link = this.querySelector('.card-link');
+                if (link && e.target.tagName !== 'A') {
+                    window.location.href = link.href;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
