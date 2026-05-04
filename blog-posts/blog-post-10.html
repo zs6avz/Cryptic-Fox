@@ -2,6 +2,17 @@
 <html lang="en">
 
 <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <!-- Clickjacking Defense (Frame-Busting) -->
+    <style id="antiClickjack">body{display:none !important;}</style>
+    <script type="text/javascript">
+        if (self === top) {
+            var antiClickjack = document.getElementById("antiClickjack");
+            if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            top.location = self.location;
+        }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best Encrypted Email Providers for Professionals — Cryptic Fox</title>
@@ -54,7 +65,7 @@
             mountains, it provides excellent web, iOS, and Android clients. They have abstracted away the difficult
             parts of PGP, making encrypted email as easy to use as Gmail.</p>
         <p><em>Best For:</em> Users who want a massive ecosystem including a VPN, Calendar, and Drive.</p>
-        <p><a href="https://pr.tn/ref/PSSV1CBJ" target="_blank" class="support-link">Create a Secure ProtonMail Account
+        <p><a href="https://pr.tn/ref/PSSV1CBJ" target="_blank" rel="noopener noreferrer" class="support-link">Create a Secure ProtonMail Account
                 &rarr;</a></p>
 
         <h2>2. Tuta (Formerly Tutanota)</h2>
@@ -77,7 +88,7 @@
         <p>Migrating your email sounds daunting, but these tools offer easy import functions. Take back your inbox
             today.</p>
         <p style="margin-top: 20px;">
-            <a href="https://pr.tn/ref/PSSV1CBJ" target="_blank" class="pro-link"
+            <a href="https://pr.tn/ref/PSSV1CBJ" target="_blank" rel="noopener noreferrer" class="pro-link"
                 style="display:inline-block; font-size: 1.2rem; padding: 10px 20px; border: 1px solid #ffd700; border-radius: var(--radius-sm);">Sign
                 Up for ProtonMail &rarr;</a>
         </p>
