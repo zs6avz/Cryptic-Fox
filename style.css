@@ -1306,6 +1306,11 @@ audio {
     color: var(--color-text);
 }
 
+.back-nav {
+    margin-top: 50px;
+    text-align: center;
+}
+
 .contact-form {
     display: flex;
     flex-direction: column;
