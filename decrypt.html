@@ -58,7 +58,16 @@
 
     <!-- Cipher Identifier (Magic Scanner) -->
     <div class="method" style="border-color: var(--color-accent); box-shadow: 0 0 15px rgba(254, 119, 67, 0.3);">
-        <h2 style="background: linear-gradient(135deg, var(--color-accent) 0%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cipher Identifier (Magic Scanner)</h2>
+        <h2 style="background: linear-gradient(135deg, var(--color-accent) 0%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cipher Identifier (Magic Scanner)
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Magic Scanner</h4>
+                    <div><b>Description:</b> A heuristic analyzer that detects common encoding and encryption patterns.</div>
+                    <div><b>History:</b> Modern digital forensics tool used for rapid triage of unknown data formats.</div>
+                    <div><b>How-to:</b> Paste your unknown message and click Identify. Use the "Apply" button to instantly jump to the detected tool.</div>
+                </div>
+            </span>
+        </h2>
         <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--color-text-muted);">Paste an unknown message below and I'll try to identify the encryption or encoding used.</p>
         <textarea class="identifier-input" placeholder="Paste unknown message..."></textarea>
         <div class="button-container">
@@ -70,7 +79,16 @@
 
     <!-- Binary -->
     <div class="method">
-        <h2>Binary (Base 2, 8, 10, 16)</h2>
+        <h2>Binary (Base 2, 8, 10, 16)
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Binary Tools</h4>
+                    <div><b>Description:</b> Converts text into various numerical bases (Binary, Octal, Decimal, Hex).</div>
+                    <div><b>History:</b> Formalized by Gottfried Leibniz in 1703; the foundation of all modern digital computation.</div>
+                    <div><b>How-to:</b> Select your base, enter text to encode into numbers, or enter space-separated numbers to decode.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="binary-input" placeholder="Enter text..."></textarea>
         <select class="binary-base">
             <option value="2">Binary (Base 2)</option>
@@ -90,7 +108,16 @@
 
     <!-- Caesar Cipher -->
     <div class="method">
-        <h2>Caesar Cipher</h2>
+        <h2>Caesar Cipher
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Caesar Cipher</h4>
+                    <div><b>Description:</b> A simple substitution cipher that shifts every letter by a fixed amount.</div>
+                    <div><b>History:</b> Named after Julius Caesar, who used a shift of 3 to protect his military correspondence.</div>
+                    <div><b>How-to:</b> Enter your message, set the shift value (1-25), and click Encrypt or Decrypt.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="caesar-input" placeholder="Enter text..."></textarea>
         <input type="number" class="caesar-shift" value="3" min="1" max="25">
         <div class="button-container">
@@ -105,7 +132,16 @@
 
     <!-- Vigenère Cipher -->
     <div class="method">
-        <h2>Vigenère Cipher</h2>
+        <h2>Vigenère Cipher
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Vigenère Cipher</h4>
+                    <div><b>Description:</b> A method of encrypting alphabetic text using a keyword to determine shifts.</div>
+                    <div><b>History:</b> Invented in 1553; it was once considered "indecipherable" for over 300 years.</div>
+                    <div><b>How-to:</b> Enter a keyword and your message. Every letter shifts based on the key's position in the alphabet.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="vigenere-input" placeholder="Enter text..."></textarea>
         <input type="text" class="vigenere-key" placeholder="Enter key">
         <div class="button-container">
@@ -120,7 +156,16 @@
 
     <!-- Atbash Cipher -->
     <div class="method">
-        <h2>Atbash Cipher</h2>
+        <h2>Atbash Cipher
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Atbash Cipher</h4>
+                    <div><b>Description:</b> A monoalphabetic substitution cipher formed by reversing the alphabet.</div>
+                    <div><b>History:</b> An ancient Hebrew cipher dating back to 500 BC, used in various biblical texts.</div>
+                    <div><b>How-to:</b> A becomes Z, B becomes Y, etc. It is its own inverse—applying it twice returns the original text.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="atbash-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
             <button onclick="encryptAtbash()">Encrypt</button>
@@ -134,7 +179,16 @@
 
     <!-- Hexadecimal Cipher -->
     <div class="method">
-        <h2>Hexadecimal Cipher</h2>
+        <h2>Hexadecimal Cipher
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Hexadecimal</h4>
+                    <div><b>Description:</b> A base-16 numbering system representing data using 0-9 and A-F.</div>
+                    <div><b>History:</b> Vital in computing to represent binary data in a more compact, human-readable format.</div>
+                    <div><b>How-to:</b> Convert standard text into its Hex equivalent or decode hex strings back into readable text.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="hex-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
             <button onclick="encryptHex()">Encrypt</button>
@@ -148,7 +202,16 @@
 
     <!-- Base64 -->
     <div class="method">
-        <h2>Base64</h2>
+        <h2>Base64
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Base64 Encoding</h4>
+                    <div><b>Description:</b> Encodes binary data into 64 safe ASCII characters for text-based transmission.</div>
+                    <div><b>History:</b> Introduced in 1992 as part of the MIME standard for email and web data.</div>
+                    <div><b>How-to:</b> Paste your text to encode it into a Base64 string (often ending in "=").</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="base64-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
             <button onclick="encryptBase64()">Encrypt</button>
@@ -162,7 +225,16 @@
 
     <!-- Base-36 & Base-62 -->
     <div class="method">
-        <h2>Base-36 & Base-62</h2>
+        <h2>Base-36 & Base-62
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Alphanumeric Bases</h4>
+                    <div><b>Description:</b> High-radix encodings that use numbers and letters (case-insensitive for 36, case-sensitive for 62).</div>
+                    <div><b>History:</b> Commonly used in URL shorteners and for compressing large numbers into short IDs.</div>
+                    <div><b>How-to:</b> Enter large integers or text blocks to convert them into compact alphanumeric strings.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="base-alt-input" placeholder="Enter text..."></textarea>
         <select class="base-alt-type">
             <option value="36">Base-36</option>
@@ -180,7 +252,16 @@
 
     <!-- Cryptographic Hashes -->
     <div class="method">
-        <h2>Cryptographic Hashes</h2>
+        <h2>Cryptographic Hashes
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Hashes & Cracker</h4>
+                    <div><b>Description:</b> One-way functions that generate a unique signature (fingerprint) for any input.</div>
+                    <div><b>History:</b> MD5 (1991) and SHA (1995) are the backbone of digital integrity and password security.</div>
+                    <div><b>How-to:</b> Generate a hash for security, or use the "Crack" button to check a hash against common passwords.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="hash-input" placeholder="Enter text to hash..."></textarea>
         
         <div class="hash-options" style="display: flex; gap: 10px; margin-top: 10px; width: 80%; flex-wrap: wrap; justify-content: center;">
@@ -204,7 +285,16 @@
 
     <!-- Morse Code -->
     <div class="method">
-        <h2>Morse Code</h2>
+        <h2>Morse Code
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Morse Code</h4>
+                    <div><b>Description:</b> A method of transmitting text information as a series of on-off tones, lights, or clicks.</div>
+                    <div><b>History:</b> Developed in 1837 by Samuel Morse for the electric telegraph.</div>
+                    <div><b>How-to:</b> Use dots (.) and dashes (-) separated by spaces for letters and slashes (/) for words.</div>
+                </div>
+            </span>
+        </h2>
         <textarea class="morse-input" placeholder="Enter text..."></textarea>
         <select class="morse-separator">
             <option value=" ">Space (Standard)</option>
@@ -223,7 +313,16 @@
 
     <!-- Literary & Thematic Ciphers -->
     <div class="method" style="border-color: #447D9B;">
-        <h2 style="background: linear-gradient(135deg, #447D9B 0%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Literary & Thematic Ciphers</h2>
+        <h2 style="background: linear-gradient(135deg, #447D9B 0%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Literary & Thematic Ciphers
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Literary Ciphers</h4>
+                    <div><b>Description:</b> Advanced tools for book-based encryption, text extraction, and musical cryptography.</div>
+                    <div><b>History:</b> These methods were favored by scholars and spies who used everyday literature to hide messages.</div>
+                    <div><b>How-to:</b> Use the specialized sub-tools for Book ciphers, Acrostics, or Musical note translation.</div>
+                </div>
+            </span>
+        </h2>
         <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--color-text-muted);">Ciphers based on text extraction, musical notes, and running keys.</p>
         
         <div class="sub-method">
