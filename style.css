@@ -973,16 +973,20 @@ audio {
 
 .loading-sticky {
     position: fixed;
-    top: 10px;
-    right: 10px;
-    background-color: rgba(0, 0, 0, 0.85);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 0.95rem;
-    z-index: 1000;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: #eb3f7b;
+    padding: 20px 40px;
+    border-radius: 12px;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 2000;
+    box-shadow: 0 0 20px rgba(235, 63, 123, 0.4);
+    border: 2px solid #eb3f7b;
+    text-align: center;
 }
 
 /* Signal panel */

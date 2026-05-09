@@ -405,7 +405,8 @@ function getLSBBits(imageData, channel) {
 }
 
 /* Signal panel wiring*/
-if (analyzeBtn) analyzeBtn.addEventListener("click", () => {
+function runSignalAnalysis() {
+  if (!glContext || !canvas) return;
   const mode = modeSelect.value;
   const channel = channelSelect.value;
   let roi = [0, 0, canvas.width, canvas.height];
@@ -417,15 +418,19 @@ if (analyzeBtn) analyzeBtn.addEventListener("click", () => {
   const imageData = glContext.extractImageData();
   const roiData = extractROI(imageData, roi);
 
-  signalCanvas.width = roi[2];
-  signalCanvas.height = roi[3];
+  if (signalCanvas) {
+    signalCanvas.width = roi[2];
+    signalCanvas.height = roi[3];
 
-  switch (mode) {
-    case "bitplane": renderBitPlane(roiData, channel); break;
-    case "xor": renderXORFrame(roiData, channel); break;
-    case "entropy": renderEntropyMap(roiData, channel); break;
+    switch (mode) {
+      case "bitplane": renderBitPlane(roiData, channel); break;
+      case "xor": renderXORFrame(roiData, channel); break;
+      case "entropy": renderEntropyMap(roiData, channel); break;
+    }
   }
-});
+}
+
+if (analyzeBtn) analyzeBtn.addEventListener("click", runSignalAnalysis);
 
 function extractROI(imageData, [x, y, w, h]) {
   const tmpCanvas = document.createElement("canvas");
@@ -489,9 +494,13 @@ function renderEntropyMap(data, channel) {
 // Main frame processing
 async function processVideoFrames() {
   if (loadingDiv) loadingDiv.style.display = 'block';
-  if (loadingText) loadingText.textContent = "Starting analysis...";
+  if (loadingText) loadingText.textContent = "Initializing multi-channel analysis...";
   [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber].forEach(ctrl => ctrl.disabled = true);
-  // preview window removed — no preview button to disable
+  
+  // Start Audio Analysis automatically if not already running
+  if (!audioCtx) {
+    startAudioAnalysis();
+  }
 
   const tempCanvas = document.createElement('canvas');
   tempCanvas.width = video.videoWidth;
@@ -499,11 +508,12 @@ async function processVideoFrames() {
   const tempCtx = tempCanvas.getContext('2d');
 
   textOutput.textContent = "";
-
   let framesToProcess = [];
+  const totalSteps = Math.floor(video.duration / step);
+  let currentStep = 0;
 
   for (let t = 0; t < video.duration; t += step) {
-    // Check if analysis was aborted
+    currentStep++;
     if (analysisAborted) {
       if (loadingText) loadingText.textContent = "Analysis stopped.";
       break;
@@ -523,6 +533,10 @@ async function processVideoFrames() {
 
     if (playbackRate) video.playbackRate = parseFloat(playbackRate.value);
     glContext.renderFrame(video, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
+    
+    // Sync Visual Payload Analysis
+    runSignalAnalysis();
+
     if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
 
     const imageData = glContext.extractImageData();
@@ -530,13 +544,16 @@ async function processVideoFrames() {
 
     let text = "";
     try {
+      // Faster OCR config for real-time feedback
       const ocrResult = await Tesseract.recognize(tempCanvas, 'eng', { logger: m => { } });
       text = ocrResult.data.text.trim();
     } catch (err) {
       text = "[OCR error]";
     }
 
-    textOutput.textContent += `Frame @ ${t.toFixed(2)}s:\n${text}\n\n`;
+    if (text) {
+      textOutput.textContent += `Frame @ ${t.toFixed(2)}s:\n${text}\n\n`;
+    }
 
     // Queue frame for worker
     framesToProcess.push({
@@ -546,7 +563,10 @@ async function processVideoFrames() {
       data: new Uint8Array(imageData.data) // send clone
     });
 
-    if (loadingText) loadingText.textContent = `Scraping frame at ${t.toFixed(1)}s...`;
+    if (loadingText) {
+      const progress = Math.round((currentStep / totalSteps) * 100);
+      loadingText.textContent = `Analyzing: ${progress}% (${currentStep}/${totalSteps} frames processed)`;
+    }
   }
 
   // Once frames are gathered, send to Worker
@@ -745,19 +765,33 @@ if (lsbChannel) lsbChannel.addEventListener("change", () => {
 
 // Audio Spectrogram Logic
 let audioCtx, audioSource, analyser, audioAnimId;
-if (startAudioAnalysisBtn) {
-  startAudioAnalysisBtn.addEventListener("click", () => {
-    if (!video || !video.src) return alert("Upload a video first.");
-    if (!audioCtx) {
+
+function startAudioAnalysis() {
+  if (!video || !video.src) return;
+  if (!audioCtx) {
+    try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       audioSource = audioCtx.createMediaElementSource(video);
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       audioSource.connect(analyser);
       analyser.connect(audioCtx.destination);
+    } catch (e) {
+      console.error("Audio Context Init Failed:", e);
+      return;
     }
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  drawSpectrogram();
+}
+
+if (startAudioAnalysisBtn) {
+  startAudioAnalysisBtn.addEventListener("click", () => {
+    if (!video || !video.src) return alert("Upload a video first.");
+    startAudioAnalysis();
     video.play();
-    drawSpectrogram();
   });
 }
 if (stopAudioAnalysisBtn) {
