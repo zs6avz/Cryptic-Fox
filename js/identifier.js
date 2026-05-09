@@ -135,16 +135,91 @@ function displayIdentifierResults(results, container) {
     let html = "<ul style='list-style: none; padding: 0; text-align: left; width: 100%;'>";
     results.forEach(res => {
         const color = res.confidence === "High" ? "#7bd389" : (res.confidence === "Moderate" ? "#447D9B" : "#FE7743");
+        
+        // Determine tool type for "Apply" button
+        let toolType = "";
+        let toolValue = "";
+        
+        if (res.type.includes("Caesar")) { toolType = "caesar"; toolValue = res.reason.match(/\d+/)?.[0] || ""; }
+        else if (res.type.includes("Atbash")) { toolType = "atbash"; }
+        else if (res.type.includes("Binary")) { toolType = "binary"; }
+        else if (res.type.includes("Hexadecimal")) { toolType = "hex"; }
+        else if (res.type.includes("Base64")) { toolType = "base64"; }
+        else if (res.type.includes("Base-36")) { toolType = "base-alt"; toolValue = "36"; }
+        else if (res.type.includes("Base-62")) { toolType = "base-alt"; toolValue = "62"; }
+        else if (res.type.includes("Morse")) { toolType = "morse"; }
+        else if (res.type.includes("Hash")) { toolType = "hash"; toolValue = res.type.split(' ')[0]; }
+
         html += `
-            <li style="margin-bottom: 15px; padding: 10px; border-left: 4px solid ${color}; background: rgba(255,255,255,0.05);">
+            <li style="margin-bottom: 15px; padding: 15px; border-left: 4px solid ${color}; background: rgba(255,255,255,0.05); position: relative;">
                 <strong style="color: ${color}; font-size: 1.1rem;">${res.type}</strong> 
                 <span style="font-size: 0.8rem; opacity: 0.7;">(${res.confidence} Confidence)</span>
                 <p style="margin: 5px 0 0; font-size: 0.9rem; color: var(--color-text-muted);">${res.reason}</p>
+                ${toolType ? `<button onclick="applyCipherTool('${toolType}', '${toolValue}')" style="margin-top: 10px; font-size: 0.8rem; padding: 4px 10px; background: ${color}; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;">Apply This Tool</button>` : ''}
             </li>
         `;
     });
     html += "</ul>";
     container.innerHTML = html;
+}
+
+/**
+ * Jumps to a specific tool, populates it with the scanned input, and sets parameters
+ */
+function applyCipherTool(type, value) {
+    const input = document.querySelector('.identifier-input').value;
+    let targetSection;
+    let targetInput;
+
+    switch(type) {
+        case 'caesar':
+            targetSection = document.querySelector('.caesar-input').closest('.method');
+            targetInput = document.querySelector('.caesar-input');
+            if (value) document.querySelector('.caesar-shift').value = value;
+            break;
+        case 'atbash':
+            targetSection = document.querySelector('.atbash-input').closest('.method');
+            targetInput = document.querySelector('.atbash-input');
+            break;
+        case 'binary':
+            targetSection = document.querySelector('.binary-input').closest('.method');
+            targetInput = document.querySelector('.binary-input');
+            break;
+        case 'hex':
+            targetSection = document.querySelector('.hex-input').closest('.method');
+            targetInput = document.querySelector('.hex-input');
+            break;
+        case 'base64':
+            targetSection = document.querySelector('.base64-input').closest('.method');
+            targetInput = document.querySelector('.base64-input');
+            break;
+        case 'base-alt':
+            targetSection = document.querySelector('.base-alt-input').closest('.method');
+            targetInput = document.querySelector('.base-alt-input');
+            document.querySelector('.base-alt-type').value = value;
+            break;
+        case 'morse':
+            targetSection = document.querySelector('.morse-input').closest('.method');
+            targetInput = document.querySelector('.morse-input');
+            break;
+        case 'hash':
+            targetSection = document.querySelector('.hash-input').closest('.method');
+            targetInput = document.querySelector('.hash-input');
+            document.querySelector('.hash-type').value = value;
+            break;
+    }
+
+    if (targetInput && targetSection) {
+        targetInput.value = input;
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Add a temporary glow effect to the target section
+        targetSection.style.transition = 'box-shadow 0.5s';
+        targetSection.style.boxShadow = '0 0 30px rgba(123, 211, 137, 0.5)';
+        setTimeout(() => {
+            targetSection.style.boxShadow = '';
+        }, 2000);
+    }
 }
 
 // Clear Identifier Fields

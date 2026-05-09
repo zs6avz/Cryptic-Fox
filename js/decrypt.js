@@ -731,4 +731,167 @@ document.addEventListener('DOMContentLoaded', () => {
     bind('clearBaseAltFieldsBtn', clearBaseAltFields);
     bind('clearHashFieldsBtn', clearHashFields);
     bind('clearMorseFieldsBtn', clearMorseFields);
+    bind('clearBookFieldsBtn', clearBookFields);
+    bind('clearExtractionFieldsBtn', clearExtractionFields);
+    bind('clearBaconFieldsBtn', clearBaconFields);
+    bind('clearMusicFieldsBtn', clearMusicFields);
 });
+// ── Vigenère Key Solver ──────────────────────────────────────────────
+
+function guessVigenereKeyLength() {
+    const input = document.querySelector('.vigenere-input').value.replace(/[^A-Z]/gi, "").toUpperCase();
+    const output = document.getElementById('vigenereGuessOutput');
+
+    if (!input) {
+        output.textContent = "Please enter some ciphertext first.";
+        return;
+    }
+
+    if (input.length < 20) {
+        output.textContent = "Text too short for reliable analysis (min 20 chars).";
+        return;
+    }
+
+    const iocs = [];
+    // Check key lengths from 2 to 20
+    for (let len = 2; len <= 20; len++) {
+        let sumIoC = 0;
+        for (let i = 0; i < len; i++) {
+            let subtext = "";
+            for (let j = i; j < input.length; j += len) {
+                subtext += input[j];
+            }
+            sumIoC += calculateIoC(subtext);
+        }
+        iocs.push({ length: len, ioc: sumIoC / len });
+    }
+
+    // Sort by proximity to English IoC (approx 0.0667)
+    iocs.sort((a, b) => Math.abs(a.ioc - 0.0667) - Math.abs(b.ioc - 0.0667));
+
+    const top = iocs.slice(0, 3);
+    output.innerHTML = "Likely key lengths: " + top.map(t => `<strong>${t.length}</strong> (IoC: ${t.ioc.toFixed(4)})`).join(", ");
+}
+
+function calculateIoC(text) {
+    if (text.length <= 1) return 0;
+    const counts = {};
+    for (let char of text) {
+        counts[char] = (counts[char] || 0) + 1;
+    }
+    let sum = 0;
+    for (let char in counts) {
+        sum += counts[char] * (counts[char] - 1);
+    }
+    return sum / (text.length * (text.length - 1));
+}
+// ── Literary & Thematic Ciphers ──────────────────────────────────────
+
+function processBookCipher(isEncrypt) {
+    const input = document.querySelector('.book-input').value.toUpperCase();
+    const key = document.querySelector('.book-key').value.replace(/[^A-Z]/gi, "").toUpperCase();
+    const output = document.querySelector('.book-output');
+
+    if (!input || !key) {
+        output.textContent = "Error: Both message and key text are required.";
+        return;
+    }
+
+    let result = "";
+    let keyIndex = 0;
+
+    for (let i = 0; i < input.length; i++) {
+        const charCode = input.charCodeAt(i);
+        if (charCode >= 65 && charCode <= 90) {
+            const shift = key.charCodeAt(keyIndex % key.length) - 65;
+            let newCode;
+            if (isEncrypt) {
+                newCode = ((charCode - 65 + shift) % 26) + 65;
+            } else {
+                newCode = ((charCode - 65 - shift + 26) % 26) + 65;
+            }
+            result += String.fromCharCode(newCode);
+            keyIndex++;
+        } else {
+            result += input[i];
+        }
+    }
+    output.textContent = result;
+}
+
+function processExtraction() {
+    const text = document.querySelector('.extraction-input').value;
+    const type = document.querySelector('.extraction-type').value;
+    const output = document.querySelector('.extraction-output');
+
+    const lines = text.split('\n').filter(l => l.trim().length > 0);
+    let result = "";
+
+    if (type === 'acrostic') {
+        result = lines.map(l => l.trim()[0]).join('');
+    } else if (type === 'telestich') {
+        result = lines.map(l => { const s = l.trim(); return s[s.length - 1]; }).join('');
+    } else if (type === 'mesostic') {
+        result = lines.map(l => { const s = l.trim(); return s[Math.floor(s.length / 2)]; }).join('');
+    }
+
+    output.textContent = result || "No lines to process.";
+}
+
+const BACON_MAP = {
+    'A': 'AAAAA', 'B': 'AAAAB', 'C': 'AAABA', 'D': 'AAABB', 'E': 'AABAA', 'F': 'AABAB', 'G': 'AABBA', 'H': 'AABBB',
+    'I': 'ABAAA', 'J': 'ABAAA', 'K': 'ABAAB', 'L': 'ABABA', 'M': 'ABABB', 'N': 'ABBAA', 'O': 'ABBAB', 'P': 'ABBBA',
+    'Q': 'ABBBB', 'R': 'BAAAA', 'S': 'BAAAB', 'T': 'BAABA', 'U': 'BAABB', 'V': 'BAABB', 'W': 'BABAA', 'X': 'BABAB',
+    'Y': 'BABBA', 'Z': 'BABBB'
+};
+
+function processBacon(isEncrypt) {
+    const input = document.querySelector('.bacon-input').value.toUpperCase();
+    const output = document.querySelector('.bacon-output');
+
+    if (isEncrypt) {
+        output.textContent = input.split('').map(c => BACON_MAP[c] || c).join(' ');
+    } else {
+        const words = input.replace(/\s+/g, '').match(/.{5}/g) || [];
+        const reverseMap = Object.fromEntries(Object.entries(BACON_MAP).map(([k, v]) => [v, k]));
+        output.textContent = words.map(w => reverseMap[w] || '?').join('');
+    }
+}
+
+const MUSIC_MAP = {
+    'A': 'C4', 'B': 'D4', 'C': 'E4', 'D': 'F4', 'E': 'G4', 'F': 'A4', 'G': 'B4',
+    'H': 'C5', 'I': 'D5', 'J': 'E5', 'K': 'F5', 'L': 'G5', 'M': 'A5', 'N': 'B5',
+    'O': 'C6', 'P': 'D6', 'Q': 'E6', 'R': 'F6', 'S': 'G6', 'T': 'A6', 'U': 'B6',
+    'V': 'C7', 'W': 'D7', 'X': 'E7', 'Y': 'F7', 'Z': 'G7'
+};
+
+function processMusic(isEncrypt) {
+    const input = document.querySelector('.music-input').value.toUpperCase();
+    const output = document.querySelector('.music-output');
+
+    if (isEncrypt) {
+        output.textContent = input.split('').map(c => MUSIC_MAP[c] || c).join(' ');
+    } else {
+        const reverseMap = Object.fromEntries(Object.entries(MUSIC_MAP).map(([k, v]) => [v, k]));
+        output.textContent = input.split(' ').map(n => reverseMap[n] || n).join('');
+    }
+}
+
+// ── Bind Clear Buttons for new sections ──
+function clearBookFields() {
+    document.querySelector('.book-input').value = '';
+    document.querySelector('.book-key').value = '';
+    document.querySelector('.book-output').textContent = '';
+}
+function clearExtractionFields() {
+    document.querySelector('.extraction-input').value = '';
+    document.querySelector('.extraction-output').textContent = '';
+}
+function clearBaconFields() {
+    document.querySelector('.bacon-input').value = '';
+    document.querySelector('.bacon-output').textContent = '';
+}
+function clearMusicFields() {
+    document.querySelector('.music-input').value = '';
+    document.querySelector('.music-output').textContent = '';
+}
