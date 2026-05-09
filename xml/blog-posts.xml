@@ -8,7 +8,7 @@
         <excerpt>From calculus to code: the architecture of reason</excerpt>
         <link>blog-post-1.html</link>
     </post>
-    <post>
+    <!--<post>
         <id>2</id>
         <title>Structure, Sound, and Form in Classical Music</title>
         <date>August 22, 2025</date>
@@ -16,8 +16,8 @@
         <thumbnail>bach-vs-beethoven-vs-mozart-best-music-composer-xl.jpg</thumbnail>
         <excerpt>From the symmetry of the Baroque to the depths of the Romantic: the hidden architecture of music.</excerpt>
         <link>blog-post-2.html</link>
-    </post>
-    <post>
+    </post>-->
+    <!--<post>
         <id>3</id>
         <title>Romantic Vision and Poetic Imagination</title>
         <date>August 22, 2025</date>
@@ -25,8 +25,8 @@
         <thumbnail>Europe_a_Prophecy_copy_B_object_1_Bentley_1,_Erdman_i_Keynes_i_Europe_a_Prophecy.jpg</thumbnail>
         <excerpt>A cry for wholeness: Blake, Coleridge, and the rebellion against mechanical determinism.</excerpt>
         <link>blog-post-3.html</link>
-    </post>
-    <post>
+    </post>-->
+    <!--<post>
         <id>4</id>
         <title>Intersections: Mysticism, Machines, and Metaphysics</title>
         <date>August 22, 2025</date>
@@ -34,7 +34,7 @@
         <thumbnail>Ada_Lovelace_portrait.jpg</thumbnail>
         <excerpt>Where logic meets lyric: the tangled thread between Lovelace, Turing, and the soul of the machine.</excerpt>
         <link>blog-post-4.html</link>
-    </post>
+    </post>-->
 
     <post>
         <id>5</id>
@@ -45,7 +45,7 @@
         <excerpt>A comprehensive guide to VPNs: what they are, how they work, and why a VPN is essential for protecting your privacy and security online.</excerpt>
         <link>blog-post-5.html</link>
     </post>
-    <post>
+    <!--<post>
         <id>6</id>
         <title>Kickstart Your Cybersecurity Career: Why TryHackMe is the Ultimate Training Ground</title>
         <date>April 8, 2026</date>
@@ -53,8 +53,8 @@
         <thumbnail>https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5</thumbnail>
         <excerpt>Discover why TryHackMe is the absolute best platform for learning ethical hacking, cryptography, and penetration testing.</excerpt>
         <link>blog-post-6.html</link>
-    </post>
-    <post>
+    </post>-->  
+    <!--<post>
         <id>7</id>
         <title>Beyond Built-in Security: Why Malwarebytes is Essential in 2026</title>
         <date>April 8, 2026</date>
@@ -62,8 +62,8 @@
         <thumbnail>malwarebytes_security.png</thumbnail>
         <excerpt>A deep dive into endpoint security and why upgrading to Malwarebytes is essential for protecting against ransomware.</excerpt>
         <link>blog-post-7.html</link>
-    </post>
-    <post>
+    </post>-->
+    <!--<post>
         <id>8</id>
         <title>Top 5 Privacy Tools Every Developer Should Use in 2026</title>
         <date>April 8, 2026</date>
@@ -71,8 +71,8 @@
         <thumbnail>top_5_privacy_tools_1777371392696.png</thumbnail>
         <excerpt>Discover the top 5 privacy tools every developer and power user needs in 2026, from password managers to zero-knowledge storage.</excerpt>
         <link>blog-post-8.html</link>
-    </post>
-    <post>
+    </post>-->
+    <!--<post>
         <id>9</id>
         <title>Zero-Knowledge Encryption Explained for Beginners</title>
         <date>April 8, 2026</date>
@@ -80,8 +80,8 @@
         <thumbnail>zero_knowledge.png</thumbnail>
         <excerpt>What is Zero-Knowledge encryption and why does it matter? Learn the cryptography basics and the best secure cloud storage providers.</excerpt>
         <link>blog-post-9.html</link>
-    </post>  
-    <post>
+    </post>  -->
+    <!--<post>
         <id>10</id>
         <title>Best Encrypted Email Providers for Professionals</title>
         <date>April 8, 2026</date>
@@ -89,7 +89,7 @@
         <thumbnail>encrypted_email.png</thumbnail>
         <excerpt>A comparison of the best encrypted email providers: ProtonMail, Tuta, and StartMail. Stop giving away your private communications.</excerpt>
         <link>blog-post-10.html</link>
-    </post>
+    </post>-->
     <post>
         <id>11</id>
         <title>History and Fundamentals of Modern Cryptography</title>
