@@ -64,6 +64,12 @@
             <button onclick="encryptAESAudio()">Encrypt</button>
             <textarea class="aes-encrypted-output" readonly placeholder="Encrypted audio data..."></textarea>
 
+            <div class="button-group" style="display: flex; gap: 10px; margin: 15px 0; justify-content: center;">
+                <button onclick="copyAudioOutput()" class="tool-btn">📋 Copy</button>
+                <button onclick="swapAudioFields()" class="tool-btn">⇄ Swap</button>
+                <button onclick="clearAudioFields()" class="tool-btn">Clear</button>
+            </div>
+
             <h3>Decrypt Audio</h3>
             <textarea class="aes-audio-input-decrypt" placeholder="Enter AES encrypted audio data..."></textarea>
             <input type="text" class="aes-audio-key-decrypt" placeholder="Enter key">

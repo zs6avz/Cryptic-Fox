@@ -216,3 +216,94 @@ function copyToClipboard(elementId) {
         alert("Copied to clipboard!");
     });
 }
+// --- AES Audio Encryption Logic ---
+function encryptAESAudio() {
+    const fileInput = document.querySelector('.aes-audio-input');
+    const keyInput = document.querySelector('.aes-audio-key');
+    const outputField = document.querySelector('.aes-encrypted-output');
+
+    if (!fileInput.files[0] || !keyInput.value) {
+        alert("Please select an audio file and enter an encryption key.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const wordArray = CryptoJS.lib.WordArray.create(e.target.result);
+            const encrypted = CryptoJS.AES.encrypt(wordArray, keyInput.value).toString();
+            outputField.value = encrypted;
+            alert("Audio encrypted successfully with AES!");
+        } catch (err) {
+            console.error(err);
+            alert("Encryption failed.");
+        }
+    };
+    reader.readAsArrayBuffer(fileInput.files[0]);
+}
+
+function decryptAESAudio() {
+    const encryptedInput = document.querySelector('.aes-audio-input-decrypt');
+    const keyInput = document.querySelector('.aes-audio-key-decrypt');
+    const audioPlayer = document.getElementById('aes-audio-output');
+    const downloadLink = document.getElementById('aes-audio-download-link');
+
+    if (!encryptedInput.value || !keyInput.value) {
+        alert("Please enter encrypted data and the decryption key.");
+        return;
+    }
+
+    try {
+        const decrypted = CryptoJS.AES.decrypt(encryptedInput.value, keyInput.value);
+        
+        // Convert CryptoJS WordArray to Uint8Array
+        const typedArray = new Uint8Array(decrypted.sigBytes);
+        for (let i = 0; i < decrypted.sigBytes; i++) {
+            typedArray[i] = (decrypted.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
+        }
+
+        const blob = new Blob([typedArray], { type: 'audio/mpeg' });
+        const url = URL.createObjectURL(blob);
+        audioPlayer.src = url;
+        downloadLink.href = url;
+        downloadLink.download = "decrypted_audio.mp3";
+        downloadLink.style.display = "inline-block";
+        alert("Audio decrypted successfully!");
+    } catch (e) {
+        console.error(e);
+        alert("Decryption failed. Please check your key.");
+    }
+}
+
+// Workflow Helpers for Audio
+function copyAudioOutput() {
+    const output = document.querySelector('.aes-encrypted-output');
+    if (!output.value) return alert("Nothing to copy!");
+    output.select();
+    navigator.clipboard.writeText(output.value);
+    alert("AES output copied!");
+}
+
+function swapAudioFields() {
+    const output = document.querySelector('.aes-encrypted-output').value;
+    const input = document.querySelector('.aes-audio-input-decrypt');
+    const keyEncrypt = document.querySelector('.aes-audio-key').value;
+    const keyDecrypt = document.querySelector('.aes-audio-key-decrypt');
+    if (output) {
+        input.value = output;
+        keyDecrypt.value = keyEncrypt;
+        alert("Moved encrypted data and key to decryption section.");
+    }
+}
+
+function clearAudioFields() {
+    document.querySelector('.aes-audio-input').value = "";
+    document.querySelector('.aes-audio-key').value = "";
+    document.querySelector('.aes-encrypted-output').value = "";
+    document.querySelector('.aes-audio-input-decrypt').value = "";
+    document.querySelector('.aes-audio-key-decrypt').value = "";
+    const audio = document.getElementById('aes-audio-output');
+    if (audio) audio.src = "";
+    const download = document.getElementById('aes-audio-download-link');
+    if (download) download.style.display = "none";
+}

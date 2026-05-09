@@ -58,6 +58,12 @@
             <input type="file" class="base64-image-input">
             <button onclick="encryptBase64Image()">Encrypt</button>
             <textarea class="base64-encrypted-output" readonly placeholder="Encrypted Base64 image..."></textarea>
+            
+            <div class="button-group" style="display: flex; gap: 10px; margin: 15px 0; justify-content: center;">
+                <button onclick="copyImageOutput()" class="tool-btn">📋 Copy</button>
+                <button onclick="swapImageFields()" class="tool-btn">⇄ Swap</button>
+                <button onclick="clearImageFields()" class="tool-btn">Clear</button>
+            </div>
 
             <h3>Decrypt Image</h3>
             <textarea class="base64-decryption-input" placeholder="Enter Base64 encrypted image..."></textarea>

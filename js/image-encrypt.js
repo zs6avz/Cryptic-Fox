@@ -41,6 +41,36 @@ function decryptBase64Image() {
     downloadLink.style.display = 'inline-block'; // Make the link visible
 }
 
+// Workflow Helpers
+function copyImageOutput() {
+    const outputField = document.querySelector('.base64-encrypted-output');
+    outputField.select();
+    outputField.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(outputField.value).then(() => {
+        alert("Encrypted Base64 copied!");
+    });
+}
+
+function swapImageFields() {
+    const output = document.querySelector('.base64-encrypted-output').value;
+    const input = document.querySelector('.base64-decryption-input');
+    if (output) {
+        input.value = output;
+        alert("Moved encrypted data to decryption input.");
+    }
+}
+
+function clearImageFields() {
+    document.querySelector('.base64-image-input').value = "";
+    document.querySelector('.base64-encrypted-output').value = "";
+    document.querySelector('.base64-decryption-input').value = "";
+    const outputImg = document.getElementById('base64-image-output');
+    const downloadLink = document.getElementById('base64-download-link');
+    outputImg.style.display = 'none';
+    outputImg.src = "";
+    downloadLink.style.display = 'none';
+}
+
 /* Canvas-Based Image Encryption & Decryption
 function encryptCanvasImage() {
     const fileInput = document.querySelector('.canvas-image-input');
