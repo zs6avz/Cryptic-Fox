@@ -548,29 +548,29 @@ function clearBaseAltFields() {
 // ── Cryptographic Hashes ──────────────────────────────────────────────
 
 const HASH_DICTIONARY = [
-    "password", "123456", "admin", "welcome", "12345678", "qwerty", "football", "monkey", "123456789", "letmein",
-    "the", "be", "to", "of", "and", "that", "have", "for", "not", "with", "as", "you", "do", "at",
-    "cryptic", "fox", "secret", "hidden", "cipher", "decrypt", "encrypt", "puzzle", "logic", "fennfox", "aeon", "logic",
-    "end", "society", "ada", "jacquard", "babbage", "lovelace", "enigma", "turing", "Beethoven", "Bach", "Mozart", "Schubert",
-    "Der Doppelgänger", "Der Lindenbaum", "Gretchen am Spinnrade", "Erlkönig", "Die Forelle", "An die Musik", "Winterreise",
-    "Die schöne Müllerin", "Der Tod und das Mädchen", "Ständchen", "Pathétique", "Moonlight", "Appassionata", "Hammerklavier",
-    "Eroica", "Pastoral", "Choral", "Für Elise", "Egmont", "Fidelio", "Missa Solemnis", "Grosse Fuge", "Kreutzer Sonata", "Goldberg Variations",
-    "Well‑Tempered Clavier", "Brandenburg Concertos", "St Matthew Passion", "St John Passion", "Art of Fugue", "Toccata and Fugue in D minor",
-    "Jesu Joy of Man’s Desiring", "Air on the G String", "Musical Offering", "Cello Suites", "Chaconne", "Requiem", "Eine kleine Nachtmusik",
-    "Die Zauberflöte", "Don Giovanni", "Le nozze di Figaro", "Cosi fan tutte", "Jupiter Symphony", "Haffner Symphony", "Great Mass in C minor",
-    "Clarinet Concerto", "Ave verum corpus", "Rondo alla Turca", "Lord Byron", "Ada Lovelace", "Joseph-Marie Jacquard", "Charles Babbage",
-    "Ninth Bridgewater Treatise", "T. S. Eliot", "Four Quartets", "Childe Harold", "Manfred", "Don Juan", "She Walks in Beauty", "Prometheus",
-    "Ada Augusta", "Countess of Lovelace", "Analytical Engine", "Difference Engine", "Jacquard Loom", "Punch Card", "Weaving Loom", "Babbage Engine",
-    "Mathematical Notes", "Bridgewater Treatises", "Natural Theology", "Burnt Norton", "East Coker", "The Dry Salvages", "Little Gidding", "Romanticism",
-    "Computing Pioneer", "Mechanical Computation", "Symbolic Logic", "Industrial Revolution", "Poetry", "Darkness", "Byron", "Eliot", "Coleridge",
-    "Four Quartets", "Kubla Khan", "Burnt Norton", "East Coker", "The Dry Salvages", "Little Gidding", "Xanadu", "Alph", "Caverns", "Sunless Sea", "Shadow",
-    "Desolation", "Prophecy", "Vision", "Abyss", "Silence", "Time", "Stillness", "Ruin", "Night", "Dream", "Fragment", "Oracle", "River", "Temple", "Pleasure Dome",
-    "Chasm", "Thunder", "Eclipse", "Ash", "Embers", "Midnight", "Eternity", "Blake", "Innocence", "Experience", "Tyger", "Lamb", "Jerusalem", "Urizen", "Los", "Orc",
-    "Albion", "Beulah", "Emanation", "Prophecy", "Vision", "Imagination", "Revelation", "Contraries", "Heaven", "Hell", "Eternity", "Divine", "Spectre", "Shadow", "Fiery",
-    "Furnace", "Forge", "Chains", "Stars", "Angels", "Demons", "Paradise", "Mystery", "Reaper", "Chimney", "Rose", "Sick Rose", "Sunflower", "Inspiration", "Rebellion", "Mythos"
-    "dark", "famine", "despair", "ash", "ember", "midnight", "silence", "vacant", "desolate", "extinct", "shadow", "chaos", "tempest", "eclipse", "ruin", "wild", "hunger",
-    "frost", "still", "oblivion", "doom", "wreck", "phantom", "terror", "abyss", "gloom", "starless", "black", "solitude", "cataclysm", "waste", "spectre", "hollow", "night",
-    "perdition", "void", "cinder", "smoke", "pall", "grief", "decay", "end"
+    "password", "123456", "admin", "welcome", "12345678", "qwerty", "football", "monkey", "123456789", "letmein", "the", "be", "to", "of",
+    "and", "that", "have", "for", "not", "with", "as", "you", "do", "at", "cryptic", "fox", "secret", "hidden", "cipher", "decrypt", "encrypt",
+    "puzzle", "logic", "fennfox", "aeon", "end", "society", "ada", "jacquard", "babbage", "lovelace", "enigma", "turing", "Beethoven", "Bach",
+    "Mozart", "Schubert", "Der Doppelgänger", "Der Lindenbaum", "Gretchen am Spinnrade", "Erlkönig", "Die Forelle", "An die Musik", "Winterreise",
+    "Die schöne Müllerin", "Der Tod und das Mädchen", "Ständchen", "Pathétique", "Moonlight", "Appassionata", "Hammerklavier", "Eroica", "Pastoral",
+    "Choral", "Für Elise", "Egmont", "Fidelio", "Missa Solemnis", "Grosse Fuge", "Kreutzer Sonata", "Goldberg Variations", "Well‑Tempered Clavier",
+    "Brandenburg Concertos", "St Matthew Passion", "St John Passion", "Art of Fugue", "Toccata and Fugue in D minor", "Jesu Joy of Man’s Desiring",
+    "Air on the G String", "Musical Offering", "Cello Suites", "Chaconne", "Requiem", "Eine kleine Nachtmusik", "Die Zauberflöte", "Don Giovanni",
+    "Le nozze di Figaro", "Cosi fan tutte", "Jupiter Symphony", "Haffner Symphony", "Great Mass in C minor", "Clarinet Concerto", "Ave verum corpus",
+    "Rondo alla Turca", "Lord Byron", "Ada Lovelace", "Joseph-Marie Jacquard", "Charles Babbage", "Ninth Bridgewater Treatise", "T. S. Eliot",
+    "Four Quartets", "Childe Harold", "Manfred", "Don Juan", "She Walks in Beauty", "Prometheus", "Ada Augusta", "Countess of Lovelace",
+    "Analytical Engine", "Difference Engine", "Jacquard Loom", "Punch Card", "Weaving Loom", "Babbage Engine", "Mathematical Notes",
+    "Bridgewater Treatises", "Natural Theology", "Burnt Norton", "East Coker", "The Dry Salvages", "Little Gidding", "Romanticism",
+    "Computing Pioneer", "Mechanical Computation", "Symbolic Logic", "Industrial Revolution", "Poetry", "Darkness", "Byron", "Eliot",
+    "Coleridge", "Kubla Khan", "Xanadu", "Alph", "Caverns", "Sunless Sea", "Shadow", "Desolation", "Prophecy", "Vision", "Abyss", "Silence",
+    "Time", "Stillness", "Ruin", "Night", "Dream", "Fragment", "Oracle", "River", "Temple", "Pleasure Dome", "Chasm", "Thunder", "Eclipse", "Ash",
+    "Embers", "Midnight", "Eternity", "Blake", "Innocence", "Experience", "Tyger", "Lamb", "Jerusalem", "Urizen", "Los", "Orc", "Albion", "Beulah",
+    "Emanation", "Imagination", "Revelation", "Contraries", "Heaven", "Hell", "Divine", "Fiery", "Furnace", "Forge", "Chains", "Stars", "Angels",
+    "Demons", "Paradise", "Mystery", "Reaper", "Chimney", "Rose", "Sick Rose", "Sunflower", "Inspiration", "Rebellion", "Mythos", "dark", "famine",
+    "despair", "ember", "vacant", "desolate", "extinct", "chaos", "tempest", "wild", "hunger", "frost", "still", "oblivion", "doom", "wreck", "phantom",
+    "terror", "gloom", "starless", "black", "solitude", "cataclysm", "waste", "spectre", "hollow", "perdition", "void", "cinder", "smoke", "pall", "grief",
+    "decay", "storm", "dust", "flame", "fire", "ice", "stone", "iron", "bone", "grave", "fall", "rift", "echo", "fear", "dread", "bleak", "cold", "cosmic",
+    "astral", "celestial", "axis", "cycle", "origin", "creation", "mythic", "legend", "mist"
 ];
 
 function generateHash() {
