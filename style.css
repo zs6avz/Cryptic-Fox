@@ -783,6 +783,8 @@ p.vigenere-output,
 p.atbash-output,
 p.hex-output,
 p.base64-output,
+p.base-alt-output,
+p.hash-output,
 p.morse-output {
     font-size: 18px;
     font-weight: lighter;

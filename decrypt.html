@@ -49,12 +49,24 @@
     <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
-    <script src="js/decrypt.js" defer></script>
+    <script src="js/identifier.js" defer></script>
 </head>
 
 <body class="decrypt-page">
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
     <h1>Decrypt Methods</h1>
+
+    <!-- Cipher Identifier (Magic Scanner) -->
+    <div class="method" style="border-color: var(--color-accent); box-shadow: 0 0 15px rgba(254, 119, 67, 0.3);">
+        <h2 style="background: linear-gradient(135deg, var(--color-accent) 0%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Cipher Identifier (Magic Scanner)</h2>
+        <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--color-text-muted);">Paste an unknown message below and I'll try to identify the encryption or encoding used.</p>
+        <textarea class="identifier-input" placeholder="Paste unknown message..."></textarea>
+        <div class="button-container">
+            <button onclick="identifyCipher()" class="primary-btn" style="background-color: var(--color-accent);">Identify Cipher</button>
+            <button id="clearIdentifierFieldsBtn">Clear</button>
+        </div>
+        <div class="identifier-output" style="margin-top: 15px; width: 80%;"></div>
+    </div>
 
     <!-- Binary -->
     <div class="method">
@@ -146,6 +158,45 @@
             <button id="clearBase64FieldsBtn">Clear</button>
         </div>
         <p class="base64-output"></p>
+    </div>
+
+    <!-- Base-36 & Base-62 -->
+    <div class="method">
+        <h2>Base-36 & Base-62</h2>
+        <textarea class="base-alt-input" placeholder="Enter text..."></textarea>
+        <select class="base-alt-type">
+            <option value="36">Base-36</option>
+            <option value="62">Base-62</option>
+        </select>
+        <div class="button-container">
+            <button onclick="encryptBaseAlt()">Encode</button>
+            <button onclick="decryptBaseAlt()">Decode</button>
+            <button id="clearBaseAltFieldsBtn">Clear</button>
+        </div>
+        <p class="base-alt-output"></p>
+    </div>
+
+    <!-- Cryptographic Hashes -->
+    <div class="method">
+        <h2>Cryptographic Hashes</h2>
+        <textarea class="hash-input" placeholder="Enter text to hash..."></textarea>
+        
+        <div class="hash-options" style="display: flex; gap: 10px; margin-top: 10px; width: 80%; flex-wrap: wrap; justify-content: center;">
+            <input type="text" class="hash-salt" placeholder="Salt / Prefix (optional)" style="width: 45%;">
+            <input type="number" class="hash-truncate" placeholder="Truncate length (optional)" style="width: 45%;" min="1">
+        </div>
+
+        <select class="hash-type" style="margin-top: 10px;">
+            <option value="MD5">MD5</option>
+            <option value="SHA1">SHA-1</option>
+            <option value="SHA256">SHA-256</option>
+        </select>
+        <div class="button-container">
+            <button onclick="generateHash()">Generate Hash</button>
+            <button onclick="crackHash()">Crack / Lookup</button>
+            <button id="clearHashFieldsBtn">Clear</button>
+        </div>
+        <p class="hash-output"></p>
     </div>
 
     <!-- Morse Code -->

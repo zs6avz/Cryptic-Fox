@@ -389,6 +389,278 @@ function clearBase64Fields() {
     if (outputElement) outputElement.textContent = ''; // Clear output
 }
 
+// ── Base-36 & Base-62 Logic ──────────────────────────────────────────
+
+const BASE62_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/**
+ * Converts a BigInt to a Base-62 string
+ */
+function toBase62(n) {
+    if (typeof n !== 'bigint') n = BigInt(n);
+    if (n === 0n) return "0";
+    let res = "";
+    while (n > 0n) {
+        res = BASE62_ALPHABET[Number(n % 62n)] + res;
+        n = n / 62n;
+    }
+    return res;
+}
+
+/**
+ * Converts a Base-62 string to a BigInt
+ */
+function fromBase62(s) {
+    let res = 0n;
+    for (let char of s) {
+        let idx = BASE62_ALPHABET.indexOf(char);
+        if (idx === -1) return null;
+        res = res * 62n + BigInt(idx);
+    }
+    return res;
+}
+
+/**
+ * Helper to identify hash sizes based on byte length
+ */
+function getHashSizeLabel(byteCount) {
+    if (byteCount === 16) return " (16 bytes — MD5-sized)";
+    if (byteCount === 20) return " (20 bytes — SHA-1-sized)";
+    if (byteCount === 32) return " (32 bytes — SHA-256-sized)";
+    return ` (${byteCount} bytes)`;
+}
+
+function encryptBaseAlt() {
+    const inputElement = document.querySelector('.base-alt-input');
+    const outputElement = document.querySelector('.base-alt-output');
+    const base = document.querySelector('.base-alt-type').value;
+    const text = inputElement.value.trim();
+
+    if (!text) {
+        outputElement.textContent = "Error: Input cannot be empty!";
+        return;
+    }
+
+    try {
+        let result;
+        // Default to char-by-char for consistency with other tools
+        if (base === "36") {
+            result = text.split('').map(char => char.charCodeAt(0).toString(36)).join(' ');
+        } else if (base === "62") {
+            result = text.split('').map(char => toBase62(BigInt(char.charCodeAt(0)))).join(' ');
+        }
+        outputElement.textContent = result || "Invalid input!";
+    } catch (error) {
+        outputElement.textContent = "Error: Encoding failed!";
+    }
+}
+
+function decryptBaseAlt() {
+    const inputElement = document.querySelector('.base-alt-input');
+    const outputElement = document.querySelector('.base-alt-output');
+    const base = document.querySelector('.base-alt-type').value;
+    const encodedText = inputElement.value.trim();
+
+    if (!encodedText) {
+        outputElement.textContent = "Error: Input cannot be empty!";
+        return;
+    }
+
+    try {
+        let result = "";
+        let byteCount = 0;
+
+        if (encodedText.includes(' ')) {
+            // Char-by-char mode (space separated)
+            const chars = encodedText.split(' ');
+            if (base === "36") {
+                result = chars.map(s => {
+                    const val = parseInt(s, 36);
+                    if (isNaN(val)) throw new Error("Invalid Base-36 value: " + s);
+                    return String.fromCharCode(val);
+                }).join('');
+            } else if (base === "62") {
+                result = chars.map(s => {
+                    const val = fromBase62(s);
+                    if (val === null) throw new Error("Invalid Base-62 value: " + s);
+                    return String.fromCharCode(Number(val));
+                }).join('');
+            }
+            byteCount = new TextEncoder().encode(result).length;
+        } else {
+            // Single block mode (treat entire string as one large number)
+            let bigNum = 0n;
+            const b = BigInt(base);
+            if (base === "36") {
+                for (const char of encodedText.toLowerCase()) {
+                    const val = parseInt(char, 36);
+                    if (isNaN(val)) throw new Error("Invalid Base-36 character");
+                    bigNum = bigNum * b + BigInt(val);
+                }
+            } else {
+                for (const char of encodedText) {
+                    const val = BASE62_ALPHABET.indexOf(char);
+                    if (val === -1) throw new Error("Invalid Base-62 character");
+                    bigNum = bigNum * b + BigInt(val);
+                }
+            }
+
+            // Convert BigInt to Hex to determine byte structure
+            let hex = bigNum.toString(16);
+            if (hex.length % 2 !== 0) hex = '0' + hex;
+            byteCount = hex.length / 2;
+
+            // Prepare display: Hex value is most useful for hash-sized data
+            result = "Hex: " + hex.toUpperCase();
+
+            // Try to decode as UTF-8 text if it looks printable
+            try {
+                const bytes = new Uint8Array(byteCount);
+                for (let i = 0; i < byteCount; i++) {
+                    bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
+                }
+                const decodedText = new TextDecoder().decode(bytes);
+                // Check if result is mostly printable characters
+                if (/^[\x20-\x7E\s]*$/.test(decodedText)) {
+                    result += " | Text: " + decodedText;
+                }
+            } catch (e) {
+                // Not printable, stick to hex
+            }
+        }
+
+        outputElement.textContent = result + getHashSizeLabel(byteCount);
+    } catch (error) {
+        outputElement.textContent = "Error: " + error.message;
+    }
+}
+
+function clearBaseAltFields() {
+    const inputElement = document.querySelector('.base-alt-input');
+    const outputElement = document.querySelector('.base-alt-output');
+    const typeSelect = document.querySelector('.base-alt-type');
+
+    if (inputElement) inputElement.value = '';
+    if (outputElement) outputElement.textContent = '';
+    if (typeSelect) typeSelect.selectedIndex = 0;
+}
+
+// ── Cryptographic Hashes ──────────────────────────────────────────────
+
+const HASH_DICTIONARY = [
+    "password", "123456", "admin", "welcome", "12345678", "qwerty", "football", "monkey", "123456789", "letmein",
+    "the", "be", "to", "of", "and", "that", "have", "for", "not", "with", "as", "you", "do", "at",
+    "cryptic", "fox", "secret", "hidden", "cipher", "decrypt", "encrypt", "puzzle", "logic", "fennfox", "aeon", "logic",
+    "end", "society", "ada", "jacquard", "babbage", "lovelace", "enigma", "turing", "Beethoven", "Bach", "Mozart", "Schubert",
+    "Der Doppelgänger", "Der Lindenbaum", "Gretchen am Spinnrade", "Erlkönig", "Die Forelle", "An die Musik", "Winterreise",
+    "Die schöne Müllerin", "Der Tod und das Mädchen", "Ständchen", "Pathétique", "Moonlight", "Appassionata", "Hammerklavier",
+    "Eroica", "Pastoral", "Choral", "Für Elise", "Egmont", "Fidelio", "Missa Solemnis", "Grosse Fuge", "Kreutzer Sonata", "Goldberg Variations",
+    "Well‑Tempered Clavier", "Brandenburg Concertos", "St Matthew Passion", "St John Passion", "Art of Fugue", "Toccata and Fugue in D minor",
+    "Jesu Joy of Man’s Desiring", "Air on the G String", "Musical Offering", "Cello Suites", "Chaconne", "Requiem", "Eine kleine Nachtmusik",
+    "Die Zauberflöte", "Don Giovanni", "Le nozze di Figaro", "Cosi fan tutte", "Jupiter Symphony", "Haffner Symphony", "Great Mass in C minor",
+    "Clarinet Concerto", "Ave verum corpus", "Rondo alla Turca", "Lord Byron", "Ada Lovelace", "Joseph-Marie Jacquard", "Charles Babbage",
+    "Ninth Bridgewater Treatise", "T. S. Eliot", "Four Quartets", "Childe Harold", "Manfred", "Don Juan", "She Walks in Beauty", "Prometheus",
+    "Ada Augusta", "Countess of Lovelace", "Analytical Engine", "Difference Engine", "Jacquard Loom", "Punch Card", "Weaving Loom", "Babbage Engine",
+    "Mathematical Notes", "Bridgewater Treatises", "Natural Theology", "Burnt Norton", "East Coker", "The Dry Salvages", "Little Gidding", "Romanticism",
+    "Computing Pioneer", "Mechanical Computation", "Symbolic Logic", "Industrial Revolution", "Poetry", "Darkness", "Byron", "Eliot", "Coleridge",
+    "Four Quartets", "Kubla Khan", "Burnt Norton", "East Coker", "The Dry Salvages", "Little Gidding", "Xanadu", "Alph", "Caverns", "Sunless Sea", "Shadow",
+    "Desolation", "Prophecy", "Vision", "Abyss", "Silence", "Time", "Stillness", "Ruin", "Night", "Dream", "Fragment", "Oracle", "River", "Temple", "Pleasure Dome",
+    "Chasm", "Thunder", "Eclipse", "Ash", "Embers", "Midnight", "Eternity", "Blake", "Innocence", "Experience", "Tyger", "Lamb", "Jerusalem", "Urizen", "Los", "Orc",
+    "Albion", "Beulah", "Emanation", "Prophecy", "Vision", "Imagination", "Revelation", "Contraries", "Heaven", "Hell", "Eternity", "Divine", "Spectre", "Shadow", "Fiery",
+    "Furnace", "Forge", "Chains", "Stars", "Angels", "Demons", "Paradise", "Mystery", "Reaper", "Chimney", "Rose", "Sick Rose", "Sunflower", "Inspiration", "Rebellion", "Mythos"
+    "dark", "famine", "despair", "ash", "ember", "midnight", "silence", "vacant", "desolate", "extinct", "shadow", "chaos", "tempest", "eclipse", "ruin", "wild", "hunger",
+    "frost", "still", "oblivion", "doom", "wreck", "phantom", "terror", "abyss", "gloom", "starless", "black", "solitude", "cataclysm", "waste", "spectre", "hollow", "night",
+    "perdition", "void", "cinder", "smoke", "pall", "grief", "decay", "end"
+];
+
+function generateHash() {
+    const inputElement = document.querySelector('.hash-input');
+    const saltElement = document.querySelector('.hash-salt');
+    const truncateElement = document.querySelector('.hash-truncate');
+    const outputElement = document.querySelector('.hash-output');
+    const type = document.querySelector('.hash-type').value;
+
+    const text = inputElement.value;
+    const salt = saltElement.value || "";
+    const truncate = parseInt(truncateElement.value, 10);
+
+    if (!text && !salt) {
+        outputElement.textContent = "Error: Input cannot be empty!";
+        return;
+    }
+
+    try {
+        const dataToHash = salt + text;
+        let hash;
+        if (type === "MD5") {
+            hash = CryptoJS.MD5(dataToHash);
+        } else if (type === "SHA1") {
+            hash = CryptoJS.SHA1(dataToHash);
+        } else if (type === "SHA256") {
+            hash = CryptoJS.SHA256(dataToHash);
+        }
+
+        let result = hash.toString(CryptoJS.enc.Hex);
+
+        if (!isNaN(truncate) && truncate > 0) {
+            result = result.substring(0, truncate);
+        }
+
+        outputElement.textContent = result;
+    } catch (error) {
+        outputElement.textContent = "Error: Hashing failed!";
+        console.error(error);
+    }
+}
+
+/**
+ * Attempts to "decode" (crack) a hash by checking against common words
+ * or providing an external lookup link.
+ */
+function crackHash() {
+    const input = document.querySelector('.hash-input').value.trim().toLowerCase();
+    const salt = document.querySelector('.hash-salt').value || "";
+    const outputElement = document.querySelector('.hash-output');
+    const type = document.querySelector('.hash-type').value;
+
+    if (!input) {
+        outputElement.textContent = "Error: Please enter a hash to crack.";
+        return;
+    }
+
+    // 1. Local Dictionary Attack
+    for (let word of HASH_DICTIONARY) {
+        const dataToHash = salt + word;
+        let hash;
+        if (type === "MD5") hash = CryptoJS.MD5(dataToHash).toString();
+        else if (type === "SHA1") hash = CryptoJS.SHA1(dataToHash).toString();
+        else if (type === "SHA256") hash = CryptoJS.SHA256(dataToHash).toString();
+
+        if (hash === input) {
+            outputElement.innerHTML = `Success! Decoded value: <strong style="color: #7bd389;">${word}</strong>`;
+            return;
+        }
+    }
+
+    // 2. If not found, suggest online lookup
+    const crackStationUrl = `https://crackstation.net/?q=${input}`;
+    outputElement.innerHTML = `Value not found in local dictionary. <a href="${crackStationUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--color-accent); font-weight: bold;">Try External Lookup (CrackStation) ⟶</a>`;
+}
+
+function clearHashFields() {
+    const inputElement = document.querySelector('.hash-input');
+    const saltElement = document.querySelector('.hash-salt');
+    const truncateElement = document.querySelector('.hash-truncate');
+    const outputElement = document.querySelector('.hash-output');
+    const typeSelect = document.querySelector('.hash-type');
+
+    if (inputElement) inputElement.value = '';
+    if (saltElement) saltElement.value = '';
+    if (truncateElement) truncateElement.value = '';
+    if (outputElement) outputElement.textContent = '';
+    if (typeSelect) typeSelect.selectedIndex = 0;
+}
+
 
 
 // Morse Code Encryption & Decryption
@@ -456,5 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bind('clearVigenereFieldsBtn', clearVigenereFields);
     bind('clearAtbashFieldsBtn', clearAtbashFields);
     bind('clearBase64FieldsBtn', clearBase64Fields);
+    bind('clearBaseAltFieldsBtn', clearBaseAltFields);
+    bind('clearHashFieldsBtn', clearHashFields);
     bind('clearMorseFieldsBtn', clearMorseFields);
 });
