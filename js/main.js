@@ -29,6 +29,7 @@ const analyzeBtn = document.getElementById("analyzeBtn");
 const signalCanvas = document.getElementById("signalCanvas");
 const startAudioAnalysisBtn = document.getElementById("startAudioAnalysisBtn");
 const stopAudioAnalysisBtn = document.getElementById("stopAudioAnalysisBtn");
+const masterAnalysisBtn = document.getElementById("masterAnalysisBtn");
 const audioCanvas = document.getElementById("audioCanvas");
 const signalCtx = signalCanvas ? signalCanvas.getContext("2d") : null;
 
@@ -775,7 +776,9 @@ function startAudioAnalysis() {
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       audioSource.connect(analyser);
-      analyser.connect(audioCtx.destination);
+      // We keep the analyzer disconnected from the destination (speakers) 
+      // so analysis remains silent as per user preference.
+      // analyser.connect(audioCtx.destination); 
     } catch (e) {
       console.error("Audio Context Init Failed:", e);
       return;
@@ -798,6 +801,14 @@ if (stopAudioAnalysisBtn) {
   stopAudioAnalysisBtn.addEventListener("click", () => {
     if (video) video.pause();
     if (audioAnimId) cancelAnimationFrame(audioAnimId);
+  });
+}
+
+if (masterAnalysisBtn) {
+  masterAnalysisBtn.addEventListener("click", () => {
+    // Scroll to the preview so the user can see the analysis
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    processVideoFrames();
   });
 }
 
