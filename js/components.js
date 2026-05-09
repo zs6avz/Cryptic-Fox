@@ -42,6 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 dropbtn.setAttribute('aria-expanded', 'false');
             }
         });
+
+        // Close dropdown when clicking any link inside it
+        dropdownContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                dropdownContent.classList.remove('show');
+                dropbtn.setAttribute('aria-expanded', 'false');
+            });
+        });
     }
 
     // 2. Inject Footer
