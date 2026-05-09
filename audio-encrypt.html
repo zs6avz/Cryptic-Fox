@@ -39,17 +39,19 @@
     <meta property="og:title" content="Audio Encryption & Decryption — Cryptic Fox">
     <meta property="og:description"
         content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
-    <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Audio Encryption & Decryption — Cryptic Fox">
     <meta name="twitter:description"
         content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <script src="js/components.js"></script>
 </head>
 
 <body class="decrypt-page">
+    <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
     <h1>Audio Encryption & Decryption</h1>
 
     <!-- AES Audio Encryption -->
@@ -71,53 +73,53 @@
         </div>
     </div>
 
-    <!-- RSA Audio Encryption -->
+    <!-- RSA Audio Encryption (Web Crypto API) -->
     <div class="method">
-        <h2>RSA Audio Encryption</h2>
+        <h2>RSA Audio Encryption (Asymmetric)</h2>
+        
+        <!-- Key Management -->
         <div class="sub-method">
-            <h3>Encrypt Audio</h3>
-            <input type="file" class="rsa-audio-input">
-            <textarea class="rsa-public-key" placeholder="Enter RSA public key"></textarea>
-            <button onclick="encryptRSAAudio()">Encrypt</button>
-            <textarea class="rsa-encrypted-output" readonly placeholder="Encrypted audio data..."></textarea>
+            <h3>1. RSA Key Management</h3>
+            <div class="button-group">
+                <button onclick="generateRSAKeyPair()">Generate New Key Pair</button>
+            </div>
+            <div class="key-display">
+                <div class="key-box">
+                    <label>Your Public Key (Share this)</label>
+                    <textarea id="rsa-public-key-display" placeholder="Public Key will appear here..." readonly></textarea>
+                    <button class="small-btn" onclick="copyToClipboard('rsa-public-key-display')">Copy Public Key</button>
+                </div>
+                <div class="key-box">
+                    <label>Your Private Key (KEEP SECRET)</label>
+                    <textarea id="rsa-private-key-display" placeholder="Private Key will appear here..." readonly></textarea>
+                    <button class="small-btn" onclick="copyToClipboard('rsa-private-key-display')">Copy Private Key</button>
+                </div>
+            </div>
+        </div>
 
-            <h3>Decrypt Audio</h3>
-            <textarea class="rsa-audio-input-decrypt" placeholder="Enter RSA encrypted audio data..."></textarea>
-            <textarea class="rsa-private-key" placeholder="Enter RSA private key"></textarea>
-            <button onclick="decryptRSAAudio()">Decrypt</button>
+        <!-- Encryption -->
+        <div class="sub-method">
+            <h3>2. Encrypt Audio (Using Recipient's Public Key)</h3>
+            <input type="file" id="rsa-audio-input">
+            <textarea id="rsa-recipient-public-key" placeholder="Paste Recipient's Public Key here..."></textarea>
+            <button onclick="encryptRSAAudio()">Encrypt with RSA</button>
+            <textarea id="rsa-encrypted-output" readonly placeholder="RSA Encrypted data will appear here..."></textarea>
+            <button class="small-btn" onclick="copyToClipboard('rsa-encrypted-output')">Copy Encrypted Data</button>
+        </div>
+
+        <!-- Decryption -->
+        <div class="sub-method">
+            <h3>3. Decrypt Audio (Using Your Private Key)</h3>
+            <textarea id="rsa-audio-input-decrypt" placeholder="Paste RSA encrypted audio data here..."></textarea>
+            <textarea id="rsa-my-private-key" placeholder="Paste Your Private Key here..."></textarea>
+            <button onclick="decryptRSAAudio()">Decrypt with RSA</button>
+            <div id="rsa-decrypt-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
             <audio id="rsa-audio-output" controls></audio>
-            <a id="rsa-audio-download-link" style="display: none;">Download Decrypted Audio</a>
+            <a id="rsa-audio-download-link" style="display: none;" class="primary-btn">Download Decrypted Audio</a>
         </div>
     </div>
 
-    <!-- Footer and Navigation -->
-    <div class="dropdown" role="navigation" aria-label="Site navigation">
-        <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
-        <div class="dropdown-content">
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="decrypt.html">Encrypt/Decrypt</a>
-            <a href="image-encrypt.html">Image Encryption</a>
-            <a href="audio-encrypt.html">Audio Encryption</a>
-            <a href="red.html">Steganalysis</a>
-            <a href="puzzles.html">Puzzles</a>
-            <a href="cryptography.html">Resources</a>
-            <a href="blog.html">Blog</a>
-            <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
-            <!--<a href="echoes.html">The Threshold of Echoes</a>-->
-            <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
-        </div>
-    </div>
-    <!-- Ad Placement Scaffolding 
-    <div class="ad-scaffold">
-        <span class="ad-label">Sponsored Placement</span>
-    </div>-->
-    <footer>
-        <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
-                rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
-                    src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0'
-                    alt='Buy Me a Coffee at ko-fi.com' /></a></p>
-    </footer>
+    <footer></footer>
 
 </body>
 

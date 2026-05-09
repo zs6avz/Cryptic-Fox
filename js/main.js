@@ -84,51 +84,99 @@ videoUpload.addEventListener("change", e => {
   if (!file) return;
   // remember original filename for per-frame output files
   currentVideoName = (file.name || 'video').replace(/\.[^/.]+$/, '');
-  const url = URL.createObjectURL(file);
-  video.src = url;
-  video.load();
-  video.onloadeddata = () => {
+  
+  // Cleanup old URL if exists
+  // Setup metadata listener BEFORE setting src
+  video.onloadedmetadata = () => {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    glContext = initGL(canvas);
+    
+    // Only init GL once if possible, or re-init safely
+    if (!glContext) {
+      glContext = initGL(canvas);
+    }
+    
     video.pause();
 
     // --- Render the first frame to the canvas for preview ---
-    // Seek to the first frame and render after seeked
-    function handler() {
-      video.removeEventListener('seeked', handler);
+    function renderFirstFrame() {
       const gain = [
-        parseFloat(redGain.value),
-        parseFloat(greenGain.value),
-        parseFloat(blueGain.value)
+        parseFloat(redGain.value || 1),
+        parseFloat(greenGain.value || 1),
+        parseFloat(blueGain.value || 1)
       ];
-      const contrastVal = parseFloat(contrast.value);
+      const contrastVal = parseFloat(contrast.value || 1);
       const brightnessVal = parseFloat(brightness ? brightness.value : 0);
       const brillianceVal = parseFloat(brilliance ? brilliance.value : 0);
       const saturationVal = parseFloat(saturation ? saturation.value : 1);
-      glContext.renderFrame(video, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
+      
+      if (glContext) {
+        glContext.renderFrame(video, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
+      }
+      
       if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
 
-      [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber, lsbChannel].forEach(ctrl => ctrl.disabled = false);
+      [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber, lsbChannel].forEach(ctrl => {
+        if (ctrl) ctrl.disabled = false;
+      });
+      
       if (scrubber) {
         scrubber.max = video.duration;
         scrubber.step = Math.max(0.01, video.duration / 1000);
-        scrubber.value = 0;
-        if (scrubberValue) scrubberValue.textContent = `0.00s`;
+        scrubber.value = video.currentTime;
+        if (scrubberValue) scrubberValue.textContent = `${video.currentTime.toFixed(2)}s`;
       }
-      // preview window removed — no preview button to enable
+      
       const startBtn = document.getElementById("startAnalysisBtn");
       if (startBtn) startBtn.disabled = false;
     }
 
-    video.addEventListener('seeked', handler);
-    video.currentTime = 0;
+    // Seek to a tiny bit past 0 to ensure 'seeked' fires, or just render if already at 0
+    const onSeeked = () => {
+      video.removeEventListener('seeked', onSeeked);
+      renderFirstFrame();
+    };
+    video.addEventListener('seeked', onSeeked);
+    
+    if (video.currentTime === 0) {
+      video.currentTime = 0.01; 
+    } else {
+      video.currentTime = 0;
+    }
+    
+    // Fallback if seeked doesn't fire in a reasonable time
+    setTimeout(() => {
+        if (scrubber && scrubber.disabled) renderFirstFrame();
+    }, 1000);
   };
+
+  const url = URL.createObjectURL(file);
+  video.src = url;
+  video.load();
 
   [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber].forEach(ctrl => {
     if (ctrl) ctrl.disabled = true;
   });
 });
+
+// Frame timing control — must be declared before processVideoFrames
+let step = 1; // default
+
+const slider = document.getElementById('frameStep');
+const display = document.getElementById('frameStepValue');
+
+if (slider && display) {
+  slider.addEventListener('input', function () {
+    step = parseFloat(this.value);
+    display.textContent = `${step.toFixed(2)}s`;
+    console.log(`Frame interval updated to ${step} seconds`);
+  });
+  // also capture 'change' for when user releases the slider
+  slider.addEventListener('change', function () {
+    step = parseFloat(this.value);
+    console.log(`Frame interval updated to ${step} seconds`);
+  });
+}
 
 // Start Analysis button handler
 const startAnalysisBtn = document.getElementById("startAnalysisBtn");
@@ -489,7 +537,7 @@ async function processVideoFrames() {
     });
     if (selectedBits.length === 0) selectedBits = [0]; // default to LSB
 
-    const worker = new Worker('../js/lsb-worker.js');
+    const worker = new Worker('js/lsb-worker.js');
     worker.postMessage({
       framesData: framesToProcess,
       channel: channel,
@@ -543,20 +591,7 @@ async function processVideoFrames() {
   }
 }
 
-// Frame timing control
-let step = 1; // default
-
-const slider = document.getElementById('frameStep');
-const display = document.getElementById('frameStepValue');
-
-if (slider && display) {
-  slider.addEventListener('input', function () {
-    step = parseFloat(this.value);
-    display.textContent = `${step.toFixed(2)}s`;
-    // Trigger re-analysis or update timers
-    console.log(`Frame interval updated to ${step} seconds`);
-  });
-}
+// (Frame timing control moved above processVideoFrames)
 
 // Live update displays for sliders
 function updateSliderDisplays() {
@@ -651,11 +686,7 @@ if (scrubber) {
 // initialize display values
 updateSliderDisplays();
 
-// Register listener ONCE
-document.getElementById('frameStep').addEventListener('change', function () {
-  step = parseFloat(this.value);
-  console.log(`Frame interval updated to ${step} seconds`);
-});
+// (frameStep listener registered above, near step declaration)
 
 // Copy LSB output button
 const copyLSBBtn = document.getElementById("copyLSBBtn");

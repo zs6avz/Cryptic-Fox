@@ -3,11 +3,9 @@ let alphabetToCipher = {};
 let cipherToAlternative = {};
 let alternativeToAlphabet = {};
 
-console.log("Cryptic Fox Script Loaded");
 
 // Single entry point for all DOM-related initialization
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Content Loaded - Initializing components");
 
     // 1. Dropdown Logic
     const dropdownBtn = document.querySelector('.dropbtn');

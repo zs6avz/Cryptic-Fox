@@ -111,7 +111,12 @@ h3 {
     background-clip: text;
 }
 
-p {
+/* Gradient text is applied via .gradient-text utility or specific selectors.
+   Removed from global p to avoid fragile overrides on every page. */
+.hero-section p,
+.feature-card p,
+.features-grid > p,
+footer p {
     background: var(--gradient-brand);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -243,10 +248,7 @@ button {
     border-radius: var(--radius-sm);
     border: 1px solid var(--color-primary);
     background-color: var(--color-surface);
-    background: var(--gradient-brand);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-text);
     cursor: pointer;
     transition: background-color var(--transition-base), box-shadow var(--transition-base);
 }
@@ -324,10 +326,7 @@ textarea {
     margin: 10px;
     font-size: large;
     font-family: 'Space Grotesk', Arial, sans-serif;
-    background: var(--gradient-brand);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--color-text);
     background-color: var(--color-surface);
     border: 1px solid var(--color-primary);
     border-radius: var(--radius-sm);
@@ -1457,6 +1456,119 @@ audio {
     .preview-media {
         height: auto;
     }
+}
+
+/* ============================================
+   13. BLOG
+   ============================================ */
+.blog-intro {
+    max-width: 800px;
+    margin: 0 auto 40px;
+}
+
+/* Search & Filter Bar */
+.blog-controls {
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+#blogSearch {
+    width: 100%;
+    padding: 12px 20px;
+    padding-right: 45px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font-family: inherit;
+    transition: var(--transition-base);
+}
+
+#blogSearch:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: var(--transition-base);
+    font-size: 0.9rem;
+    -webkit-text-fill-color: var(--color-text-muted);
+}
+
+.filter-btn:hover {
+    border-color: var(--color-primary);
+    color: var(--color-text);
+}
+
+.filter-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    -webkit-text-fill-color: white;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.page-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+    cursor: pointer;
+    transition: var(--transition-base);
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.page-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* ============================================

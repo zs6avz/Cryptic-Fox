@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404: Signal Lost — Cryptic Fox</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .error-container {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            line-height: 1;
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.2));
+        }
+        .error-message {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            margin: 20px 0 40px;
+            max-width: 500px;
+        }
+        .glitch-text {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: var(--color-primary);
+            opacity: 0.6;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body class="error-page">
+    <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
+
+    <div class="error-container">
+        <div class="glitch-text">ERROR_CODE: 0x404 // SIGNAL_TERMINATED</div>
+        <h1 class="error-code">404</h1>
+        <p class="error-message">
+            The coordinates you provided lead to a digital void. The page you are looking for has been encrypted, moved, or deleted from the server.
+        </p>
+        <a href="index.html" class="primary-btn">Return to Base</a>
+    </div>
+
+    <footer></footer>
+
+    <script src="js/components.js"></script>
+    <script src="js/script.js" defer></script>
+</body>
+</html>

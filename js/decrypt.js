@@ -92,7 +92,7 @@ const alphabetToJacquard = {};
 // Function to load cipher mappings
 async function loadJacquard() {
     try {
-        const response = await fetch('../xml/jacquard.xml'); // Fetch the mappings XML file
+        const response = await fetch('xml/jacquard.xml'); // Fetch the mappings XML file
         if (!response.ok) throw new Error(`Failed to load mappings: ${response.statusText}`);
         const xml = await response.text();
         const parser = new DOMParser();
@@ -109,7 +109,6 @@ async function loadJacquard() {
             alphabetToJacquard[alphabet] = cipher;
         }
 
-        console.log("Mappings loaded successfully:", jacquardToAlphabet, alphabetToJacquard);
     } catch (error) {
         console.error("Error loading mappings:", error);
     }

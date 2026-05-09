@@ -33,36 +33,22 @@
   <meta property="og:title" content="Video Steganography Tool — Cryptic Fox">
   <meta property="og:description"
     content="Extract hidden data from video frames using LSB analysis, color tools, and OCR.">
-  <meta property="og:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+  <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Video Steganography Tool — Cryptic Fox">
   <meta name="twitter:description"
     content="Extract hidden data from video frames using LSB analysis, color tools, and OCR.">
-  <meta name="twitter:image" content="https://cryptic-fox.com/Fox-Thumbnail.png">
+  <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
-  <script src="js/script.js" defer></script>
+    <script src="js/components.js"></script>
+    <script src="js/script.js" defer></script>
 
 </head>
 
-<body>
-  <div class="dropdown" role="navigation" aria-label="Site navigation">
-    <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
-    <div class="dropdown-content">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="decrypt.html">Encrypt/Decrypt</a>
-      <a href="image-encrypt.html">Image Encryption</a>
-      <a href="audio-encrypt.html">Audio Encryption</a>
-      <a href="red.html">Steganalysis</a>
-      <a href="puzzles.html">Puzzles</a>
-      <a href="cryptography.html">Resources</a>
-      <a href="blog.html">Blog</a>
-      <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
-      <!--<a href="#" class="pro-link">✦ Upgrade to Pro</a>-->
-    </div>
-  </div>
+<body class="red-page">
+    <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
 
   <h1>Video Steganography Tool</h1><img src="images/fennfox.png" class="center-image" alt="Cryptic Fox logo"
     style="width: 150px; height: auto;">
@@ -101,14 +87,11 @@
         <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" style="width:70%;">
         <span class="slider-value" id="scrubberValue">0.00s</span>
       </div>
-      <!-- buttons moved below previews for a centered control bar -->
     </div>
   </section>
 
   <!-- Hidden video element kept for processing; preview removed -->
-  <video id="video" style="display:none"></video>
-
-
+  <video id="video" playsinline muted style="position: absolute; opacity: 0; pointer-events: none; width: 1px; height: 1px;"></video>
 
   <!-- Frame Timing Control -->
   <section id="colorContrast" style="margin-top: 20px;">
@@ -273,11 +256,7 @@
   <div class="ad-scaffold">
     <span class="ad-label">Sponsored Placement</span>
   </div>-->
-  <footer>
-    <p>&copy; 2025 Cryptic Fox &nbsp;|&nbsp; <a href='https://ko-fi.com/S6S81YLIDM' target='_blank'
-        rel='noopener noreferrer'><img height='36' style='border:0px;height:36px;'
-          src='https://storage.ko-fi.com/cdn/kofi6.png?v=6' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a></p>
-  </footer>
+  <footer></footer>
 </body>
 
 </html>
