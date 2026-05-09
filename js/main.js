@@ -183,6 +183,55 @@ videoUpload.addEventListener("change", e => {
   });
 });
 
+// URL upload handler
+const videoUrlInput = document.getElementById("videoUrl");
+const loadUrlBtn = document.getElementById("loadUrlBtn");
+
+if (loadUrlBtn) {
+  loadUrlBtn.addEventListener("click", () => {
+    const url = videoUrlInput.value.trim();
+    if (!url) return alert("Please enter a valid video URL.");
+    
+    if (url.includes("youtube.com") || url.includes("youtu.be")) {
+      return alert("YouTube links cannot be analyzed directly due to CORS security restrictions. These services prevent external tools from accessing their raw pixel data. Please download the video using a local tool and upload the file instead.");
+    }
+
+    console.log("Loading remote video:", url);
+    currentVideoName = url.split('/').pop().split('?')[0] || 'remote_video';
+    
+    // Set crossOrigin to anonymous to attempt CORS loading for pixel access
+    video.crossOrigin = "anonymous";
+    
+    const onLoadedMetadata = () => {
+      console.log("Remote metadata loaded:", video.videoWidth, "x", video.videoHeight);
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      if (!glContext) {
+        glContext = initGL(canvas);
+      }
+      video.pause();
+      
+      // Force initial render
+      setTimeout(() => {
+        const gain = [parseFloat(redGain.value || 1), parseFloat(greenGain.value || 1), parseFloat(blueGain.value || 1)];
+        if (glContext) glContext.renderFrame(video, gain, 1, 0, 0, 1);
+      }, 500);
+
+      [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber, lsbChannel].forEach(ctrl => {
+        if (ctrl) ctrl.disabled = false;
+      });
+      if (scrubber) {
+        scrubber.max = video.duration || 1;
+        scrubber.value = 0;
+      }
+    };
+
+    video.onloadedmetadata = onLoadedMetadata;
+    video.src = url;
+    video.load();
+  });
+}
+
 // Frame timing control — must be declared before processVideoFrames
 let step = 1; // default
 

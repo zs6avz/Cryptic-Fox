@@ -2,7 +2,8 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; media-src 'self' blob: *; worker-src 'self' blob:;">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
@@ -56,10 +57,24 @@
 
   <!-- Upload Section -->
   <section>
-    <label for="videoUpload">Upload Video:</label>
-    <p>Supports MP4, AVI, MOV, MKV formats. Max size: 500MB.</p>
-    <p>The larger the file the longer the processing time</p>
-    <input type="file" id="videoUpload" accept="video/*">
+    <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; justify-content: center;">
+      <div>
+        <label for="videoUpload" style="display: block; margin-bottom: 10px; font-weight: bold;">Upload Local Video:</label>
+        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 5px;">Supports MP4, AVI, MOV, MKV. Max 500MB.</p>
+        <input type="file" id="videoUpload" accept="video/*" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; border: 1px solid #333;">
+      </div>
+      <div style="flex: 1; min-width: 300px;">
+        <label for="videoUrl" style="display: block; margin-bottom: 10px; font-weight: bold;">Analyze from URL (CORS enabled):</label>
+        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 5px;">Paste direct link to .mp4, .webm, etc.</p>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4" style="flex: 1;">
+          <button id="loadUrlBtn" class="primary-btn">Load URL</button>
+        </div>
+      </div>
+    </div>
+    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 15px; text-align: center;">
+        <b>Forensic Note:</b> Direct YouTube links are blocked by YouTube's security policies (CORS). To analyze YouTube content, please download the video first and upload it using the "Local Video" option.
+    </p>
   </section>
 
   <!-- Video Preview -->
