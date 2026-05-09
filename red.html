@@ -67,7 +67,15 @@
   <!-- Video + Output Preview (side-by-side) -->
   <section style="display:flex; gap:20px; align-items:flex-start;">
     <div style="flex:1; min-width:240px;">
-      <h2>Output Preview</h2>
+      <h2>Output Preview
+        <span class="info-icon">i
+          <div class="tooltip-content">
+            <h4>Output Preview</h4>
+            <div><b>Description:</b> A real-time viewport that renders the processed video frames after color, contrast, and LSB filters are applied.</div>
+            <div><b>How-to:</b> Use the playback controls to navigate. Observe the canvas for hidden text or patterns revealed by the sliders below.</div>
+          </div>
+        </span>
+      </h2>
       <canvas id="canvas" class="preview-media"></canvas>
       <div id="outputTime" class="output-timer">0.00s</div>
       <div class="preview-controls"
@@ -95,7 +103,15 @@
 
   <!-- Frame Timing Control -->
   <section id="colorContrast" style="margin-top: 20px;">
-    <h2>Color & Contrast</h2>
+    <h2>Color & Contrast
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Color & Contrast</h4>
+          <div><b>Description:</b> Adjusts the visual properties of the video to expose data hidden in specific color channels or low-visibility areas.</div>
+          <div><b>How-to:</b> Isolate color channels (Red/Green/Blue) or push Contrast/Brightness to the extremes to reveal faint steganographic "ghosts."</div>
+        </div>
+      </span>
+    </h2>
     <label>Red
       <input type="range" id="redGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: red;">
       <span class="slider-value" id="redGainValue">1.00</span>
@@ -132,7 +148,15 @@
 
   <!-- LSB Processing Channel (for extraction during analysis) -->
   <section>
-    <h2>LSB Extraction</h2>
+    <h2>LSB Extraction
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>LSB Extraction</h4>
+          <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text or file signatures.</div>
+          <div><b>How-to:</b> Select the target bits (Bit 0 is most common) and click "Start Analysis" to parse the entire video for hidden payloads.</div>
+        </div>
+      </span>
+    </h2>
     <div style="display:flex; gap: 20px; align-items:flex-start; flex-wrap:wrap;">
       <div>
         <label for="lsbChannel" style="display:block; font-weight:bold;">LSB Channel:</label>
@@ -192,7 +216,15 @@
 
   <!-- Signal Analysis Panel -->
   <section id="signalPanel" class="signal-panel" style="margin-top: 20px;">
-    <h2>Visual Payload Analysis</h2>
+    <h2>Visual Payload Analysis
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Visual Payload</h4>
+          <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within the raw pixel data.</div>
+          <div><b>How-to:</b> Select a bit (0-7) and click "Render Signal." If Bit 0 shows a structured pattern while Bit 7 is a clear image, data is likely hidden.</div>
+        </div>
+      </span>
+    </h2>
     <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap; margin-bottom: 15px;">
       <label for="modeSelect">Mode:</label>
       <select id="modeSelect">
@@ -221,7 +253,15 @@
 
   <!-- Audio Steganography -->
   <section style="margin-top:20px;">
-    <h2>Audio Spectrogram Visualizer</h2>
+    <h2>Audio Spectrogram Visualizer
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Audio Spectrogram</h4>
+          <div><b>Description:</b> A frequency-over-time visualizer for the video's audio track.</div>
+          <div><b>How-to:</b> Watch for shapes or letters appearing in the high-frequency range (15kHz+), often used to hide passwords in audio.</div>
+        </div>
+      </span>
+    </h2>
     <p>Detect hidden data in high-frequency audio bands.</p>
     <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap; margin-top: 10px;">
       <button id="startAudioAnalysisBtn" class="primary-btn">Start Live Spectrogram</button>
@@ -247,7 +287,15 @@
 
   <!-- Decoded Output -->
   <section>
-    <h2>Extracted Text</h2>
+    <h2>Extracted Text
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Extracted Text</h4>
+          <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).</div>
+          <div><b>How-to:</b> Check this section after running an analysis to see decoded strings, URLs, or potential passkeys.</div>
+        </div>
+      </span>
+    </h2>
     <pre id="decodeOutput"></pre>
     <pre id="textOutput"></pre>
   </section>
