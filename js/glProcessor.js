@@ -148,11 +148,12 @@ export function initGL(canvas) {
       gl.uniform1f(uSaturationLoc, saturation || 1.0);
 
       // Upload current video frame into videoTex (unit 0)
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, videoTex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, videoEl);
-
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      if (videoEl.readyState >= 2) {
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, videoTex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, videoEl);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      }
     },
 
     // Helper: extract current frame as ImageData for OCR

@@ -5,7 +5,7 @@ import os
 html_files = glob.glob('*.html') + glob.glob('blog-posts/*.html')
 
 csp_tag = '''
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">'''
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">'''
 
 frame_buster = '''
     <!-- Clickjacking Defense (Frame-Busting) -->
@@ -39,7 +39,11 @@ for file in html_files:
 
     modified = False
 
-    if '<meta http-equiv="Content-Security-Policy"' not in content:
+    # Use regex to find and replace existing CSP tag if it exists, otherwise add it
+    if '<meta http-equiv="Content-Security-Policy"' in content:
+        content = re.sub(r'<meta http-equiv="Content-Security-Policy"[^>]*>', csp_tag.strip(), content)
+        modified = True
+    else:
         content = content.replace('<head>', '<head>' + csp_tag + frame_buster)
         modified = True
 

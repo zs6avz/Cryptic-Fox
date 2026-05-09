@@ -82,24 +82,39 @@ function triggerDownload(filename, text) {
 videoUpload.addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
+  console.log("File uploaded:", file.name, file.size, file.type);
+  
   // remember original filename for per-frame output files
   currentVideoName = (file.name || 'video').replace(/\.[^/.]+$/, '');
   
+  const url = URL.createObjectURL(file);
+  
   // Cleanup old URL if exists
-  // Setup metadata listener BEFORE setting src
-  video.onloadedmetadata = () => {
+  if (video.src) {
+    URL.revokeObjectURL(video.src);
+  }
+
+  // Define the metadata handler
+  const onLoadedMetadata = () => {
+    console.log("Metadata loaded:", video.videoWidth, "x", video.videoHeight, "Duration:", video.duration);
+    
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      console.warn("Video dimensions are 0. Retrying in 500ms...");
+      setTimeout(onLoadedMetadata, 500);
+      return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
-    // Only init GL once if possible, or re-init safely
     if (!glContext) {
       glContext = initGL(canvas);
     }
     
     video.pause();
 
-    // --- Render the first frame to the canvas for preview ---
     function renderFirstFrame() {
+      console.log("Rendering first frame...");
       const gain = [
         parseFloat(redGain.value || 1),
         parseFloat(greenGain.value || 1),
@@ -111,7 +126,11 @@ videoUpload.addEventListener("change", e => {
       const saturationVal = parseFloat(saturation ? saturation.value : 1);
       
       if (glContext) {
-        glContext.renderFrame(video, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
+        try {
+          glContext.renderFrame(video, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
+        } catch (err) {
+          console.error("Initial render failed:", err);
+        }
       }
       
       if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
@@ -121,8 +140,8 @@ videoUpload.addEventListener("change", e => {
       });
       
       if (scrubber) {
-        scrubber.max = video.duration;
-        scrubber.step = Math.max(0.01, video.duration / 1000);
+        scrubber.max = video.duration || 1;
+        scrubber.step = Math.max(0.01, (video.duration || 1) / 1000);
         scrubber.value = video.currentTime;
         if (scrubberValue) scrubberValue.textContent = `${video.currentTime.toFixed(2)}s`;
       }
@@ -131,26 +150,30 @@ videoUpload.addEventListener("change", e => {
       if (startBtn) startBtn.disabled = false;
     }
 
-    // Seek to a tiny bit past 0 to ensure 'seeked' fires, or just render if already at 0
     const onSeeked = () => {
       video.removeEventListener('seeked', onSeeked);
       renderFirstFrame();
     };
     video.addEventListener('seeked', onSeeked);
     
+    // Some browsers need a slight nudge to render the first frame
     if (video.currentTime === 0) {
       video.currentTime = 0.01; 
     } else {
       video.currentTime = 0;
     }
     
-    // Fallback if seeked doesn't fire in a reasonable time
+    // Fallback if seeked doesn't fire
     setTimeout(() => {
-        if (scrubber && scrubber.disabled) renderFirstFrame();
-    }, 1000);
+      if (scrubber && scrubber.disabled) {
+        console.log("Seeked fallback triggered");
+        renderFirstFrame();
+      }
+    }, 2000);
   };
 
-  const url = URL.createObjectURL(file);
+  // Attach listener before setting src
+  video.onloadedmetadata = onLoadedMetadata;
   video.src = url;
   video.load();
 
