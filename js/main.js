@@ -768,22 +768,55 @@ if (stopAudioAnalysisBtn) {
 }
 
 function drawSpectrogram() {
-  if (!audioCanvas || !analyser) return;
-  const ctx = audioCanvas.getContext("2d");
+  if (!audioCanvas || !analyser || !audioCtx) return;
+  const ctx = audioCanvas.getContext("2d", { alpha: false });
   const bufferLength = analyser.frequencyBinCount;
   const dataArray = new Uint8Array(bufferLength);
+  const width = audioCanvas.width;
+  const height = audioCanvas.height;
 
-  // shift old data left
-  const imgData = ctx.getImageData(1, 0, audioCanvas.width - 1, audioCanvas.height);
+  // 1. Shift existing image left
+  const imgData = ctx.getImageData(1, 0, width - 1, height);
   ctx.putImageData(imgData, 0, 0);
 
+  // 2. Capture new frequency data
   analyser.getByteFrequencyData(dataArray);
 
-  // draw new column
-  for (let i = 0; i < bufferLength; i++) {
-    let value = dataArray[i];
-    ctx.fillStyle = `rgb(${value}, ${value / 2}, ${255 - value})`;
-    ctx.fillRect(audioCanvas.width - 1, audioCanvas.height - (i * (audioCanvas.height / bufferLength)), 1, (audioCanvas.height / bufferLength));
+  // 3. Determine frequency range and scaling
+  const focusMode = document.getElementById("freqFocus")?.value || "full";
+  const useLog = document.getElementById("logScale")?.checked || false;
+  const sampleRate = audioCtx.sampleRate;
+  const nyquist = sampleRate / 2;
+
+  let fMin = 0;
+  let fMax = nyquist;
+
+  if (focusMode === "low") fMax = 2000;
+  if (focusMode === "high") fMin = 15000;
+
+  // 4. Draw new column (pixel by pixel for accurate mapping)
+  for (let y = 0; y < height; y++) {
+    const percent = y / height;
+    let freq;
+
+    if (useLog) {
+      const actualMin = Math.max(20, fMin);
+      const actualMax = fMax;
+      freq = actualMin * Math.pow(actualMax / actualMin, percent);
+    } else {
+      freq = fMin + percent * (fMax - fMin);
+    }
+
+    const binIndex = Math.round((freq / nyquist) * bufferLength);
+    const value = dataArray[Math.min(binIndex, bufferLength - 1)] || 0;
+
+    const r = Math.min(255, value * 1.5);
+    const g = Math.min(255, value * 0.5);
+    const b = Math.min(255, 255 - value + (value > 128 ? value : 0));
+    
+    ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+    ctx.fillRect(width - 1, height - y - 1, 1, 1);
   }
+
   audioAnimId = requestAnimationFrame(drawSpectrogram);
 }

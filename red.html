@@ -223,9 +223,18 @@
   <section style="margin-top:20px;">
     <h2>Audio Spectrogram Visualizer</h2>
     <p>Detect hidden data in high-frequency audio bands.</p>
-    <div style="display:flex; gap:10px; align-items:center;">
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap: wrap; margin-top: 10px;">
       <button id="startAudioAnalysisBtn" class="primary-btn">Start Live Spectrogram</button>
       <button id="stopAudioAnalysisBtn">Stop</button>
+      <label for="freqFocus" style="margin:0;">Focus:</label>
+      <select id="freqFocus" style="width:auto; margin:0;">
+        <option value="full">Full Spectrum</option>
+        <option value="low">Low Focus (0-2kHz)</option>
+        <option value="high">High Focus (15-22kHz)</option>
+      </select>
+      <label style="margin:0; display:flex; align-items:center; gap:5px;">
+        <input type="checkbox" id="logScale"> Log Scale
+      </label>
     </div>
     <canvas id="audioCanvas" width="800" height="256"
       style="margin-top: 15px; width:100%; max-width:800px; height:256px; background:#111; border:1px solid #333;"></canvas>
