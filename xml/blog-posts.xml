@@ -102,10 +102,10 @@
     <post>
         <id>12</id>
         <title>Digital Rabbitholes: Beyond the Cipher</title>
-        <date>May 3, 2026</date>
+        <date>May 11, 2026</date>
         <category>Mystery</category>
         <thumbnail>cicada_puzzle_theme_1777370465513.png</thumbnail>
-        <excerpt>5 Surprising Truths Behind the Internet’s Most Elaborate Mystery. From QR codes in Seoul to the dark philosophy of ego destruction.</excerpt>
+        <excerpt>Exploring the verifiable history of Cicada 3301. A deep dive into the documented puzzles, verified communications, and the reality behind the mystery.</excerpt>
         <link>blog-post-12.html</link>
     </post>
     <post>
@@ -119,29 +119,29 @@
     </post>
     <post>
         <id>14</id>
-        <title>Why Your AI is Blind to Poetry: The "Verse" Vulnerability</title>
-        <date>May 1, 2026</date>
+        <title>Why Your AI is Blind to Poetry</title>
+        <date>May 11, 2026</date>
         <category>Security</category>
         <thumbnail>adversarial_poetry_jailbreak_1777640287946.png</thumbnail>
-        <excerpt>Frontier LLMs are trapped in a 'Scale Paradox' where poetic sophistication dismantles safety guardrails. Exploring the world of adversarial verse.</excerpt>
+        <excerpt>A factual exploration of why creative language and figurative structures still pose a challenge for AI safety systems, and what research actually shows.</excerpt>
         <link>blog-post-14.html</link>
     </post>
     <post>
         <id>15</id>
-        <title>The SVV Digital Mystery: Light of the Cleansing Fire</title>
-        <date>May 3, 2026</date>
+        <title>The SVV Digital Mystery</title>
+        <date>May 11, 2026</date>
         <category>Mystery</category>
         <thumbnail>SVV.webp</thumbnail>
-        <excerpt>A descent into Sodalitas Vulturis Volantis. From cryptic Twitter handles to the unsettling hierarchy of the Vulture.</excerpt>
+        <excerpt>A factual overview of Sodalitas Vulturis Volantis (SVV). Examining the verifiable project components, from Twitter entry points to cryptographic challenges.</excerpt>
         <link>blog-post-15.html</link>
     </post>
     <post>
         <id>16</id>
         <title>The END Project: Architecture of Reason</title>
-        <date>May 3, 2026</date>
+        <date>May 11, 2026</date>
         <category>Mystery</category>
         <thumbnail>redacted.webp</thumbnail>
-        <excerpt>A deep dive into the newest digital mystery. Discover a world where early computation meets romantic poetry and industrial artifacts.</excerpt>
+        <excerpt>A factual account of The END Project, examining its aesthetic themes, puzzle structure, and its mysterious disappearance in late 2025.</excerpt>
         <link>blog-post-16.html</link>
     </post>
 </blog>

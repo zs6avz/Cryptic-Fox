@@ -32,11 +32,11 @@
     --color-primary-rgb: 68, 125, 155;
 
     /* Surfaces */
-    --color-bg: #0a0a0a;
-    --color-surface: #2a2a2a;
-    --color-surface-hover: #3a3a3a;
-    --color-surface-deep: #0f0f0f;
-    --color-surface-alt: #2e2e2e;
+    --color-bg: #1a1a1a;
+    --color-surface: #2d2d2d;
+    --color-surface-hover: #3d3d3d;
+    --color-surface-deep: #121212;
+    --color-surface-alt: #1e1e1e;
 
     /* Text */
     --color-text: #e1e1e1;
@@ -554,7 +554,7 @@ section label {
 }
 
 .hero-logo {
-    width: 120px;
+    width: 160px;
     height: auto;
     margin-bottom: 20px;
     animation: float 3s ease-in-out infinite;

@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; media-src 'self' blob: *; worker-src 'self' blob:;">
+        content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; worker-src 'self' blob:;">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
@@ -51,30 +51,16 @@
 <body class="red-page">
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
 
-  <h1>Red Fox: Video Steganalysis Suite</h1><img src="images/fennfox.png" class="center-image" alt="Cryptic Fox logo"
+  <h1>Red Fox: Video Steganalysis Suite</h1><img src="images/new-fox-logo.PNG" class="center-image" alt="Cryptic Fox logo"
     style="width: 150px; height: auto;">
   <h3>A professional-grade forensic workbench for deep video analysis. Detect hidden LSB payloads, analyze spectral audio signatures, and visualize visual bit-plane distributions.</h3>
 
   <!-- Upload Section -->
   <section>
-    <div style="display: flex; gap: 20px; align-items: flex-end; flex-wrap: wrap; justify-content: center;">
-      <div>
-        <label for="videoUpload" style="display: block; margin-bottom: 10px; font-weight: bold;">Upload Local Video:</label>
-        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 5px;">Supports MP4, AVI, MOV, MKV. Max 500MB.</p>
-        <input type="file" id="videoUpload" accept="video/*" style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; border: 1px solid #333;">
-      </div>
-      <div style="flex: 1; min-width: 300px;">
-        <label for="videoUrl" style="display: block; margin-bottom: 10px; font-weight: bold;">Analyze from URL (CORS enabled):</label>
-        <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 5px;">Paste direct link to .mp4, .webm, etc.</p>
-        <div style="display: flex; gap: 10px;">
-          <input type="text" id="videoUrl" placeholder="https://example.com/video.mp4" style="flex: 1;">
-          <button id="loadUrlBtn" class="primary-btn">Load URL</button>
-        </div>
-      </div>
-    </div>
-    <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 15px; text-align: center;">
-        <b>Forensic Note:</b> Direct YouTube links are blocked by YouTube's security policies (CORS). To analyze YouTube content, please download the video first and upload it using the "Local Video" option.
-    </p>
+    <label for="videoUpload">Upload Video:</label>
+    <p>Supports MP4, AVI, MOV, MKV formats. Max size: 500MB.</p>
+    <p>The larger the file the longer the processing time</p>
+    <input type="file" id="videoUpload" accept="video/*">
   </section>
 
   <!-- Video Preview -->
@@ -272,7 +258,7 @@
 
       <button id="analyzeBtn" class="primary-btn" style="padding: 8px 20px;">Render Signal</button>
     </div>
-    <div style="overflow:auto; max-width: 100%; border: 1px solid #333; background: #000;">
+    <div style="overflow:auto; max-width: 100%; border: 1px solid #333; background: var(--color-bg);">
       <canvas id="signalCanvas" style="display: block; margin: 0 auto;"></canvas>
     </div>
   </section>
@@ -310,7 +296,7 @@
       </label>
     </div>
     <canvas id="audioCanvas" width="800" height="256"
-      style="margin-top: 15px; width:100%; max-width:800px; height:256px; background:#111; border:1px solid #333;"></canvas>
+      style="margin-top: 15px; width:100%; max-width:800px; height:256px; background: var(--color-bg); border:1px solid #333;"></canvas>
   </section>
 
   <!-- Sticky Loading Overlay (no blur, no full-screen) -->
