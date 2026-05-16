@@ -41,20 +41,17 @@
     <meta name="twitter:description" content="Translate between the alphabet and the TEP Cipher.">
     <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
-    <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
+    <script src="js/smoke.js" defer></script>
 </head>
 
-<body class="tep-page">
+<body class="tep-page smoke-bg">
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
     <!-- Foxy Input Screen -->
     <div id="foxScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 display: flex; flex-direction: column; justify-content: center; align-items: center;
                 background: radial-gradient(circle at center, #2b2e33 0%, #0f1115 100%);
                 z-index: 10; opacity: 1; transition: z-index 0.5s, opacity 0.5s; overflow: hidden;">
-
-        <!-- Canvas for Dynamic Smoke Effect -->
-        <canvas id="smokeCanvas"></canvas>
 
         <img src="images/new-fox-logo.PNG" class="center-image" alt=""
             style="width: 150px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(68, 125, 155, 0.5)); position: relative;">
@@ -67,102 +64,6 @@
             style="width: 120px; z-index: 1; position: relative; margin-top: 10px;">
             Submit
         </button>
-
-        <script>
-            // Smoke Effect Logic
-            (function () {
-                const canvas = document.getElementById('smokeCanvas');
-                const ctx = canvas.getContext('2d');
-
-                function resize() {
-                    const parent = document.getElementById('foxScreen');
-                    // strictly bond to the parents physical size
-                    const rect = parent.getBoundingClientRect();
-                    const cw = rect.width || window.innerWidth;
-                    const ch = rect.height || window.innerHeight;
-
-                    // set memory size
-                    canvas.width = cw;
-                    canvas.height = ch;
-
-                    // nuke any global css styles directly via javascript
-                    canvas.style.cssText = 'position: absolute !important; top: 0 !important; left: 0 !important; ' +
-                        'width: ' + cw + 'px !important; height: ' + ch + 'px !important; ' +
-                        'max-width: none !important; max-height: none !important; ' +
-                        'margin: 0 !important; padding: 0 !important; border: none !important; ' +
-                        'background: transparent !important; box-shadow: none !important; ' +
-                        'z-index: 0 !important; pointer-events: none !important; outline: none !important;';
-                }
-
-                window.addEventListener('resize', resize);
-                window.addEventListener('orientationchange', resize);
-                resize();
-
-                // Safety check just in case DOM paints later
-                setTimeout(resize, 100);
-                setTimeout(resize, 500);
-
-                class Particle {
-                    constructor() {
-                        this.reset();
-                        // Start scattered fully across the screen on instantiation
-                        this.y = Math.random() * canvas.height;
-                        this.life = Math.random() * this.maxLife;
-                    }
-                    reset() {
-                        this.x = Math.random() * canvas.width;
-                        this.y = canvas.height + 150;
-                        this.size = Math.random() * 150 + 100;
-                        this.speedX = Math.random() * 1.5 - 0.75;
-                        this.speedY = Math.random() * -1.5 - 0.5; // Drift upwards
-                        this.life = 0;
-                        this.maxLife = Math.random() * 400 + 200; // Particle lifespan
-                        this.opacityMultiplier = Math.random() * 0.15 + 0.05; // Light mist opacity
-                    }
-                    update() {
-                        this.x += this.speedX;
-                        this.y += this.speedY;
-                        this.life++;
-
-                        // Loop sides strictly dynamically to the alive canvas width
-                        if (this.x > canvas.width + this.size) this.x = -this.size;
-                        if (this.x < -this.size) this.x = canvas.width + this.size;
-
-                        if (this.life >= this.maxLife || this.y < -this.size) this.reset();
-                    }
-                    draw() {
-                        let limit = this.maxLife / 2;
-                        let envelope = 1 - (Math.abs(this.life - limit) / limit);
-                        if (envelope < 0) envelope = 0;
-                        let opacity = envelope * this.opacityMultiplier;
-
-                        ctx.beginPath();
-                        let gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
-                        gradient.addColorStop(0, 'rgba(200, 220, 240, ' + opacity + ')');
-                        gradient.addColorStop(1, 'rgba(200, 220, 240, 0)');
-                        ctx.fillStyle = gradient;
-                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
-                }
-
-                const particles = [];
-                for (let i = 0; i < 40; i++) particles.push(new Particle());
-
-                function animateSmoke() {
-                    const foxScreen = document.getElementById('foxScreen');
-                    if (foxScreen && foxScreen.style.opacity === '0') return; // Pause drawing when faded
-
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    for (let p of particles) {
-                        p.update();
-                        p.draw();
-                    }
-                    requestAnimationFrame(animateSmoke);
-                }
-                animateSmoke();
-            })();
-        </script>
     </div>
 
     <!-- Menu Button -->

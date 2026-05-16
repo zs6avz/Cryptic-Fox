@@ -44,9 +44,10 @@
     <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
     <script src="js/script.js" defer></script>
+    <script src="js/smoke.js" defer></script>
 </head>
 
-<body class="echoes-page">
+<body class="echoes-page smoke-bg">
     <div class="dropdown" role="navigation" aria-label="Site navigation">
         <button class="dropbtn" aria-label="Navigation menu" aria-expanded="false">⨀Ξ〄⋑</button>
         <div class="dropdown-content">
@@ -83,9 +84,18 @@
         </select>
 
         <div class="characters">
-            <button onclick="askAda()">Ask Ada</button>
-            <button onclick="askB25Y()">Ask B25Y</button>
-            <button onclick="askCharles()">Ask Charles</button>
+            <div class="character-card">
+                <img src="images/Ada_Lovelace_transparency.JPG" alt="Ada">
+                <button onclick="askAda()">Ask Ada</button>
+            </div>
+            <div class="character-card">
+                <img src="images/B25Y_Questionmark.png" alt="B25Y">
+                <button onclick="askB25Y()">Ask B25Y</button>
+            </div>
+            <div class="character-card">
+                <img src="images/Charles-Babbage.JPG" alt="Charles">
+                <button onclick="askCharles()">Ask Charles</button>
+            </div>
         </div>
 
         <div class="controls">
