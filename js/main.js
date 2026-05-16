@@ -1057,23 +1057,40 @@ async function runStatisticalAnalysis() {
 if (runStatsBtn) runStatsBtn.addEventListener('click', runStatisticalAnalysis);
 
 // Drag and Drop Listeners
+const preventDefaults = (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+};
+
 if (dropZone) {
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, e => {
-      e.preventDefault();
-      e.stopPropagation();
-    }, false);
+    dropZone.addEventListener(eventName, preventDefaults, false);
   });
 
   dropZone.addEventListener('dragenter', () => dropZone.classList.add('drag-over'));
   dropZone.addEventListener('dragover', () => dropZone.classList.add('drag-over'));
   dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  
   dropZone.addEventListener('drop', e => {
+    preventDefaults(e);
     dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
-    handleFileUpload(file);
+    if (file) handleFileUpload(file);
   });
 }
+
+// Global window suppression to prevent accidental navigation
+['dragover', 'drop'].forEach(eventName => {
+  window.addEventListener(eventName, preventDefaults, false);
+});
+
+// Explicitly disable on input too
+if (mediaUpload) {
+  ['dragover', 'drop'].forEach(eventName => {
+    mediaUpload.addEventListener(eventName, preventDefaults, false);
+  });
+}
+
 
 // Keyboard Shortcuts
 window.addEventListener('keydown', e => {
