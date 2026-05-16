@@ -1,4 +1,4 @@
-export function initGL(canvas) {
+function initGL(canvas) {
   // Initialize WebGL context and shaders
   const gl = canvas.getContext("webgl");
   if (!gl) {

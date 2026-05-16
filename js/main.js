@@ -1,4 +1,5 @@
-import { initGL } from './glProcessor.js';
+// Wrap in DOMContentLoaded to ensure elements are available even in non-module mode
+document.addEventListener('DOMContentLoaded', () => {
 
 // DOM elements
 const video = document.getElementById("video");
@@ -1062,32 +1063,28 @@ const preventDefaults = (e) => {
   e.stopPropagation();
 };
 
-if (dropZone) {
-  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, preventDefaults, false);
-  });
+// Apply to document for maximum coverage
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  document.addEventListener(eventName, preventDefaults, false);
+});
 
-  dropZone.addEventListener('dragenter', () => dropZone.classList.add('drag-over'));
-  dropZone.addEventListener('dragover', () => dropZone.classList.add('drag-over'));
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+if (dropZone) {
+  // Visual feedback only for zone
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, () => dropZone.classList.add('drag-over'), false);
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, () => dropZone.classList.remove('drag-over'), false);
+  });
   
   dropZone.addEventListener('drop', e => {
-    preventDefaults(e);
-    dropZone.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
     if (file) handleFileUpload(file);
   });
-}
-
-// Global window suppression to prevent accidental navigation
-['dragover', 'drop'].forEach(eventName => {
-  window.addEventListener(eventName, preventDefaults, false);
-});
-
-// Explicitly disable on input too
-if (mediaUpload) {
-  ['dragover', 'drop'].forEach(eventName => {
-    mediaUpload.addEventListener(eventName, preventDefaults, false);
+  
+  // Make the entire zone clickable to trigger the hidden file input
+  dropZone.addEventListener('click', () => {
+    if (mediaUpload) mediaUpload.click();
   });
 }
 
@@ -1346,3 +1343,5 @@ function drawSpectrogram() {
 
   audioAnimId = requestAnimationFrame(drawSpectrogram);
 }
+
+}); // End DOMContentLoaded
