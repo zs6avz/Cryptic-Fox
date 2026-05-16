@@ -1,4 +1,3 @@
-// Wrap in DOMContentLoaded to ensure elements are available even in non-module mode
 document.addEventListener('DOMContentLoaded', () => {
 
 // DOM elements
@@ -1057,18 +1056,9 @@ async function runStatisticalAnalysis() {
 
 if (runStatsBtn) runStatsBtn.addEventListener('click', runStatisticalAnalysis);
 
-// Drag and Drop Listeners
-const preventDefaults = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-};
-
-// Apply to document for maximum coverage
-['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-  document.addEventListener(eventName, preventDefaults, false);
-});
-
+// Drop Zone Specific Listeners
 if (dropZone) {
+
   // Visual feedback only for zone
   ['dragenter', 'dragover'].forEach(name => {
     dropZone.addEventListener(name, () => dropZone.classList.add('drag-over'), false);
