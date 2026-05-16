@@ -2,115 +2,143 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; worker-src 'self' blob:;">
-    <!-- Clickjacking Defense (Frame-Busting) -->
-    <style id="antiClickjack">body{display:none !important;}</style>
-    <script type="text/javascript">
-        if (self === top) {
-            var antiClickjack = document.getElementById("antiClickjack");
-            if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
-        } else {
-            top.location = self.location;
-        }
-    </script>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; worker-src 'self' blob:;">
+  <!-- Clickjacking Defense (Frame-Busting) -->
+  <style id="antiClickjack">
+    body {
+      display: none !important;
+    }
+  </style>
+  <script type="text/javascript">
+    if (self === top) {
+      var antiClickjack = document.getElementById("antiClickjack");
+      if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
+    } else {
+      top.location = self.location;
+    }
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Red Fox: Advanced Video Steganalysis & Forensic Suite — Cryptic Fox</title>
+  <title>Red Fox: Advanced Steganalysis & Forensic Suite — Cryptic Fox</title>
   <link rel="stylesheet" href="style.css" />
   <!-- Favicon Links -->
   <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
- 
+
   <meta name="description"
-    content="Professional video forensic toolkit. Extract hidden payloads via LSB analysis, visualize bit-planes, analyze spectral audio signatures, and perform automated OCR on video frames.">
+    content="Professional media forensic toolkit. Extract hidden payloads via LSB analysis, visualize bit-planes, analyze spectral audio signatures, and perform automated OCR on video frames.">
   <link rel="canonical" href="https://cryptic-fox.com/red.html">
- 
+
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://cryptic-fox.com/red.html">
-  <meta property="og:title" content="Red Fox: Advanced Video Steganalysis — Cryptic Fox">
+  <meta property="og:title" content="Red Fox: Advanced Steganalysis — Cryptic Fox">
   <meta property="og:description"
-    content="A professional-grade forensic workbench for deep video analysis. Extract hidden data and spectral audio signatures.">
+    content="A professional-grade forensic workbench for deep media analysis. Extract hidden data and spectral audio signatures.">
   <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
- 
+
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Red Fox: Advanced Video Steganalysis — Cryptic Fox">
+  <meta name="twitter:title" content="Red Fox: Advanced Steganalysis — Cryptic Fox">
   <meta name="twitter:description"
-    content="A professional-grade forensic workbench for deep video analysis. Extract hidden data and spectral audio signatures.">
+    content="A professional-grade forensic workbench for deep media analysis. Extract hidden data and spectral audio signatures.">
   <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
-    <script src="js/components.js"></script>
-    <script src="js/script.js" defer></script>
+  <script src="js/components.js"></script>
+  <script src="js/script.js" defer></script>
 
 </head>
 
-<body class="red-page">
-    <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
+<body class="red-page smoke-bg">
+  <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
 
-  <h1>Red Fox: Video Steganalysis Suite</h1><img src="images/new-fox-logo.PNG" class="center-image" alt="Cryptic Fox logo"
-    style="width: 150px; height: auto;">
-  <h3>A professional-grade forensic workbench for deep video analysis. Detect hidden LSB payloads, analyze spectral audio signatures, and visualize visual bit-plane distributions.</h3>
+  <h1>Red Fox: Steganalysis Suite</h1>
+  <img src="images/new-fox-logo.PNG" class="center-image" alt="Cryptic Fox logo" style="width: 150px; height: auto;">
+  <h3>A professional-grade forensic workbench for deep media analysis. Detect hidden LSB payloads, analyze spectral
+    audio signatures, and visualize bit-plane distributions.</h3>
 
-  <!-- Upload Section -->
-  <section>
-    <label for="videoUpload">Upload Video:</label>
-    <p>Supports MP4, AVI, MOV, MKV formats. Max size: 500MB.</p>
-    <p>The larger the file the longer the processing time</p>
-    <input type="file" id="videoUpload" accept="video/*">
-  </section>
+  <!-- Error Banner -->
+  <div id="errorBanner" class="red-error-banner" style="display: none;">
+    <span id="errorText"></span>
+    <button id="errorDismiss" class="error-dismiss-btn" aria-label="Dismiss error">✕</button>
+  </div>
 
-  <!-- Video Preview -->
-  <!-- Video + Output Preview (side-by-side) -->
-  <section style="display:flex; gap:20px; align-items:flex-start;">
-    <div style="flex:1; min-width:240px;">
-      <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-        <span>Output Preview</span>
-        <span class="info-icon">i
-          <div class="tooltip-content">
-            <h4>Output Preview</h4>
-            <div><b>Description:</b> A real-time viewport that renders the processed video frames after color, contrast, and LSB filters are applied.</div>
-            <div><b>How-to:</b> Use the playback controls to navigate. Observe the canvas for hidden text or patterns revealed by the sliders below.</div>
-          </div>
-        </span>
-      </h2>
-      <canvas id="canvas" class="preview-media"></canvas>
-      <div id="outputTime" class="output-timer">0.00s</div>
-      <div class="preview-controls"
-        style="display:flex; justify-content:center; gap:12px; margin-top:8px; align-items:center;">
-        <button id="playPauseBtn" aria-label="Play">▶</button>
-        <label class="playback-label">Playback Speed
-          <select id="playbackRate">
-            <option value="0.25">0.25x</option>
-            <option value="0.5">0.50x</option>
-            <option value="1.0" selected>1.00x</option>
-            <option value="1.25">1.25x</option>
-            <option value="1.5">1.50x</option>
-          </select>
-        </label>
-      </div>
-      <div style="margin-top:8px; display:flex; justify-content:center; gap:8px; align-items:center;">
-        <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" style="width:70%;">
-        <span class="slider-value" id="scrubberValue">0.00s</span>
-      </div>
+  <!-- Upload Section with Drag-and-Drop -->
+  <section class="red-upload-section">
+    <h2>Upload Media</h2>
+    <div id="dropZone" class="red-drop-zone">
+      <div class="red-drop-icon">📁</div>
+      <p class="red-drop-text">Drag & drop a file here, or click to browse</p>
+      <p class="red-drop-hint">Supports images (PNG, BMP, JPEG, WEBP) and video (MP4, AVI, MOV, MKV). Max 500MB.</p>
+      <input type="file" id="mediaUpload" accept="image/*,video/*" class="red-drop-input">
+    </div>
+    <div id="fileInfo" class="red-file-info" style="display: none;">
+      <span id="fileName"></span> · <span id="fileSize"></span>
+      <span id="fileType" class="red-file-badge"></span>
     </div>
   </section>
 
-  <!-- Hidden video element kept for processing; preview removed -->
-  <video id="video" playsinline muted style="position: fixed; top: -1000px; left: -1000px; opacity: 0; pointer-events: none; width: 320px; height: 180px;"></video>
+  <!-- Output Preview -->
+  <section>
+    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+      <span>Output Preview</span>
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Output Preview</h4>
+          <div><b>Description:</b> A real-time viewport that renders the processed frames after color, contrast, and LSB
+            filters are applied.</div>
+          <div><b>How-to:</b> Use the playback controls to navigate. Observe the canvas for hidden text or patterns
+            revealed by the sliders below.</div>
+        </div>
+      </span>
+    </h2>
+    <canvas id="canvas" class="preview-media"></canvas>
+    <div id="outputTime" class="output-timer">0.00s</div>
 
-  <!-- Frame Timing Control -->
+    <!-- Playback Controls (video only) -->
+    <div id="videoControls" class="preview-controls"
+      style="display:flex; justify-content:center; gap:12px; margin-top:8px; align-items:center;">
+      <button id="prevFrameBtn" class="red-frame-btn" aria-label="Previous frame" title="Previous frame (←)">◄</button>
+      <button id="playPauseBtn" aria-label="Play" title="Play/Pause (Space)">▶</button>
+      <button id="nextFrameBtn" class="red-frame-btn" aria-label="Next frame" title="Next frame (→)">►</button>
+      <label class="playback-label">Speed
+        <select id="playbackRate">
+          <option value="0.25">0.25x</option>
+          <option value="0.5">0.50x</option>
+          <option value="1.0" selected>1.00x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.50x</option>
+        </select>
+      </label>
+    </div>
+    <div id="videoScrubber" style="margin-top:8px; display:flex; justify-content:center; gap:8px; align-items:center;">
+      <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" style="width:70%;">
+      <span class="slider-value" id="scrubberValue">0.00s</span>
+    </div>
+
+    <div class="red-canvas-actions">
+      <button id="savePreviewBtn" class="red-save-btn" title="Save preview as PNG">💾 Save Preview</button>
+    </div>
+  </section>
+
+  <!-- Hidden video element for processing -->
+  <video id="video" playsinline
+    style="position: fixed; top: -1000px; left: -1000px; opacity: 0; pointer-events: none; width: 320px; height: 180px;"></video>
+
+  <!-- Color & Contrast -->
   <section id="colorContrast" style="margin-top: 20px;">
     <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
       <span>Color & Contrast</span>
       <span class="info-icon">i
         <div class="tooltip-content">
           <h4>Color & Contrast</h4>
-          <div><b>Description:</b> Adjusts the visual properties of the video to expose data hidden in specific color channels or low-visibility areas.</div>
-          <div><b>How-to:</b> Isolate color channels (Red/Green/Blue) or push Contrast/Brightness to the extremes to reveal faint steganographic "ghosts."</div>
+          <div><b>Description:</b> Adjusts the visual properties of the media to expose data hidden in specific color
+            channels or low-visibility areas.</div>
+          <div><b>How-to:</b> Isolate color channels (Red/Green/Blue) or push Contrast/Brightness to the extremes to
+            reveal faint steganographic "ghosts."</div>
         </div>
       </span>
     </h2>
@@ -140,7 +168,6 @@
         style="width:100%; accent-color: #7bd389;">
       <span class="slider-value" id="brillianceValue">0.00</span>
     </label>
-
     <label>Saturation
       <input type="range" id="saturation" min="0" max="2" step="0.01" value="1"
         style="width:100%; accent-color: purple;">
@@ -148,19 +175,22 @@
     </label>
   </section>
 
-  <!-- LSB Processing Channel (for extraction during analysis) -->
+  <!-- LSB Extraction -->
   <section>
     <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
       <span>LSB Extraction</span>
       <span class="info-icon">i
         <div class="tooltip-content">
           <h4>LSB Extraction</h4>
-          <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text or file signatures.</div>
-          <div><b>How-to:</b> Select the target bits (Bit 0 is most common) and click "Start Analysis" to parse the entire video for hidden payloads.</div>
+          <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text
+            or file signatures.</div>
+          <div><b>How-to:</b> Select the target bits (Bit 0 is most common) and click "Start Analysis" to parse the
+            media for hidden payloads.</div>
         </div>
       </span>
     </h2>
-    <div style="display:flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md);">
+    <div
+      style="display:flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md);">
       <div style="text-align: center;">
         <label for="lsbChannel" style="display:block; font-weight:bold; margin-bottom: 10px;">LSB Channel:</label>
         <select id="lsbChannel" style="width: 150px;">
@@ -173,7 +203,8 @@
       </div>
       <div style="text-align: center;">
         <label style="display:block; font-weight:bold; margin-bottom: 10px;">Bits to Extract:</label>
-        <div id="bitSelectors" style="display:flex; gap: 10px; flex-wrap: wrap; max-width: 300px; justify-content: center;">
+        <div id="bitSelectors"
+          style="display:flex; gap: 10px; flex-wrap: wrap; max-width: 300px; justify-content: center;">
           <label><input type="checkbox" value="0" checked> Bit 0 (LSB)</label>
           <label><input type="checkbox" value="1"> Bit 1</label>
           <label><input type="checkbox" value="2"> Bit 2</label>
@@ -187,26 +218,48 @@
       </div>
     </div>
 
-    <h2 style="margin-top:16px;">Frame Timing</h2>
-    <label for="frameStep" style="display: block; font-weight: bold; margin-bottom: 8px;">
-      Time Between Frames: <span id="frameStepValue">1.00s</span>
-    </label>
-    <input type="range" id="frameStep" min="0.5" max="20.0" step="0.01" value="1.00"
-      style="width: 100%; accent-color: #eb3f7b;">
-    <p>Adjust the time between frames. Range: 0.5–20.0 seconds. Default is 1.00 second.</p>
-    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-        <button id="startAnalysisBtn" class="primary-btn" disabled style="padding: 10px 25px;">
-          Start Analysis
-        </button>
-        <button id="resetBtn" class="primary-btn" style="padding: 10px 25px; background: var(--color-surface-hover);">Reset All</button>
+    <!-- Frame Timing (video only) -->
+    <div id="frameTimingSection">
+      <h3 style="margin-top:16px;">Frame Timing</h3>
+      <label for="frameStep" style="display: block; font-weight: bold; margin-bottom: 8px;">
+        Time Between Frames: <span id="frameStepValue">1.00s</span>
+      </label>
+      <input type="range" id="frameStep" min="0.5" max="20.0" step="0.01" value="1.00"
+        style="width: 100%; accent-color: #eb3f7b;">
+      <p>Adjust the time between frames. Range: 0.5–20.0 seconds. Default is 1.00 second.</p>
     </div>
 
+    <!-- OCR Toggle -->
+    <div
+      style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); text-align: center;">
+      <label style="display:inline-flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="checkbox" id="ocrToggle">
+        <span>Enable OCR Text Detection</span>
+      </label>
+      <p style="font-size: 0.8em; color: var(--color-text-muted); margin-top: 5px;">Warning: significantly increases
+        analysis time.</p>
+    </div>
 
-    <!-- Single LSB control now handles extraction AND display -->
+    <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+      <button id="startAnalysisBtn" class="primary-btn" disabled style="padding: 10px 25px;">
+        Start Analysis
+      </button>
+      <button id="resetBtn" class="primary-btn"
+        style="padding: 10px 25px; background: var(--color-surface-hover);">Reset All</button>
+    </div>
+
+    <!-- Progress Bar -->
+    <div id="progressContainer" class="red-progress-container" style="display: none;">
+      <div class="red-progress-track">
+        <div id="progressBar" class="red-progress-fill"></div>
+      </div>
+      <span id="progressText" class="red-progress-text">0%</span>
+    </div>
 
     <!-- LSB Output Display -->
     <h3>LSB Data Exfiltration</h3>
-    <pre id="lsbOutputDisplay" style="max-height: 200px; overflow-y: auto; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);"></pre>
+    <pre id="lsbOutputDisplay"
+      style="max-height: 200px; overflow-y: auto; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);"></pre>
     <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 15px;">
       <button id="copyLSBBtn">Copy All Text</button>
       <button id="downloadBinaryBtn" class="primary-btn">Download Raw Binary (.bin)</button>
@@ -226,28 +279,45 @@
       <span class="info-icon">i
         <div class="tooltip-content">
           <h4>Visual Payload</h4>
-          <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within the raw pixel data.</div>
-          <div><b>How-to:</b> Select a bit (0-7) and click "Render Signal." If Bit 0 shows a structured pattern while Bit 7 is a clear image, data is likely hidden.</div>
+          <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within
+            the raw pixel data.</div>
+          <div><b>How-to:</b> Select a bit (0-7) and click "Render Signal." If Bit 0 shows a structured pattern while
+            Bit 7 is a clear image, data is likely hidden.</div>
         </div>
       </span>
     </h2>
-    <div style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
+    <div
+      style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
       <div style="display: flex; align-items: center; gap: 8px;">
         <label for="modeSelect">Mode:</label>
         <select id="modeSelect">
-            <option value="bitplane">Bit-plane</option>
-            <option value="xor">XOR</option>
-            <option value="entropy">Entropy</option>
+          <option value="bitplane">Bit-plane</option>
+          <option value="xor">XOR</option>
+          <option value="entropy">Entropy</option>
         </select>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px;">
         <label for="channelSelect">Channel:</label>
         <select id="channelSelect">
-            <option value="red">Red</option>
-            <option value="green">Green</option>
-            <option value="blue">Blue</option>
-            <option value="all">All (Avg)</option>
+          <option value="red">Red</option>
+          <option value="green">Green</option>
+          <option value="blue">Blue</option>
+          <option value="all">All (Avg)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <label for="bitPlaneSelect">Bit:</label>
+        <select id="bitPlaneSelect">
+          <option value="0" selected>Bit 0 (LSB)</option>
+          <option value="1">Bit 1</option>
+          <option value="2">Bit 2</option>
+          <option value="3">Bit 3</option>
+          <option value="4">Bit 4</option>
+          <option value="5">Bit 5</option>
+          <option value="6">Bit 6</option>
+          <option value="7">Bit 7 (MSB)</option>
         </select>
       </div>
 
@@ -261,33 +331,80 @@
     <div style="overflow:auto; max-width: 100%; border: 1px solid #333; background: var(--color-bg);">
       <canvas id="signalCanvas" style="display: block; margin: 0 auto;"></canvas>
     </div>
+    <div class="red-canvas-actions">
+      <button id="saveSignalBtn" class="red-save-btn">💾 Save Signal Map</button>
+    </div>
   </section>
 
-  <!-- Audio Steganography -->
-  <section style="margin-top:20px;">
+  <!-- Statistical Analysis -->
+  <section style="margin-top: 20px;">
+    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+      <span>Statistical Analysis</span>
+      <span class="info-icon">i
+        <div class="tooltip-content">
+          <h4>Statistical Analysis</h4>
+          <div><b>Description:</b> Provides quantitative evidence of steganographic modifications using histogram
+            distribution and chi-square testing.</div>
+          <div><b>How-to:</b> Click "Run Statistical Analysis" after loading a file. A flat LSB histogram and low
+            chi-square p-value suggest hidden data.</div>
+        </div>
+      </span>
+    </h2>
+    <div class="red-stats-grid">
+      <div class="red-stats-panel">
+        <h3>LSB Histogram</h3>
+        <canvas id="histogramCanvas" width="400" height="200"
+          style="width:100%; max-width:400px; background:#111; border:1px solid #333; border-radius: var(--radius-sm);"></canvas>
+        <div style="display:flex; gap:15px; justify-content:center; margin-top:8px; font-size:0.85em;">
+          <span><span
+              style="display:inline-block;width:12px;height:12px;background:#ff4444;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Red</span>
+          <span><span
+              style="display:inline-block;width:12px;height:12px;background:#44ff44;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Green</span>
+          <span><span
+              style="display:inline-block;width:12px;height:12px;background:#4444ff;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Blue</span>
+        </div>
+      </div>
+      <div class="red-stats-panel">
+        <h3>Detection Metrics</h3>
+        <div id="statsOutput" class="red-stats-output">
+          <p style="color: var(--color-text-muted); font-style: italic;">Load a file and run analysis to see results.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: 15px;">
+      <button id="runStatsBtn" class="primary-btn" disabled style="padding: 10px 25px;">Run Statistical
+        Analysis</button>
+    </div>
+  </section>
+
+  <!-- Audio Steganography (video only) -->
+  <section id="audioSection" style="margin-top:20px;">
     <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
       <span>Audio Spectrogram Visualizer</span>
       <span class="info-icon">i
         <div class="tooltip-content">
           <h4>Audio Spectrogram</h4>
           <div><b>Description:</b> A frequency-over-time visualizer for the video's audio track.</div>
-          <div><b>How-to:</b> Watch for shapes or letters appearing in the high-frequency range (15kHz+), often used to hide passwords in audio.</div>
+          <div><b>How-to:</b> Watch for shapes or letters appearing in the high-frequency range (15kHz+), often used to
+            hide passwords in audio.</div>
         </div>
       </span>
     </h2>
     <p>Detect hidden data in high-frequency audio bands.</p>
-    <div style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
+    <div
+      style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
       <div style="display: flex; gap: 10px;">
         <button id="startAudioAnalysisBtn" class="primary-btn">Start Live Spectrogram</button>
         <button id="stopAudioAnalysisBtn">Stop</button>
       </div>
-      
+
       <div style="display: flex; align-items: center; gap: 8px;">
         <label for="freqFocus">Focus:</label>
         <select id="freqFocus" style="width:auto;">
-            <option value="full">Full Spectrum</option>
-            <option value="low">Low Focus (0-2kHz)</option>
-            <option value="high">High Focus (15-22kHz)</option>
+          <option value="full">Full Spectrum</option>
+          <option value="low">Low Focus (0-2kHz)</option>
+          <option value="high">High Focus (15-22kHz)</option>
         </select>
       </div>
 
@@ -297,36 +414,62 @@
     </div>
     <canvas id="audioCanvas" width="800" height="256"
       style="margin-top: 15px; width:100%; max-width:800px; height:256px; background: var(--color-bg); border:1px solid #333;"></canvas>
+    <div class="red-canvas-actions">
+      <button id="saveAudioBtn" class="red-save-btn">💾 Save Spectrogram</button>
+    </div>
   </section>
 
-  <!-- Sticky Loading Overlay (no blur, no full-screen) -->
+  <!-- Loading Overlay -->
   <div id="loadingDiv" class="loading-sticky" style="display: none;">
+    <div class="spinner"></div>
     <p id="loadingText">Processing frames, please wait...</p>
   </div>
 
-  <!-- Master Control Section -->
-  <section style="margin-top: 30px; text-align: center; border: 2px solid #eb3f7b; background: rgba(235, 63, 123, 0.05);">
+  <!-- Deep Analysis Suite -->
+  <section
+    style="margin-top: 30px; text-align: center; border: 2px solid #eb3f7b; background: rgba(235, 63, 123, 0.05);">
     <h2>Deep Analysis Suite</h2>
-    <p>Run all forensic tools simultaneously for a comprehensive scan of the video's data, visuals, and audio.</p>
-    <button id="masterAnalysisBtn" class="primary-btn" style="padding: 15px 40px; font-size: 1.2rem; background: linear-gradient(135deg, #eb3f7b 0%, #ff7eb3 100%); margin-top: 10px;">
-        🚀 Start Full Deep Scan
+    <p>Run all forensic tools simultaneously for a comprehensive scan of the media's data, visuals, and audio.</p>
+    <p>Adjust all settings before starting the analysis.</p>
+    <button id="masterAnalysisBtn" class="primary-btn" disabled
+      style="padding: 15px 40px; font-size: 1.2rem; background: linear-gradient(135deg, #eb3f7b 0%, #ff7eb3 100%); margin-top: 10px;">
+      🚀 Start Full Deep Scan
     </button>
   </section>
 
-  <!-- Decoded Output -->
+  <!-- Extracted Text -->
   <section>
     <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
       <span>Extracted Text</span>
       <span class="info-icon">i
         <div class="tooltip-content">
           <h4>Extracted Text</h4>
-          <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).</div>
-          <div><b>How-to:</b> Check this section after running an analysis to see decoded strings, URLs, or potential passkeys.</div>
+          <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).
+          </div>
+          <div><b>How-to:</b> Check this section after running an analysis to see decoded strings, URLs, or potential
+            passkeys.</div>
         </div>
       </span>
     </h2>
-    <pre id="decodeOutput"></pre>
+    <pre id="decodeOutput"
+      style="color: var(--color-text-muted); font-style: italic;">No analysis results yet. Upload a file and run analysis.</pre>
     <pre id="textOutput"></pre>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 15px;">
+      <button id="exportReportBtn" class="primary-btn">📄 Export Analysis Report</button>
+    </div>
+  </section>
+
+  <!-- Keyboard Shortcuts -->
+  <section class="red-shortcuts-section">
+    <h2>Keyboard Shortcuts</h2>
+    <div class="red-shortcuts-grid">
+      <div class="red-shortcut"><kbd>Space</kbd> Play / Pause</div>
+      <div class="red-shortcut"><kbd>←</kbd> Previous Frame</div>
+      <div class="red-shortcut"><kbd>→</kbd> Next Frame</div>
+      <div class="red-shortcut"><kbd>R</kbd> Reset All</div>
+      <div class="red-shortcut"><kbd>Enter</kbd> Start Analysis</div>
+      <div class="red-shortcut"><kbd>Esc</kbd> Stop Analysis</div>
+    </div>
   </section>
 
   <!-- JS Modules -->
@@ -337,6 +480,7 @@
     integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG"
     crossorigin="anonymous"></script>
   <script type="module" src="js/main.js"></script>
+  <script src="js/smoke.js" defer></script>
 
   <!-- Ad Placement Scaffolding
   <div class="ad-scaffold">

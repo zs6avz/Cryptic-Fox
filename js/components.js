@@ -32,13 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
             e.stopPropagation();
             const isExpanded = dropbtn.getAttribute('aria-expanded') === 'true';
             dropbtn.setAttribute('aria-expanded', !isExpanded);
-            dropdownContent.classList.toggle('show');
+            dropdownContent.classList.toggle('active');
         });
 
         // Close dropdown when clicking outside
         window.addEventListener('click', () => {
-            if (dropdownContent.classList.contains('show')) {
-                dropdownContent.classList.remove('show');
+            if (dropdownContent.classList.contains('active')) {
+                dropdownContent.classList.remove('active');
                 dropbtn.setAttribute('aria-expanded', 'false');
             }
         });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Close dropdown when clicking any link inside it
         dropdownContent.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
-                dropdownContent.classList.remove('show');
+                dropdownContent.classList.remove('active');
                 dropbtn.setAttribute('aria-expanded', 'false');
             });
         });
