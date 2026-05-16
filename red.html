@@ -329,7 +329,7 @@
       <button id="analyzeBtn" class="primary-btn" style="padding: 8px 20px;">Render Signal</button>
     </div>
     <div style="overflow:auto; max-width: 100%; border: 1px solid #333; background: var(--color-bg);">
-      <canvas id="signalCanvas" style="display: block; margin: 0 auto;"></canvas>
+      <canvas id="signalCanvas" class="forensic-monitor" style="display: block; margin: 0 auto;"></canvas>
     </div>
     <div class="red-canvas-actions">
       <button id="saveSignalBtn" class="red-save-btn">💾 Save Signal Map</button>
@@ -412,7 +412,7 @@
         <input type="checkbox" id="logScale"> Log Scale
       </label>
     </div>
-    <canvas id="audioCanvas" width="800" height="256"
+    <canvas id="audioCanvas" class="forensic-monitor" width="800" height="256"
       style="margin-top: 15px; width:100%; max-width:800px; height:256px; background: var(--color-bg); border:1px solid #333;"></canvas>
     <div class="red-canvas-actions">
       <button id="saveAudioBtn" class="red-save-btn">💾 Save Spectrogram</button>

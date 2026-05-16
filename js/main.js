@@ -262,6 +262,13 @@ function loadVideoFile(file) {
     }, 2000);
   };
 
+  // Cleanup old URL if exists
+  if (video.src && video.src.startsWith('blob:')) {
+    URL.revokeObjectURL(video.src);
+  }
+
+  const url = URL.createObjectURL(file);
+  
   // Attach listener before setting src
   video.onloadedmetadata = onLoadedMetadata;
   video.src = url;
@@ -423,6 +430,19 @@ function resetAll() {
 
 if (resetBtn) resetBtn.addEventListener('click', resetAll);
 
+if (playPauseBtn) {
+  playPauseBtn.addEventListener('click', () => {
+    if (video.paused) {
+      video.play().catch(err => {
+        console.error("Play failed:", err);
+        showError("Playback failed. Please ensure the file is a valid video.");
+      });
+    } else {
+      video.pause();
+    }
+  });
+}
+
 video.addEventListener('play', () => {
   startRenderLoop();
   if (playPauseBtn) { playPauseBtn.textContent = '⏸'; playPauseBtn.setAttribute('aria-label', 'Pause'); }
@@ -434,12 +454,29 @@ video.addEventListener('pause', () => {
   renderPreviewIfAvailable();
 });
 video.addEventListener('ended', () => { isPlaying = false; if (playPauseBtn) { playPauseBtn.textContent = '▶'; playPauseBtn.setAttribute('aria-label', 'Play'); } });
-video.addEventListener('timeupdate', () => {
-  if (!scrubberDragging && scrubber) {
-    scrubber.value = video.currentTime;
-    if (scrubberValue) scrubberValue.textContent = `${video.currentTime.toFixed(2)}s`;
-  }
   if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
+});
+
+// Scrubber interaction
+if (scrubber) {
+  scrubber.addEventListener('input', () => {
+    scrubberDragging = true;
+    if (video) video.currentTime = parseFloat(scrubber.value);
+    if (scrubberValue) scrubberValue.textContent = `${parseFloat(scrubber.value).toFixed(2)}s`;
+  });
+  scrubber.addEventListener('change', () => {
+    scrubberDragging = false;
+    renderPreviewIfAvailable();
+  });
+}
+
+// Visual Payload controls
+[modeSelect, channelSelect, bitPlaneSelect].forEach(ctrl => {
+  if (ctrl) {
+    ctrl.addEventListener('change', () => {
+      runSignalAnalysis();
+    });
+  }
 });
 
 // Seek helper
@@ -1083,6 +1120,28 @@ if (contrast) contrast.addEventListener('input', updateSliderDisplays);
 if (brightness) brightness.addEventListener('input', updateSliderDisplays);
 if (brilliance) brilliance.addEventListener('input', updateSliderDisplays);
 if (saturation) saturation.addEventListener('input', updateSliderDisplays);
+if (lsbChannel) lsbChannel.addEventListener('change', () => { if(!isImageMode) renderPreviewIfAvailable(); });
+
+// Audio Buttons
+if (startAudioAnalysisBtn) startAudioAnalysisBtn.addEventListener('click', startAudioAnalysis);
+if (stopAudioAnalysisBtn) stopAudioAnalysisBtn.addEventListener('click', stopAudioAnalysis);
+
+// Download Binary
+if (downloadBinaryBtn) {
+  downloadBinaryBtn.addEventListener('click', () => {
+    if (window._currentBinaryData) {
+      const blob = new Blob([window._currentBinaryData], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentMediaName}_extracted_${Date.now()}.bin`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      showError("No binary data to download. Run analysis first.");
+    }
+  });
+}
 if (playbackRate) {
   const updatePlaybackRate = () => {
     if (playbackRateValue) playbackRateValue.textContent = `${parseFloat(playbackRate.value).toFixed(2)}x`;
