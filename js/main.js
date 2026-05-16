@@ -1068,6 +1068,8 @@ if (dropZone) {
   });
   
   dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    e.stopPropagation();
     const file = e.dataTransfer.files[0];
     if (file) handleFileUpload(file);
   });
@@ -1076,6 +1078,15 @@ if (dropZone) {
   dropZone.addEventListener('click', () => {
     if (mediaUpload) mediaUpload.click();
   });
+
+  if (mediaUpload) {
+    mediaUpload.addEventListener('drop', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      const file = e.dataTransfer.files[0];
+      if (file) handleFileUpload(file);
+    });
+  }
 }
 
 
