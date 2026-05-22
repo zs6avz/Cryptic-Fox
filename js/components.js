@@ -35,6 +35,23 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdownContent.classList.toggle('active');
         });
 
+        dropbtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const isExpanded = dropbtn.getAttribute('aria-expanded') === 'true';
+                dropbtn.setAttribute('aria-expanded', !isExpanded);
+                dropdownContent.classList.toggle('active');
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dropdownContent.classList.contains('active')) {
+                dropdownContent.classList.remove('active');
+                dropbtn.setAttribute('aria-expanded', 'false');
+                dropbtn.focus();
+            }
+        });
+
         // Close dropdown when clicking outside
         window.addEventListener('click', () => {
             if (dropdownContent.classList.contains('active')) {
@@ -50,6 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 dropbtn.setAttribute('aria-expanded', 'false');
             });
         });
+
+        // Mark as initialized so script.js doesn't attach duplicate listeners
+        navPlaceholder.dataset.navInitialized = 'true';
     }
 
     // 2. Inject Footer

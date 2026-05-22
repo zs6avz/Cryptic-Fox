@@ -7,11 +7,12 @@ let alternativeToAlphabet = {};
 // Single entry point for all DOM-related initialization
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1. Dropdown Logic
+    // 1. Dropdown Logic (skip if components.js already initialized the nav)
+    const navEl = document.querySelector('[role="navigation"]');
     const dropdownBtn = document.querySelector('.dropbtn');
     const dropdownContent = document.querySelector('.dropdown-content');
 
-    if (dropdownBtn && dropdownContent) {
+    if (!navEl?.dataset.navInitialized && dropdownBtn && dropdownContent) {
         dropdownBtn.addEventListener('click', (event) => {
             event.stopPropagation();
             dropdownContent.classList.toggle('active');

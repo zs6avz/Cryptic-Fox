@@ -895,3 +895,42 @@ function clearMusicFields() {
     document.querySelector('.music-input').value = '';
     document.querySelector('.music-output').textContent = '';
 }
+
+// ── Shared Copy & Swap Utilities ─────────────────────────────────────
+
+function copyToClipboard(outputSelector) {
+    const el = document.querySelector(outputSelector);
+    if (!el) return;
+    const text = el.textContent || el.value || '';
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+        const btns = document.querySelectorAll(`button[onclick*="${outputSelector}"]`);
+        btns.forEach(btn => {
+            if (btn.textContent.includes('Copy')) {
+                const original = btn.textContent;
+                btn.textContent = '✔ Copied!';
+                setTimeout(() => { btn.textContent = original; }, 1500);
+            }
+        });
+    }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    });
+}
+
+function swapFields(inputSelector, outputSelector) {
+    const inputEl = document.querySelector(inputSelector);
+    const outputEl = document.querySelector(outputSelector);
+    if (!inputEl || !outputEl) return;
+    const outputText = outputEl.textContent || outputEl.value || '';
+    if (!outputText) return;
+    inputEl.value = outputText;
+    outputEl.textContent = '';
+}

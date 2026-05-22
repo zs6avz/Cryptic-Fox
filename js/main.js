@@ -1059,15 +1059,23 @@ if (runStatsBtn) runStatsBtn.addEventListener('click', runStatisticalAnalysis);
 // Drop Zone Specific Listeners
 if (dropZone) {
 
-  // Visual feedback only for zone
+  // Visual feedback + prevent browser default (required to allow drops)
   ['dragenter', 'dragover'].forEach(name => {
-    dropZone.addEventListener(name, () => dropZone.classList.add('drag-over'), false);
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('drag-over');
+    }, false);
   });
   ['dragleave', 'drop'].forEach(name => {
-    dropZone.addEventListener(name, () => dropZone.classList.remove('drag-over'), false);
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('drag-over');
+    }, false);
   });
-  
-  dropZone.addEventListener('drop', e => {
+
+  dropZone.addEventListener('drop', (e) => {
     e.preventDefault();
     e.stopPropagation();
     const file = e.dataTransfer.files[0];
