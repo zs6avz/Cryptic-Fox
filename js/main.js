@@ -240,26 +240,29 @@ function loadVideoFile(file) {
       if (startBtn) startBtn.disabled = false;
     }
 
-    const onSeeked = () => {
-      video.removeEventListener('seeked', onSeeked);
+    // Use canplay to ensure frame data is decoded before rendering
+    const onCanPlay = () => {
+      video.removeEventListener('canplay', onCanPlay);
+      clearTimeout(canPlayFallback);
+      video.pause();
       renderFirstFrame();
     };
-    video.addEventListener('seeked', onSeeked);
-    
-    // Some browsers need a slight nudge to render the first frame
-    if (video.currentTime === 0) {
-      video.currentTime = 0.01; 
+
+    // If already has enough data, render immediately
+    if (video.readyState >= 3) {
+      video.pause();
+      renderFirstFrame();
     } else {
-      video.currentTime = 0;
+      video.addEventListener('canplay', onCanPlay);
+
+      // Fallback in case canplay never fires
+      const canPlayFallback = setTimeout(() => {
+        video.removeEventListener('canplay', onCanPlay);
+        if (scrubber && scrubber.disabled) {
+          renderFirstFrame();
+        }
+      }, 3000);
     }
-    
-    // Fallback if seeked doesn't fire
-    setTimeout(() => {
-      if (scrubber && scrubber.disabled) {
-        console.log("Seeked fallback triggered");
-        renderFirstFrame();
-      }
-    }, 2000);
   };
 
   // Cleanup old URL if exists
@@ -365,7 +368,10 @@ if (playPauseBtn) {
       video.play().then(() => {
         startRenderLoop();
         if (playPauseBtn) { playPauseBtn.textContent = '⏸'; playPauseBtn.setAttribute('aria-label', 'Pause'); }
-      }).catch(err => console.error('play error', err));
+      }).catch(err => {
+        console.error('play error', err);
+        showError("Playback failed. Please ensure the file is a valid video.");
+      });
     } else {
       video.pause();
       isPlaying = false;
@@ -430,19 +436,6 @@ function resetAll() {
 
 if (resetBtn) resetBtn.addEventListener('click', resetAll);
 
-if (playPauseBtn) {
-  playPauseBtn.addEventListener('click', () => {
-    if (video.paused) {
-      video.play().catch(err => {
-        console.error("Play failed:", err);
-        showError("Playback failed. Please ensure the file is a valid video.");
-      });
-    } else {
-      video.pause();
-    }
-  });
-}
-
 video.addEventListener('play', () => {
   startRenderLoop();
   if (playPauseBtn) { playPauseBtn.textContent = '⏸'; playPauseBtn.setAttribute('aria-label', 'Pause'); }
@@ -454,6 +447,7 @@ video.addEventListener('pause', () => {
   renderPreviewIfAvailable();
 });
 video.addEventListener('ended', () => { isPlaying = false; if (playPauseBtn) { playPauseBtn.textContent = '▶'; playPauseBtn.setAttribute('aria-label', 'Play'); } });
+video.addEventListener('timeupdate', () => {
   if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
 });
 
@@ -817,18 +811,6 @@ function updateSliderDisplays() {
 }
 
 // Button wiring for remaining actions
-if (copyLSBBtn) {
-  copyLSBBtn.addEventListener('click', () => {
-    if (lsbOutputDisplay) {
-      navigator.clipboard.writeText(lsbOutputDisplay.textContent)
-        .then(() => {
-          const originalText = copyLSBBtn.textContent;
-          copyLSBBtn.textContent = "Copied!";
-          setTimeout(() => copyLSBBtn.textContent = originalText, 2000);
-        });
-    }
-  });
-}
 
 if (resetBtn) {
   resetBtn.addEventListener('click', () => {

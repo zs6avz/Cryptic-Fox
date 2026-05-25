@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         
         dropdownContent.classList.remove('active');
-    } else {
+    } else if (!dropdownBtn || !dropdownContent) {
         console.warn("Dropdown components not found.");
     }
 
