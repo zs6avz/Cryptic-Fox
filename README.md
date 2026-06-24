@@ -39,4 +39,4 @@
 Cryptic Fox is an independent project. You can support the development of new tools and blog posts via:
 - **Ko-fi**: [Support me on Ko-fi](https://ko-fi.com/S6S81YLIDM)
 ---
-*© 2026 Cryptic Fox | Secrecy is an Art.*
+*© 2026 Cryptic Fox*
