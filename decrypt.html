@@ -108,6 +108,30 @@
         <p class="binary-output"></p>
     </div>
 
+    <!-- Jacquard Cipher -->
+<div class="method">
+    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Jacquard Cipher</span>
+        <span class="info-icon">i
+            <div class="tooltip-content">
+                <h4>Jacquard Cipher</h4>
+                <div><b>Description:</b> Maps letters to 6-bit loom-style punch patterns inspired by Jacquard cards.</div>
+                <div><b>History:</b> Inspired by Joseph-Marie Jacquard's programmable loom (early 1800s), a precursor to punch-card computing.</div>
+                <div><b>How-to:</b> Enter plain text to encrypt into 6-bit codes, or enter space-separated 6-bit codes to decrypt back to letters.</div>
+            </div>
+        </span>
+    </h2>
+    <textarea class="jacquard-input" placeholder="Enter text or space-separated Jacquard codes..."></textarea>
+    <div class="button-container">
+        <button onclick="encryptJacquard()">Encrypt</button>
+        <button onclick="decryptJacquard()">Decrypt</button>
+        <button onclick="copyToClipboard('.jacquard-output')">📋 Copy</button>
+        <button onclick="swapFields('.jacquard-input', '.jacquard-output')">⇄ Swap</button>
+        <button id="clearJacquardFieldsBtn">Clear</button>
+    </div>
+    <p class="jacquard-output"></p>
+</div>
+
     <!-- Caesar Cipher -->
     <div class="method">
         <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
