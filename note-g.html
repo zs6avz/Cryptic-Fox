@@ -48,6 +48,14 @@
     <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
     <style>
+        /* Custom color overrides for Ada Lovelace theme */
+        :root {
+            --color-primary: #9B44D9;
+            --color-accent: #E91E8C;
+            --color-primary-rgb: 155, 68, 217;
+            --gradient-brand: linear-gradient(135deg, #890de2 0%, #f37dbe 100%);
+        }
+
         .note-g-container {
             max-width: 1000px;
             margin: 0 auto;
@@ -55,7 +63,7 @@
         }
 
         .hero-section {
-            background: linear-gradient(135deg, rgba(68, 125, 155, 0.2) 0%, rgba(254, 119, 67, 0.2) 100%);
+            background: linear-gradient(135deg, rgba(155, 68, 217, 0.2) 0%, rgba(233, 30, 140, 0.2) 100%);
             border: 2px solid var(--color-primary);
             border-radius: var(--radius-lg);
             padding: 40px;
@@ -172,7 +180,7 @@
         .input-group input:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 10px rgba(68, 125, 155, 0.5);
+            box-shadow: 0 0 10px rgba(155, 68, 217, 0.5);
         }
 
         .calculate-btn {
