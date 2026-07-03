@@ -21,6 +21,71 @@ class LovelaceMusic {
         this.currentNoteIndex = 0;
         this.scheduledNotes = [];
         this.animationFrame = null;
+        this.isPreset = false;
+        this.currentPresetName = null;
+        
+        // Historic preset compositions
+        this.PRESET_COMPOSITIONS = {
+            'daisyBell': {
+                name: 'Daisy Bell',
+                description: 'First song performed by a computer (1961)',
+                year: 1961,
+                notes: [
+                    // Complete Daisy Bell melody (50 notes)
+                    // MIDI notes and durations from authentic 1961 arrangement
+                    { midi: 74, duration: 0.75, type: 'note' },  // D5
+                    { midi: 71, duration: 0.75, type: 'note' },  // B4
+                    { midi: 67, duration: 0.75, type: 'note' },  // G4
+                    { midi: 62, duration: 0.75, type: 'note' },  // D4
+                    { midi: 64, duration: 0.25, type: 'note' },  // E4
+                    { midi: 66, duration: 0.25, type: 'note' },  // F#4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 64, duration: 0.5, type: 'note' },   // E4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 62, duration: 1.5, type: 'note' },   // D4
+                    { midi: 69, duration: 0.75, type: 'note' },  // A4
+                    { midi: 74, duration: 0.75, type: 'note' },  // D5
+                    { midi: 71, duration: 0.75, type: 'note' },  // B4
+                    { midi: 67, duration: 0.75, type: 'note' },  // G4
+                    { midi: 64, duration: 0.25, type: 'note' },  // E4
+                    { midi: 66, duration: 0.25, type: 'note' },  // F#4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 69, duration: 0.5, type: 'note' },   // A4
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 69, duration: 1.5, type: 'note' },   // A4
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 72, duration: 0.25, type: 'note' },  // C5
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 69, duration: 0.25, type: 'note' },  // A4
+                    { midi: 74, duration: 0.5, type: 'note' },   // D5
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 69, duration: 0.25, type: 'note' },  // A4
+                    { midi: 67, duration: 1.0, type: 'note' },   // G4
+                    { midi: 69, duration: 0.25, type: 'note' },  // A4
+                    { midi: 71, duration: 0.5, type: 'note' },   // B4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 64, duration: 0.5, type: 'note' },   // E4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 64, duration: 0.25, type: 'note' },  // E4
+                    { midi: 62, duration: 1.25, type: 'note' },  // D4
+                    { midi: 62, duration: 0.25, type: 'note' },  // D4
+                    { midi: 67, duration: 0.5, type: 'note' },   // G4
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 69, duration: 0.5, type: 'note' },   // A4
+                    { midi: 67, duration: 0.5, type: 'note' },   // G4
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 69, duration: 0.25, type: 'note' },  // A4
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 72, duration: 0.25, type: 'note' },  // C5
+                    { midi: 74, duration: 0.25, type: 'note' },  // D5
+                    { midi: 71, duration: 0.25, type: 'note' },  // B4
+                    { midi: 67, duration: 0.25, type: 'note' },  // G4
+                    { midi: 69, duration: 0.5, type: 'note' },   // A4
+                    { midi: 62, duration: 0.25, type: 'note' },  // D4
+                    { midi: 67, duration: 1.25, type: 'note' }   // G4
+                ]
+            }
+        };
         
         // Scale definitions (intervals from root)
         this.scales = {
@@ -236,11 +301,55 @@ class LovelaceMusic {
     }
     
     /**
+     * Load a preset composition
+     */
+    loadPresetComposition(presetKey) {
+        const preset = this.PRESET_COMPOSITIONS[presetKey];
+        if (!preset) {
+            console.error('Preset not found:', presetKey);
+            return;
+        }
+        
+        this.isPreset = true;
+        this.currentPresetName = preset.name;
+        this.musicalNotes = preset.notes;
+        
+        // Convert preset notes to sequence for waveform visualization
+        // Map MIDI notes to normalized values similar to Bernoulli numbers
+        const midiValues = preset.notes
+            .filter(n => n.type === 'note')
+            .map(n => n.midi);
+        const minMidi = Math.min(...midiValues);
+        const maxMidi = Math.max(...midiValues);
+        const midiRange = maxMidi - minMidi || 12;
+        
+        this.currentSequence = preset.notes.map(note => {
+            if (note.type === 'rest') return 0;
+            // Normalize to range similar to Bernoulli numbers (-0.5 to 0.5)
+            return ((note.midi - minMidi) / midiRange - 0.5);
+        });
+        
+        // Display results
+        this.displayPresetInfo(preset);
+        this.displayMusicalMapping();
+        this.visualizeBernoulliWaveform();
+        
+        // Enable play button
+        document.getElementById('playBtn').disabled = false;
+        document.getElementById('downloadBtn').disabled = false;
+        document.getElementById('sequenceInfo').style.display = 'block';
+    }
+    
+    /**
      * Generate Bernoulli sequence and map to music
      */
     generate() {
         const n = parseInt(document.getElementById('nValue').value);
         const mode = document.getElementById('mappingMode').value;
+        
+        // Reset preset flag
+        this.isPreset = false;
+        this.currentPresetName = null;
         
         // Calculate Bernoulli numbers
         this.currentSequence = this.calculateBernoulliNumbers(n);
@@ -260,10 +369,33 @@ class LovelaceMusic {
     }
     
     /**
+     * Display preset composition info
+     */
+    displayPresetInfo(preset) {
+        const display = document.getElementById('bernoulliDisplay');
+        const titleElement = document.getElementById('sequenceInfo').querySelector('h3');
+        
+        titleElement.innerHTML = `🎵 Historic Preset: ${preset.name} (${preset.year})`;
+        
+        let html = `${preset.description}\n\n`;
+        html += `Composition Length: ${preset.notes.length} notes\n`;
+        html += `Total Duration: ${preset.notes.reduce((sum, n) => sum + n.duration, 0).toFixed(2)}s\n\n`;
+        html += `This melody represents the first song ever performed by a computer,\n`;
+        html += `programmed on the IBM 704 at Bell Labs in 1961 by John Kelly,\n`;
+        html += `Carol Lockbaum, and Max Mathews using vocoder synthesis.\n\n`;
+        html += `Later famously sung by HAL 9000 in "2001: A Space Odyssey" (1968).`;
+        
+        display.textContent = html;
+    }
+    
+    /**
      * Display Bernoulli sequence
      */
     displaySequence(n) {
         const display = document.getElementById('bernoulliDisplay');
+        const titleElement = document.getElementById('sequenceInfo').querySelector('h3');
+        
+        titleElement.innerHTML = `Bernoulli Sequence (B<sub>0</sub> to B<sub id="maxN">${n}</sub>)`;
         document.getElementById('maxN').textContent = n;
         
         let html = '';
@@ -322,6 +454,74 @@ class LovelaceMusic {
      */
     midiToFreq(midi) {
         return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+    
+    /**
+     * Visualize preset composition as note bars
+     */
+    visualizePresetWaveform() {
+        const rect = this.canvas.getBoundingClientRect();
+        const width = rect.width;
+        const height = rect.height;
+        
+        this.ctx.clearRect(0, 0, width, height);
+        
+        // Background
+        this.ctx.fillStyle = '#000';
+        this.ctx.fillRect(0, 0, width, height);
+        
+        if (!this.musicalNotes.length) return;
+        
+        // Draw grid
+        this.ctx.strokeStyle = 'rgba(68, 125, 155, 0.2)';
+        this.ctx.lineWidth = 1;
+        for (let i = 0; i <= 4; i++) {
+            const y = (height / 4) * i;
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(width, y);
+            this.ctx.stroke();
+        }
+        
+        // Find MIDI range
+        const midiValues = this.musicalNotes
+            .filter(n => n.type === 'note')
+            .map(n => n.midi);
+        const minMidi = Math.min(...midiValues);
+        const maxMidi = Math.max(...midiValues);
+        const midiRange = maxMidi - minMidi || 12;
+        
+        // Draw notes as bars
+        const barWidth = width / this.musicalNotes.length;
+        
+        this.musicalNotes.forEach((note, i) => {
+            const x = i * barWidth;
+            
+            if (note.type === 'rest') {
+                // Draw rest indicator
+                this.ctx.fillStyle = 'rgba(128, 128, 128, 0.3)';
+                this.ctx.fillRect(x, height / 2 - 5, barWidth * 0.8, 10);
+            } else {
+                // Draw note bar
+                const normalized = (note.midi - minMidi) / midiRange;
+                const barHeight = normalized * height * 0.6 + height * 0.1;
+                const y = height - barHeight;
+                
+                const hue = (normalized * 120 + 180) % 360; // Blue to green gradient
+                this.ctx.fillStyle = `hsla(${hue}, 70%, 60%, 0.8)`;
+                this.ctx.fillRect(x + 2, y, barWidth - 4, barHeight);
+                
+                // Duration indicator (opacity)
+                this.ctx.fillStyle = `hsla(${hue}, 70%, 50%, ${note.duration / 2})`;
+                this.ctx.fillRect(x + 2, y, barWidth - 4, 3);
+            }
+        });
+        
+        // Labels
+        this.ctx.fillStyle = '#b0b0b0';
+        this.ctx.font = '12px Space Grotesk, sans-serif';
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(`${this.currentPresetName} — ${this.musicalNotes.length} notes`, 10, 20);
     }
     
     /**
@@ -593,6 +793,29 @@ class LovelaceMusic {
         const selector = document.getElementById('etudeSelector');
         const etudes = [4, 6, 8, 10, 12, 14, 16, 18, 20];
         
+        // Add Daisy Bell historic preset button first
+        const presetContainer = document.createElement('div');
+        presetContainer.style.gridColumn = '1 / -1';
+        presetContainer.style.marginBottom = '15px';
+        
+        const daisyBtn = document.createElement('button');
+        daisyBtn.className = 'etude-btn preset-btn';
+        daisyBtn.innerHTML = '★ Daisy Bell (1961)';
+        daisyBtn.title = 'First song performed by a computer (IBM 704, Bell Labs, 1961) — Hover over section title for more info';
+        
+        daisyBtn.addEventListener('click', () => {
+            // Remove active class from all
+            document.querySelectorAll('.etude-btn').forEach(b => b.classList.remove('active'));
+            daisyBtn.classList.add('active');
+            
+            // Load preset
+            this.loadPresetComposition('daisyBell');
+        });
+        
+        presetContainer.appendChild(daisyBtn);
+        selector.appendChild(presetContainer);
+        
+        // Add regular Bernoulli etudes
         etudes.forEach(n => {
             const btn = document.createElement('button');
             btn.className = 'etude-btn';

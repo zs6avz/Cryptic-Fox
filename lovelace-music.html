@@ -53,49 +53,6 @@
             padding: 20px;
         }
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--color-text-muted);
-            cursor: pointer;
-            transition: color 0.2s ease;
-            padding: 5px;
-            margin: 0;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: var(--color-accent);
-            box-shadow: none;
-            background: none;
-            transform: scale(1.1);
-        }
-
         .intro-box {
             background: var(--color-surface);
             border: 1px solid var(--color-border);
@@ -344,115 +301,58 @@
             background: rgba(254, 119, 67, 0.2);
         }
 
-        .help-btn {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--gradient-brand);
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 15px;
-            vertical-align: middle;
-            transition: var(--transition-base);
-            box-shadow: 0 2px 8px rgba(68, 125, 155, 0.3);
-        }
-
-        .help-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(68, 125, 155, 0.5);
-        }
-
-        .help-modal {
-            background: var(--color-surface-deep);
-            border: 2px solid var(--color-primary);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-glow);
-            width: 90%;
-            max-width: 800px;
-            max-height: 85vh;
-            padding: 40px;
+        .preset-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e49d 50%, #d4af37 100%);
+            color: #1a1a1a;
+            border: 2px solid #b8941e;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
             position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
-        .modal-overlay.active .help-modal {
-            transform: translateY(0);
+        .preset-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
         }
 
-        .help-modal h2 {
-            color: var(--color-accent);
-            margin-top: 0;
-            font-size: 1.8rem;
-            border-bottom: 2px solid var(--color-primary);
-            padding-bottom: 10px;
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
-        .help-modal h3 {
-            color: var(--color-primary);
-            margin-top: 25px;
-            font-size: 1.3rem;
+        .preset-btn:hover {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, #e5c05a 0%, #fff5c0 50%, #e5c05a 100%);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            transform: translateY(-2px);
         }
 
-        .help-modal p {
-            line-height: 1.7;
-            margin-bottom: 15px;
-            color: var(--color-text);
+        .preset-btn.active {
+            border-color: #d4af37;
+            background: linear-gradient(135deg, #c19a2e 0%, #e5c05a 50%, #c19a2e 100%);
+            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.6), inset 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .help-modal ul {
-            text-align: left;
-            margin: 15px 0;
-            padding-left: 25px;
-        }
 
-        .help-modal li {
-            margin-bottom: 10px;
-            line-height: 1.6;
-            color: var(--color-text);
-        }
 
-        .help-modal strong {
-            color: var(--color-accent);
-        }
 
-        .help-modal code {
-            background: rgba(68, 125, 155, 0.2);
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            color: var(--color-primary);
-        }
 
-        .help-section {
-            background: rgba(68, 125, 155, 0.1);
-            border-left: 3px solid var(--color-primary);
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: var(--radius-sm);
-        }
+
 
         @media (max-width: 768px) {
             .control-panel {
                 grid-template-columns: 1fr;
             }
             
-            .help-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 1rem;
-                margin-left: 10px;
-            }
-            
-            .help-modal {
-                padding: 25px;
-                max-height: 90vh;
-            }
+
         }
     </style>
 </head>
@@ -462,7 +362,17 @@
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
 
     <div class="lovelace-container">
-        <h1>🎼 Lovelace Music <button onclick="toggleHelpModal()" class="help-btn" title="Help & Information">?</button></h1>
+        <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+            <span>🎼 Lovelace Music</span>
+            <span class="info-icon">i
+                <div class="tooltip-content">
+                    <h4>Lovelace Music</h4>
+                    <div><b>Description:</b> Realizes Ada Lovelace's vision of algorithmic composition by transforming Bernoulli numbers into musical structures using WebAudio API.</div>
+                    <div><b>How-to:</b> Set parameters, generate a Bernoulli sequence, and click Play to hear mathematical music. Try the etudes for pre-composed examples!</div>
+                    <div><b>Modes:</b> Melodic (sign → direction), Rhythmic (magnitude → duration), Harmonic (chords), Timbral (filter modulation)</div>
+                </div>
+            </span>
+        </h1>
         <p style="color: var(--color-text-muted);">Algorithmic Composition from Bernoulli Numbers</p>
 
         <!-- Introduction -->
@@ -484,7 +394,17 @@
         <div class="control-panel">
             <!-- Bernoulli Parameters -->
             <div class="control-group">
-                <h3>🔢 Bernoulli Parameters</h3>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <span>🔢 Bernoulli Parameters</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>Bernoulli Parameters</h4>
+                            <div><b>Sequence Length:</b> How many Bernoulli numbers to calculate (B₀ to Bₙ). Larger values create longer compositions.</div>
+                            <div><b>Scale:</b> Musical scale to use (Major, Minor, Pentatonic, etc.). Determines which notes are available.</div>
+                            <div><b>Root Note:</b> Starting note in MIDI format (60 = C4). All notes are generated relative to this root.</div>
+                        </div>
+                    </span>
+                </h3>
                 <div class="param-row">
                     <label for="nValue">Sequence Length (n):</label>
                     <input type="number" id="nValue" min="4" max="30" value="12" step="1">
@@ -511,7 +431,17 @@
 
             <!-- Audio Parameters -->
             <div class="control-group">
-                <h3>🎵 Audio Parameters</h3>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <span>🎵 Audio Parameters</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>Audio Parameters</h4>
+                            <div><b>Waveform:</b> Shape of the sound wave (sine = smooth, square = harsh, sawtooth = bright, triangle = mellow).</div>
+                            <div><b>Tempo:</b> Speed in beats per minute. Slower tempos let you hear each note clearly.</div>
+                            <div><b>Volume:</b> Playback volume level.</div>
+                        </div>
+                    </span>
+                </h3>
                 <div class="param-row">
                     <label>Waveform:</label>
                     <select id="waveform">
@@ -533,7 +463,18 @@
 
             <!-- Mapping Mode -->
             <div class="control-group">
-                <h3>🎹 Mapping Mode</h3>
+                <h3 style="display: flex; align-items: center; gap: 8px;">
+                    <span>🎹 Mapping Mode</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>Mapping Modes</h4>
+                            <div><b>Melodic:</b> Sign determines direction (+ = up, − = down), magnitude determines interval size.</div>
+                            <div><b>Rhythmic:</b> Magnitude controls note duration, creating varied rhythmic patterns.</div>
+                            <div><b>Harmonic:</b> Generates chords instead of single notes.</div>
+                            <div><b>Timbral:</b> Modulates filter frequency for timbral variation.</div>
+                        </div>
+                    </span>
+                </h3>
                 <div class="param-row">
                     <label>Interpretation:</label>
                     <select id="mappingMode">
@@ -574,7 +515,17 @@
 
         <!-- Lovelace Etudes -->
         <div class="sequence-display">
-            <h3>🎼 Lovelace Etudes</h3>
+            <h3 style="display: flex; align-items: center; gap: 8px;">
+                <span>🎼 Lovelace Etudes</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Lovelace Etudes</h4>
+                        <div><b>Description:</b> Pre-composed sequences exploring different Bernoulli number lengths. Each etude button generates a composition using that specific n value.</div>
+                        <div><b>Daisy Bell:</b> ⭐ Historic preset — the first song performed by a computer (IBM 704, Bell Labs, 1961).</div>
+                        <div><b>Tip:</b> Try different etudes to hear how sequence length affects musical structure!</div>
+                    </div>
+                </span>
+            </h3>
             <p style="color: var(--color-text-muted);">
                 Explore pre-composed motifs where each etude represents a different Bernoulli sequence length.
             </p>
@@ -594,149 +545,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Help Modal -->
-    <div id="helpModal" class="modal-overlay">
-        <div class="help-modal">
-            <button class="modal-close" onclick="toggleHelpModal()" aria-label="Close help modal">&times;</button>
-            <h2>🎼 Lovelace Music — Help & Guide</h2>
-            
-            <div class="help-section">
-                <h3>🌟 Ada Lovelace's Vision</h3>
-                <p>In 1843, Ada Lovelace wrote:</p>
-                <blockquote style="border-left: 3px solid var(--color-accent); padding-left: 15px; font-style: italic; color: var(--color-text-muted);">
-                    "The Analytical Engine might act upon other things besides number... the Engine might compose elaborate and scientific pieces of music of any degree of complexity or extent."
-                </blockquote>
-                <p>This module brings her vision to life, transforming mathematical Bernoulli numbers into sound.</p>
-            </div>
-
-            <h3>🔢 What are Bernoulli Numbers?</h3>
-            <p>Bernoulli numbers are a sequence of rational numbers (B₀, B₁, B₂, ...) that appear throughout mathematics:</p>
-            <ul>
-                <li><strong>Wave Synthesis:</strong> Used in Fourier series for generating periodic waveforms</li>
-                <li><strong>Harmonic Analysis:</strong> Help compute harmonic coefficients and spectral properties</li>
-                <li><strong>Number Theory:</strong> Connected to prime numbers, sums of powers, and the Riemann zeta function</li>
-                <li><strong>Signal Processing:</strong> Used in approximating periodic functions</li>
-            </ul>
-            <p>Their alternating signs (positive/negative/zero) and varying magnitudes create interesting musical contours.</p>
-
-            <h3>🎹 Musical Mapping Modes</h3>
-            <p>Choose how Bernoulli numbers translate to music:</p>
-            
-            <div class="help-section">
-                <h4>🎵 Melodic Mode</h4>
-                <ul>
-                    <li><strong>Sign:</strong> Positive numbers = ascending intervals, Negative = descending</li>
-                    <li><strong>Magnitude:</strong> Larger values = bigger melodic leaps</li>
-                    <li><strong>Zero:</strong> Creates rests (silence)</li>
-                    <li><strong>Use for:</strong> Creating melodic lines with mathematical structure</li>
-                </ul>
-            </div>
-
-            <div class="help-section">
-                <h4>⏱️ Rhythmic Mode</h4>
-                <ul>
-                    <li><strong>Magnitude:</strong> Controls note duration (larger = longer)</li>
-                    <li><strong>Pattern:</strong> Creates rhythmic complexity from number patterns</li>
-                    <li><strong>Use for:</strong> Generating dynamic, mathematically-driven rhythms</li>
-                </ul>
-            </div>
-
-            <div class="help-section">
-                <h4>🎼 Harmonic Mode</h4>
-                <ul>
-                    <li><strong>Chords:</strong> Generates triads (3-note chords) instead of single notes</li>
-                    <li><strong>Type:</strong> Magnitude determines major vs. minor quality</li>
-                    <li><strong>Use for:</strong> Creating harmonic progressions</li>
-                </ul>
-            </div>
-
-            <div class="help-section">
-                <h4>🔊 Timbral Mode</h4>
-                <ul>
-                    <li><strong>Filter Modulation:</strong> Bernoulli values control filter cutoff frequency</li>
-                    <li><strong>Timbre:</strong> Changes the "color" or brightness of each note</li>
-                    <li><strong>Use for:</strong> Creating evolving textures and tones</li>
-                </ul>
-            </div>
-
-            <h3>🎮 How to Use</h3>
-            <ol style="text-align: left; line-height: 1.8;">
-                <li><strong>Set Parameters:</strong>
-                    <ul>
-                        <li><code>Sequence Length (n)</code> — How many Bernoulli numbers to generate (4-30)</li>
-                        <li><code>Scale</code> — Musical scale (Major, Minor, Pentatonic, etc.)</li>
-                        <li><code>Root Note</code> — Starting pitch (60 = C4, middle C)</li>
-                    </ul>
-                </li>
-                <li><strong>Configure Audio:</strong>
-                    <ul>
-                        <li><code>Waveform</code> — Sound quality (Sine = pure, Sawtooth = bright, Square = hollow)</li>
-                        <li><code>Tempo</code> — Speed in beats per minute (40-200 BPM)</li>
-                        <li><code>Volume</code> — Output level (0.0-1.0)</li>
-                    </ul>
-                </li>
-                <li><strong>Choose Mapping Mode:</strong> Select how numbers become music (Melodic, Rhythmic, Harmonic, Timbral)</li>
-                <li><strong>Generate:</strong> Click <code>Generate Sequence</code> to calculate Bernoulli numbers</li>
-                <li><strong>Play:</strong> Click <code>▶ Play</code> to hear your mathematical composition!</li>
-            </ol>
-
-            <h3>🎼 Lovelace Etudes</h3>
-            <p>Pre-composed sequences exploring different Bernoulli number lengths. Each "Etude" button generates a complete composition using that specific n value. Try them all to hear how sequence length affects musical structure!</p>
-
-            <h3>📊 Visualization</h3>
-            <p>The waveform display shows your Bernoulli sequence as a graph. During playback, watch the orange highlight move across the sequence, showing which number is currently playing.</p>
-
-            <h3>💡 Tips for Best Results</h3>
-            <ul>
-                <li><strong>Start Small:</strong> Try n=8 or n=10 first to understand the patterns</li>
-                <li><strong>Experiment with Scales:</strong> Pentatonic sounds pleasant, Chromatic is experimental</li>
-                <li><strong>Mix Modes:</strong> Try the same sequence in different mapping modes</li>
-                <li><strong>Adjust Tempo:</strong> Slower tempos (60-80 BPM) let you hear each note clearly</li>
-                <li><strong>Waveform Choice:</strong> Sawtooth is bright and energetic, Sine is mellow</li>
-            </ul>
-
-            <h3>🔬 The Mathematics-Music Connection</h3>
-            <p>Music is inherently mathematical:</p>
-            <ul>
-                <li><strong>Notes = Frequencies:</strong> Each pitch is a specific vibration rate (A4 = 440 Hz)</li>
-                <li><strong>Scales = Numeric Ratios:</strong> Musical intervals are frequency ratios</li>
-                <li><strong>Rhythm = Time Division:</strong> Beats are subdivisions of time</li>
-                <li><strong>Harmony = Wave Interference:</strong> Chords are simultaneous frequencies</li>
-            </ul>
-            <p>By mapping Bernoulli numbers to these parameters, we create compositions where mathematical structure becomes audible structure.</p>
-
-            <div class="help-section">
-                <p><strong>✨ "If the rules of harmony were expressed symbolically, the Engine could compose music." — Ada Lovelace, 1843</strong></p>
-                <p>Nearly 200 years later, you're experiencing exactly what she predicted.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function toggleHelpModal() {
-            const modal = document.getElementById('helpModal');
-            modal.classList.toggle('active');
-
-            if (modal.classList.contains('active')) {
-                modal.onclick = (e) => {
-                    if (e.target === modal) toggleHelpModal();
-                };
-                document.addEventListener('keydown', escapeHandler);
-            } else {
-                document.removeEventListener('keydown', escapeHandler);
-            }
-        }
-
-        function escapeHandler(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('helpModal');
-                if (modal.classList.contains('active')) {
-                    toggleHelpModal();
-                }
-            }
-        }
-    </script>
 </body>
 
 </html>
