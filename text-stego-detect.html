@@ -55,6 +55,92 @@
             padding: 20px;
         }
 
+        .method {
+            margin: 0 auto;
+        }
+
+        .info-icon {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: var(--color-accent);
+            color: #000;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: help;
+            margin-left: 10px;
+            vertical-align: middle;
+            position: relative;
+            transition: transform 0.2s;
+        }
+
+        .info-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .info-icon:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            width: 280px;
+            background-color: var(--color-surface-alt);
+            color: var(--color-text);
+            text-align: left;
+            border-radius: 8px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -140px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            border: 1px solid var(--color-accent);
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(10px);
+            pointer-events: none;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            white-space: normal;
+        }
+
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: var(--color-accent) transparent transparent transparent;
+        }
+
+        .tooltip-content h4 {
+            margin: 0 0 10px 0;
+            color: var(--color-accent);
+            font-size: 0.95rem;
+            border-bottom: 1px solid rgba(254, 119, 67, 0.3);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tooltip-content div {
+            margin-bottom: 10px;
+        }
+
+        .tooltip-content b {
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
         .input-section {
             display: grid;
             grid-template-columns: 1fr;
@@ -333,19 +419,7 @@
             border-radius: 3px;
         }
 
-        .info-tooltip {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--color-accent);
-            color: #000;
-            text-align: center;
-            line-height: 18px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: help;
-        }
+
 
         .hidden-file-input {
             display: none;
@@ -383,18 +457,31 @@
     <div class="analysis-container">
         <div class="method">
             <div class="method-header">
-                <h2>
+                <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
                     <span class="card-icon">📊</span>
-                    Linguistic Forensics
-                    <span class="info-tooltip" title="Detects text manipulation through stylometry, term frequency analysis, and pattern recognition">?</span>
+                    <span>Linguistic Forensics</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>Text Steganography Detection</h4>
+                            <div><b>Description:</b> Detects hidden messages in text through stylometric analysis, term frequency patterns, and linguistic anomalies.</div>
+                            <div><b>Methods:</b> Uses TF-IDF weighting, cosine similarity, and pattern recognition to identify manipulation.</div>
+                            <div><b>How-to:</b> Provide suspicious text and a baseline reference sample. The tool will analyze and highlight anomalies.</div>
+                        </div>
+                    </span>
                 </h2>
             </div>
 
             <div class="input-section">
                 <div class="text-input-box">
-                    <label for="suspiciousText">
-                        Suspicious Text
-                        <span class="info-tooltip" title="Paste the text you suspect may contain hidden messages">?</span>
+                    <label for="suspiciousText" style="display: flex; align-items: center; gap: 5px;">
+                        <span>Suspicious Text</span>
+                        <span class="info-icon">i
+                            <div class="tooltip-content">
+                                <h4>Suspicious Text Input</h4>
+                                <div><b>Purpose:</b> The text you suspect may contain hidden messages or steganographic manipulation.</div>
+                                <div><b>Requirements:</b> Best results with 200+ words. Upload .txt files or paste directly.</div>
+                            </div>
+                        </span>
                     </label>
                     <textarea id="suspiciousText" placeholder="Paste text to analyze for steganographic manipulation..."></textarea>
                     <input type="file" id="suspiciousFile" accept=".txt" class="hidden-file-input">
@@ -402,9 +489,15 @@
                 </div>
 
                 <div class="text-input-box">
-                    <label for="baselineText">
-                        Baseline Text (Reference)
-                        <span class="info-tooltip" title="Provide a sample of the author's normal writing for comparison">?</span>
+                    <label for="baselineText" style="display: flex; align-items: center; gap: 5px;">
+                        <span>Baseline Text (Reference)</span>
+                        <span class="info-icon">i
+                            <div class="tooltip-content">
+                                <h4>Baseline Reference</h4>
+                                <div><b>Purpose:</b> A sample of the author's normal writing style for comparison against the suspicious text.</div>
+                                <div><b>Requirements:</b> Should be similar length and from the same author or source when possible.</div>
+                            </div>
+                        </span>
                     </label>
                     <textarea id="baselineText" placeholder="Paste reference text representing normal writing patterns..."></textarea>
                     <input type="file" id="baselineFile" accept=".txt" class="hidden-file-input">
