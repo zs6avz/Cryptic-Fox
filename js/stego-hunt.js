@@ -2,7 +2,7 @@
 
 const CHALLENGES = [
     {
-        image: "../images/new-fox-logo.PNG",
+        image: "../images/fennfox.png",
         flag: "FLAG{LSB_VOICE}",
         hint: "Try looking at the Least Significant Bit (LSB) of the Blue channel.",
         channel: 2, // Blue

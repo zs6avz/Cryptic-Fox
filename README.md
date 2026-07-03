@@ -1,6 +1,6 @@
 # Cryptic Fox — Cryptography Toolkit
 
-![Cryptic Fox Logo](images/new-fox-logo.PNG)
+![Cryptic Fox Logo](images/fennfox.png)
 
 **Cryptic Fox** is a comprehensive, web-based suite of tools and educational resources designed for cryptography enthusiasts, puzzle solvers, and cybersecurity students. It provides a professional environment to encrypt, decrypt, and analyze hidden information across various media formats.
 
