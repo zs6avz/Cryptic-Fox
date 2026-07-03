@@ -49,10 +49,10 @@
     <style>
         /* Custom color overrides for Ada Lovelace theme */
         :root {
-            --color-primary: #542675;
-            --color-accent: #c0769f;
-            --color-primary-rgb: 155, 68, 217;
-            --gradient-brand: linear-gradient(135deg, #9B44D9 0%, #ec89c0 100%);
+            --color-primary: #8B4545;
+            --color-accent: #6B3535;
+            --color-primary-rgb: 139, 69, 69;
+            --gradient-brand: linear-gradient(135deg, #8B4545 0%, #6B3535 100%);
         }
 
         .lovelace-container {
@@ -71,7 +71,7 @@
         }
 
         .intro-box h2 {
-            color: var(--color-accent);
+            color: var(--color-primary);
             margin-top: 0;
         }
 
@@ -99,7 +99,7 @@
 
         .control-group h3 {
             margin-top: 0;
-            color: var(--color-accent);
+            color: var(--color-primary);
             font-size: 1.1rem;
         }
 
@@ -145,7 +145,7 @@
 
         .btn {
             padding: 12px 24px;
-            background: var(--gradient-brand);
+            background: var(--color-accent);
             border: none;
             border-radius: var(--radius-pill);
             color: white;
@@ -156,14 +156,12 @@
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-card-hover);
+            background: var(--color-primary);
         }
 
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .btn-secondary {
@@ -203,7 +201,7 @@
         }
 
         .sequence-display h3 {
-            color: var(--color-accent);
+            color: var(--color-primary);
             margin-top: 0;
         }
 
@@ -224,7 +222,7 @@
         .musical-mapping {
             margin-top: 15px;
             padding: 15px;
-            background: rgba(68, 125, 155, 0.1);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: var(--radius-sm);
             border-left: 3px solid var(--color-primary);
         }
@@ -253,7 +251,7 @@
 
         .note-name {
             font-weight: bold;
-            color: var(--color-accent);
+            color: var(--color-primary);
         }
 
         .note-duration {
@@ -305,48 +303,25 @@
         }
 
         .etude-btn.active {
-            border-color: var(--color-accent);
-            background: rgba(254, 119, 67, 0.2);
+            border-color: var(--color-primary);
+            background: rgba(139, 69, 69, 0.2);
         }
 
         .preset-btn {
-            background: linear-gradient(135deg, #d4af37 0%, #f4e49d 50%, #d4af37 100%);
-            color: #1a1a1a;
-            border: 2px solid #b8941e;
+            background: var(--color-primary);
+            color: white;
+            border: 1px solid var(--color-border);
             font-weight: 700;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .preset-btn::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transform: rotate(45deg);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
         .preset-btn:hover {
-            border-color: #d4af37;
-            background: linear-gradient(135deg, #e5c05a 0%, #fff5c0 50%, #e5c05a 100%);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
-            transform: translateY(-2px);
+            border-color: var(--color-primary);
+            background: var(--color-accent);
         }
 
         .preset-btn.active {
-            border-color: #d4af37;
-            background: linear-gradient(135deg, #c19a2e 0%, #e5c05a 50%, #c19a2e 100%);
-            box-shadow: 0 4px 16px rgba(212, 175, 55, 0.6), inset 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-color: var(--color-primary);
+            background: var(--color-accent);
         }
 
 
