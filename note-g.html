@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <!-- Clickjacking Defense (Frame-Busting) -->
+    <style id="antiClickjack">body{display:none !important;}</style>
+    <script type="text/javascript">
+        if (self === top) {
+            var antiClickjack = document.getElementById("antiClickjack");
+            if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            top.location = self.location;
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note G: The Enchantress of Numbers — Cryptic Fox</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/components.js"></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/note-g.js" defer></script>
+    <script src="js/smoke.js" defer></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <meta name="description"
+        content="Explore Ada Lovelace's Note G — the first computer program. Calculate Bernoulli numbers using the algorithm designed for Babbage's Analytical Engine.">
+    <link rel="canonical" href="https://cryptic-fox.com/note-g.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/note-g.html">
+    <meta property="og:title" content="Note G: The Enchantress of Numbers — Cryptic Fox">
+    <meta property="og:description"
+        content="Explore Ada Lovelace's Note G — the first computer program. Calculate Bernoulli numbers using the algorithm designed for Babbage's Analytical Engine.">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Note G: The Enchantress of Numbers — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Explore Ada Lovelace's Note G — the first computer program. Calculate Bernoulli numbers.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+
+    <style>
+        .note-g-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(68, 125, 155, 0.2) 0%, rgba(254, 119, 67, 0.2) 100%);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-section .subtitle {
+            font-size: 1.3rem;
+            color: var(--color-accent);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .info-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .info-section h2 {
+            color: var(--color-primary);
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+        }
+
+        .info-section h3 {
+            color: var(--color-accent);
+            font-size: 1.3rem;
+            margin-top: 25px;
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            color: var(--color-text);
+            margin-bottom: 15px;
+        }
+
+        .info-section ul {
+            text-align: left;
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .info-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: var(--color-accent);
+            overflow-x: auto;
+        }
+
+        .calculator-section {
+            background: var(--color-surface-deep);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .calculator-section h2 {
+            color: var(--color-primary);
+            margin-top: 0;
+            font-size: 2rem;
+        }
+
+        .input-group {
+            margin: 30px 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--color-text);
+        }
+
+        .input-group input {
+            width: 100%;
+            max-width: 200px;
+            padding: 12px;
+            font-size: 1.2rem;
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            transition: var(--transition-base);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(68, 125, 155, 0.5);
+        }
+
+        .calculate-btn {
+            background: var(--gradient-brand);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: var(--radius-pill);
+            cursor: pointer;
+            transition: var(--transition-base);
+            margin: 20px 0;
+            box-shadow: var(--shadow-card);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-card-hover);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result-box {
+            background: rgba(68, 125, 155, 0.1);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin: 30px 0;
+            min-height: 100px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-box h3 {
+            color: var(--color-accent);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .result-value {
+            font-size: 1.8rem;
+            color: var(--color-primary);
+            font-weight: 600;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .fraction-display {
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .fraction-numerator {
+            display: block;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+
+        .fraction-denominator {
+            display: block;
+            padding-top: 5px;
+        }
+
+        .computation-steps {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .computation-steps h4 {
+            color: var(--color-accent);
+            margin-top: 0;
+        }
+
+        .computation-steps pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            overflow-x: auto;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            color: var(--color-accent);
+            background: rgba(254, 119, 67, 0.1);
+            border: 1px solid var(--color-accent);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .known-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .known-value-item {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            text-align: center;
+        }
+
+        .known-value-item .label {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .known-value-item .value {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .quote-box {
+            background: rgba(254, 119, 67, 0.1);
+            border-left: 4px solid var(--color-accent);
+            padding: 20px;
+            margin: 20px 0;
+            font-style: italic;
+            color: var(--color-text-muted);
+        }
+
+        .quote-box p {
+            margin: 0;
+        }
+
+        .quote-box .attribution {
+            text-align: right;
+            margin-top: 10px;
+            color: var(--color-accent);
+            font-style: normal;
+            font-size: 0.9rem;
+        }
+
+        .help-btn {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 15px;
+            vertical-align: middle;
+            transition: var(--transition-base);
+            box-shadow: 0 2px 8px rgba(68, 125, 155, 0.3);
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(68, 125, 155, 0.5);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 5px;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--color-accent);
+            box-shadow: none;
+            background: none;
+            transform: scale(1.1);
+        }
+
+        .help-modal {
+            background: var(--color-surface-deep);
+            border: 2px solid var(--color-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-glow);
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            padding: 40px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .modal-overlay.active .help-modal {
+            transform: translateY(0);
+        }
+
+        .help-modal h2 {
+            color: var(--color-accent);
+            margin-top: 0;
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+        }
+
+        .help-modal h3 {
+            color: var(--color-primary);
+            margin-top: 25px;
+            font-size: 1.3rem;
+        }
+
+        .help-modal p {
+            line-height: 1.7;
+            margin-bottom: 15px;
+            color: var(--color-text);
+        }
+
+        .help-modal ul, .help-modal ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .help-modal li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+
+        .help-modal strong {
+            color: var(--color-accent);
+        }
+
+        .help-modal code {
+            background: rgba(68, 125, 155, 0.2);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            color: var(--color-primary);
+        }
+
+        .help-section {
+            background: rgba(68, 125, 155, 0.1);
+            border-left: 3px solid var(--color-primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: var(--radius-sm);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .calculator-section {
+                padding: 20px;
+            }
+            
+            .known-values {
+                grid-template-columns: 1fr;
+            }
+            
+            .help-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 1rem;
+                margin-left: 10px;
+            }
+            
+            .help-modal {
+                padding: 25px;
+                max-height: 90vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="smoke-canvas-container"></div>
+    <nav class="dropdown" role="navigation"></nav>
+
+    <div class="note-g-container">
+        <div class="hero-section">
+            <h1>Note G: The First Computer Program <button onclick="toggleHelpModal()" class="help-btn" title="Quick Help">?</button></h1>
+            <p class="subtitle">The Enchantress of Numbers</p>
+            <p>In 1843, Ada Lovelace wrote what is considered the world's first computer program — an algorithm to calculate Bernoulli numbers on Charles Babbage's proposed Analytical Engine. Though the machine was never built in her lifetime, her vision transcended hardware limitations and established the foundation of computer programming.</p>
+        </div>
+
+        <div class="info-section">
+            <h2>Who Was Ada Lovelace?</h2>
+            <p>Augusta Ada King, Countess of Lovelace (1815–1852), was an English mathematician and writer who worked with Charles Babbage on his Analytical Engine. The daughter of poet Lord Byron, Ada possessed an exceptional gift for mathematics and logical reasoning.</p>
+            
+            <p>While translating an Italian article about Babbage's machine, she added extensive notes of her own — labeled A through G. <strong>Note G</strong> contained a complete algorithm for computing Bernoulli numbers, making it the first published algorithm intended to be processed by a machine.</p>
+
+            <div class="quote-box">
+                <p>"The Analytical Engine weaves algebraical patterns just as the Jacquard loom weaves flowers and leaves."</p>
+                <div class="attribution">— Ada Lovelace</div>
+            </div>
+
+            <h3>Why Bernoulli Numbers?</h3>
+            <p>Ada chose Bernoulli numbers to demonstrate the Analytical Engine's capabilities because:</p>
+            <ul>
+                <li><strong>Complex Recursion:</strong> They require storing and referencing previous computed values</li>
+                <li><strong>Fractional Arithmetic:</strong> Operations must preserve exact ratios, not just decimals</li>
+                <li><strong>Memory Management:</strong> The algorithm showcased the Engine's "store" (memory) and "mill" (processor)</li>
+                <li><strong>Mathematical Significance:</strong> Used in number theory, calculus, and various mathematical applications</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>Understanding Bernoulli Numbers</h2>
+            <p>Bernoulli numbers are a sequence of rational numbers with deep connections to number theory and analysis. They appear in formulas for sums of powers, Taylor series, and the Riemann zeta function.</p>
+
+            <h3>The Recursive Formula</h3>
+            <p>Ada's Note G used this recursive formula to compute Bₙ:</p>
+            
+            <div class="formula-box">
+                Bₙ = -Σ(k=0 to n-1) [C(n,k) × Bₖ / (n + 1 - k)]
+            </div>
+
+            <p>Where:</p>
+            <ul>
+                <li><strong>Bₙ</strong> is the nth Bernoulli number</li>
+                <li><strong>C(n,k)</strong> is the binomial coefficient "n choose k"</li>
+                <li><strong>Σ</strong> represents summation over all k from 0 to n-1</li>
+            </ul>
+
+            <h3>Base Cases</h3>
+            <ul>
+                <li><strong>B₀ = 1</strong></li>
+                <li><strong>B₁ = 1/2</strong> (Note: Ada used the positive 1/2 convention)</li>
+                <li>All odd Bernoulli numbers (except B₁) equal zero</li>
+            </ul>
+
+            <h3>Known Values</h3>
+            <div class="known-values">
+                <div class="known-value-item">
+                    <div class="label">B₀</div>
+                    <div class="value">1</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₁</div>
+                    <div class="value">1/2</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₂</div>
+                    <div class="value">1/6</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₄</div>
+                    <div class="value">-1/30</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₆</div>
+                    <div class="value">1/42</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₈</div>
+                    <div class="value">-1/30</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>🎯 Bernoulli Number Calculator</h2>
+            <p>Experience Ada's algorithm in action! Enter a value of n to compute the nth Bernoulli number as an exact fraction.</p>
+
+            <div class="input-group">
+                <label for="n-input">Enter n (0 ≤ n ≤ 50):</label>
+                <input type="number" id="n-input" min="0" max="50" value="8" placeholder="e.g., 8">
+            </div>
+
+            <button class="calculate-btn" id="calculate-btn">Calculate Bₙ</button>
+
+            <div class="result-box" id="result-box">
+                <h3>Result: B<span id="result-n"></span></h3>
+                <div class="result-value" id="result-value"></div>
+                
+                <div class="computation-steps" id="computation-steps">
+                    <h4>Computation Steps:</h4>
+                    <pre id="steps-content"></pre>
+                </div>
+            </div>
+
+            <div id="error-message" class="error-message" style="display: none;"></div>
+        </div>
+
+        <div class="info-section">
+            <h2>The Algorithm: How It Works</h2>
+            
+            <h3>1. Initialize Storage</h3>
+            <p>Like the Analytical Engine's "store," we maintain an array of all previously computed Bernoulli numbers. Each number is stored as an exact fraction (numerator/denominator).</p>
+
+            <h3>2. Set Base Cases</h3>
+            <p>We begin with the known values:</p>
+            <ul>
+                <li>B₀ = 1/1</li>
+                <li>B₁ = 1/2</li>
+            </ul>
+
+            <h3>3. Recursive Computation</h3>
+            <p>For each n ≥ 2, we compute Bₙ by:</p>
+            <ol>
+                <li>Starting with Bₙ = 0</li>
+                <li>For each k from 0 to n-1:
+                    <ul>
+                        <li>Calculate the binomial coefficient C(n,k)</li>
+                        <li>Multiply by the stored value Bₖ</li>
+                        <li>Divide by (n + 1 - k)</li>
+                        <li>Add to our running total</li>
+                    </ul>
+                </li>
+                <li>Negate the result (according to the formula)</li>
+                <li>Simplify the fraction using GCD</li>
+                <li>Store Bₙ for future use</li>
+            </ol>
+
+            <h3>4. Exact Fraction Arithmetic</h3>
+            <p>To preserve precision, we never use floating-point decimals. Instead:</p>
+            <ul>
+                <li><strong>Addition:</strong> a/b + c/d = (ad + bc) / (bd)</li>
+                <li><strong>Multiplication:</strong> a/b × c/d = (ac) / (bd)</li>
+                <li><strong>Division:</strong> a/b ÷ c/d = (ad) / (bc)</li>
+                <li><strong>Simplification:</strong> Divide numerator and denominator by their GCD</li>
+            </ul>
+
+            <div class="quote-box">
+                <p>"The Analytical Engine has no pretensions whatever to originate anything. It can do whatever we know how to order it to perform."</p>
+                <div class="attribution">— Ada Lovelace</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>Legacy & Impact</h2>
+            <p>Ada Lovelace's Note G represents far more than a mathematical exercise. She envisioned possibilities for computing that wouldn't be realized for over a century:</p>
+
+            <ul>
+                <li><strong>Programming Concepts:</strong> Variables, loops, conditionals, and subroutines</li>
+                <li><strong>Beyond Calculation:</strong> She theorized machines could manipulate symbols and create music</li>
+                <li><strong>Debugging:</strong> She anticipated and described how errors could occur and be corrected</li>
+                <li><strong>Algorithm Design:</strong> Systematic problem-solving through step-by-step instructions</li>
+            </ul>
+
+            <p>Today, Ada Lovelace Day (second Tuesday of October) celebrates women in STEM fields. Her vision and intellect continue to inspire programmers, mathematicians, and engineers worldwide.</p>
+        </div>
+
+        <div class="info-section">
+            <h2>A Letter to Charles Babbage</h2>
+            <p>On August 14, 1843, shortly after completing her translation and notes on the Analytical Engine, Ada wrote this passionate letter to Charles Babbage:</p>
+            
+            <div class="quote-box">
+                <p>My dear Babbage,</p>
+                <p>I am writing to you with a sense of urgency and excitement. As I continue to delve into the capabilities of your Analytical Engine, I am increasingly convinced that its potential far surpasses that of any mere calculating machine. The machine, with its ability to perform any calculation we can devise, seems to me to be a harbinger of a new age, where the boundaries between what is possible and what is not are redefined.</p>
+                <p><strong>That brain of mine is something more than merely mortal, as time will show.</strong> I feel that I am destined to play a significant role in unlocking the mysteries that this machine can reveal. My understanding of mathematics and my ability to see patterns and connections that others might miss will, I believe, be crucial in maximizing the Engine's potential.</p>
+                <p>I implore you, my dear friend, to not let this project falter due to lack of support or resources. Your genius has brought us to the precipice of a new era, and it would be a travesty if this work were to go unfinished. I am committed to aiding you in any way I can, whether through my own financial means or by leveraging my connections to secure patronage.</p>
+                <p>Let us work together to ensure that the Analytical Engine is not just a dream, but a reality that will astound the world.</p>
+                <p>Your friend and collaborator,</p>
+                <p style="text-align: right; font-style: normal; color: var(--color-accent);">Ada Lovelace</p>
+                <div class="attribution">— Letter to Charles Babbage, August 14, 1843</div>
+            </div>
+
+            <p>This letter captures Ada's extraordinary confidence in her own abilities and her deep commitment to realizing the potential of the Analytical Engine. Her prophecy that her brain was "something more than merely mortal" proved prescient — her contributions to computing would not be fully appreciated until more than a century after her death.</p>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay">
+        <div class="help-modal">
+            <button class="modal-close" onclick="toggleHelpModal()" aria-label="Close help modal">&times;</button>
+            <h2>📚 Quick Help — Bernoulli Calculator</h2>
+            
+            <h3>🎯 How to Use the Calculator</h3>
+            <ol>
+                <li><strong>Enter a Value:</strong> Type a number <code>n</code> (0-60) in the input field</li>
+                <li><strong>Click Calculate:</strong> The algorithm will compute the nth Bernoulli number</li>
+                <li><strong>View Results:</strong> See both the exact fraction and decimal approximation</li>
+                <li><strong>Explore Computation Steps:</strong> Review the mathematical process used</li>
+            </ol>
+
+            <div class="help-section">
+                <h3>🔢 Understanding the Results</h3>
+                <p><strong>Exact Fraction:</strong> Bernoulli numbers are rational numbers (fractions). The calculator shows the precise fraction form.</p>
+                <p><strong>Decimal Approximation:</strong> For convenience, the decimal equivalent is also displayed (accurate to 15 digits).</p>
+                <p><strong>Pattern Alert:</strong> Notice that odd-indexed Bernoulli numbers (except B₁) are zero! This is a fascinating mathematical property.</p>
+            </div>
+
+            <h3>📊 Known First Bernoulli Numbers</h3>
+            <p>The calculator displays the first few known values for reference:</p>
+            <ul>
+                <li><strong>B₀ = 1</strong> (starting value)</li>
+                <li><strong>B₁ = -1/2</strong> (special case)</li>
+                <li><strong>B₂ = 1/6</strong> (first recursively computed)</li>
+                <li><strong>B₄ = -1/30</strong> (notice B₃ = 0, following the odd-index pattern)</li>
+            </ul>
+
+            <h3>🧮 The Recursive Formula</h3>
+            <p>The calculator uses Ada Lovelace's original approach:</p>
+            <div class="help-section">
+                <code style="display: block; margin: 10px 0;">Bₙ = -Σ(k=0 to n-1) [C(n+1,k) × Bₖ / (n+1-k)]</code>
+                <p style="margin-top: 10px;"><strong>Where:</strong></p>
+                <ul style="margin: 5px 0;">
+                    <li><code>C(n,k)</code> = binomial coefficient "n choose k"</li>
+                    <li><code>Σ</code> = summation over all k values</li>
+                    <li>Each new Bₙ depends on all previous B values</li>
+                </ul>
+            </div>
+
+            <h3>⚡ Performance Notes</h3>
+            <ul>
+                <li><strong>Lower Values (0-20):</strong> Calculate instantly</li>
+                <li><strong>Medium Values (21-40):</strong> May take a few seconds</li>
+                <li><strong>Higher Values (41-60):</strong> Can take 10-30 seconds due to large number arithmetic</li>
+            </ul>
+            <p>The calculator preserves exact fractional precision throughout, which requires intensive computation for large values.</p>
+
+            <h3>🎓 Why Bernoulli Numbers Matter</h3>
+            <ul>
+                <li><strong>Number Theory:</strong> Connected to prime numbers and the Riemann zeta function</li>
+                <li><strong>Calculus:</strong> Appear in Taylor series expansions</li>
+                <li><strong>Physics:</strong> Used in quantum field theory and statistical mechanics</li>
+                <li><strong>Computing History:</strong> The first algorithm designed for a computer</li>
+            </ul>
+
+            <h3>🎼 Musical Connection</h3>
+            <p>Bernoulli numbers have applications in:</p>
+            <ul>
+                <li><strong>Wave Synthesis:</strong> Fourier series for generating waveforms</li>
+                <li><strong>Harmonic Analysis:</strong> Computing harmonic coefficients</li>
+                <li><strong>Signal Processing:</strong> Approximating periodic functions</li>
+            </ul>
+            <p style="margin-top: 10px;">✨ <strong>Want to hear Bernoulli numbers as music?</strong> Check out <a href="lovelace-music.html" style="color: var(--color-accent);">Lovelace Music</a> to transform these mathematical sequences into sound!</p>
+
+            <div class="help-section">
+                <h3>💡 Tips for Exploration</h3>
+                <ul>
+                    <li>Try computing several consecutive even-indexed values (B₀, B₂, B₄, B₆...)</li>
+                    <li>Notice how the numerators grow quickly while denominators stay relatively small</li>
+                    <li>Observe the alternating signs (positive, negative, positive...)</li>
+                    <li>The computation steps show how each new value builds on previous ones</li>
+                </ul>
+            </div>
+
+            <h3>🏛️ Historical Context</h3>
+            <p>Ada Lovelace developed this algorithm in 1843 for Charles Babbage's Analytical Engine. Though the machine was never built, her algorithm was complete and correct — the first true computer program, written nearly 200 years ago.</p>
+            <p>Her work wasn't fully recognized until the 1950s, when computer scientists rediscovered her notes and realized she had anticipated modern programming concepts including loops, conditionals, and subroutines.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleHelpModal() {
+            const modal = document.getElementById('helpModal');
+            modal.classList.toggle('active');
+
+            if (modal.classList.contains('active')) {
+                modal.onclick = (e) => {
+                    if (e.target === modal) toggleHelpModal();
+                };
+                document.addEventListener('keydown', escapeHandler);
+            } else {
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        }
+
+        function escapeHandler(e) {
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('helpModal');
+                if (modal.classList.contains('active')) {
+                    toggleHelpModal();
+                }
+            }
+        }
+    </script>
+
+    <footer></footer>
+</body>
+
+</html>

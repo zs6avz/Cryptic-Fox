@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a href="${prefix}decrypt.html">Encrypt/Decrypt</a>
                 <a href="${prefix}image-encrypt.html">Image Encryption</a>
                 <a href="${prefix}audio-encrypt.html">Audio Encryption</a>
+                <!-- <a href="${prefix}red.html">Steganalysis</a> -->
+                <a href="${prefix}text-stego-detect.html">Text Stego Detector</a>
+                <a href="${prefix}note-g.html">Note G: Bernoulli Numbers</a>
+                <a href="${prefix}lovelace-music.html">Lovelace Music</a>
+                <!-- <a href="${prefix}puzzles.html">Puzzles</a> -->
                 <a href="${prefix}cryptography.html">Resources</a>
                 <a href="${prefix}tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
             </div>

@@ -13,6 +13,4 @@
     events.forEach(eventName => {
         document.addEventListener(eventName, preventDefaults, true);
     });
-
-    console.log("Drag-and-drop suppression active.");
 })();

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net;">
+    <!-- Clickjacking Defense (Frame-Busting) -->
+    <style id="antiClickjack">body{display:none !important;}</style>
+    <script type="text/javascript">
+        if (self === top) {
+            var antiClickjack = document.getElementById("antiClickjack");
+            if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            top.location = self.location;
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Stego Detector — Cryptic Fox</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="js/components.js"></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/text-stego-detect.js" defer></script>
+    <script src="js/smoke.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <!-- Favicon Links -->
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+
+    <meta name="description"
+        content="Detect text steganography using stylometric analysis, TF-IDF weighting, and similarity scoring. Identify synonym substitution, spacing manipulation, and punctuation-based hidden messages.">
+    <link rel="canonical" href="https://cryptic-fox.com/text-stego-detect.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://cryptic-fox.com/text-stego-detect.html">
+    <meta property="og:title" content="Text Stego Detector — Cryptic Fox">
+    <meta property="og:description"
+        content="Advanced text steganography detection through linguistic analysis and pattern recognition.">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Text Stego Detector — Cryptic Fox">
+    <meta name="twitter:description"
+        content="Advanced text steganography detection through linguistic analysis and pattern recognition.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+
+    <style>
+        .analysis-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .text-input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .text-input-box label {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .text-input-box textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--color-text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+
+        .text-input-box textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .file-upload-btn {
+            padding: 8px 16px;
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .file-upload-btn:hover {
+            background: var(--color-accent);
+            color: #000;
+        }
+
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .anomaly-meter {
+            background: var(--color-card-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .meter-bar {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+            border-radius: var(--radius-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meter-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 3px;
+            background: #000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            transition: left 0.5s ease;
+        }
+
+        .meter-label {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .score-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .score-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--color-border);
+        }
+
+        .score-card h4 {
+            margin: 0 0 8px 0;
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .score-card .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-accent);
+        }
+
+        .expandable-section {
+            background: var(--color-card-bg);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            transition: background 0.2s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .section-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .section-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .section-content.show {
+            display: block;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .comparison-table th {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+
+        .comparison-table .deviation {
+            font-weight: 600;
+        }
+
+        .comparison-table .deviation.high {
+            color: #F44336;
+        }
+
+        .comparison-table .deviation.medium {
+            color: #FFC107;
+        }
+
+        .comparison-table .deviation.low {
+            color: #4CAF50;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .highlighted-text {
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .highlight-spacing {
+            background: rgba(255, 193, 7, 0.3);
+            border-bottom: 2px solid #FFC107;
+        }
+
+        .highlight-punctuation {
+            background: rgba(156, 39, 176, 0.3);
+            border-bottom: 2px solid #9C27B0;
+        }
+
+        .highlight-synonym {
+            background: rgba(33, 150, 243, 0.3);
+            border-bottom: 2px solid #2196F3;
+        }
+
+        .decoded-message {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .decoded-message h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+        }
+
+        .decoded-message .message-content {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            word-break: break-word;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .info-tooltip {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-accent);
+            color: #000;
+            text-align: center;
+            line-height: 18px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: help;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
+        .hidden-btn {
+            display: none;
+        }
+
+        .legend-spacing {
+            background: rgba(255, 193, 7, 0.3);
+            border: 2px solid #FFC107;
+        }
+
+        .legend-punctuation {
+            background: rgba(156, 39, 176, 0.3);
+            border: 2px solid #9C27B0;
+        }
+
+        .legend-synonym {
+            background: rgba(33, 150, 243, 0.3);
+            border: 2px solid #2196F3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dropdown" role="navigation"></div>
+
+    <section class="hero">
+        <h1>🔍 Text Stego Detector</h1>
+        <p class="tagline">Advanced steganography detection through stylometric analysis, TF-IDF weighting, and similarity scoring</p>
+    </section>
+
+    <div class="analysis-container">
+        <div class="method">
+            <div class="method-header">
+                <h2>
+                    <span class="card-icon">📊</span>
+                    Linguistic Forensics
+                    <span class="info-tooltip" title="Detects text manipulation through stylometry, term frequency analysis, and pattern recognition">?</span>
+                </h2>
+            </div>
+
+            <div class="input-section">
+                <div class="text-input-box">
+                    <label for="suspiciousText">
+                        Suspicious Text
+                        <span class="info-tooltip" title="Paste the text you suspect may contain hidden messages">?</span>
+                    </label>
+                    <textarea id="suspiciousText" placeholder="Paste text to analyze for steganographic manipulation..."></textarea>
+                    <input type="file" id="suspiciousFile" accept=".txt" class="hidden-file-input">
+                    <button class="file-upload-btn" onclick="document.getElementById('suspiciousFile').click()">📁 Upload .txt File</button>
+                </div>
+
+                <div class="text-input-box">
+                    <label for="baselineText">
+                        Baseline Text (Reference)
+                        <span class="info-tooltip" title="Provide a sample of the author's normal writing for comparison">?</span>
+                    </label>
+                    <textarea id="baselineText" placeholder="Paste reference text representing normal writing patterns..."></textarea>
+                    <input type="file" id="baselineFile" accept=".txt" class="hidden-file-input">
+                    <button class="file-upload-btn" onclick="document.getElementById('baselineFile').click()">📁 Upload .txt File</button>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button class="primary-btn" onclick="analyzeText()">🔍 Analyze Text</button>
+                <button class="primary-btn" onclick="clearAnalysis()">🗑️ Clear</button>
+                <button class="primary-btn hidden-btn" id="exportBtn" onclick="exportResults()">💾 Export Results</button>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="anomaly-meter">
+                    <h3>Anomaly Score</h3>
+                    <div class="meter-bar">
+                        <div class="meter-indicator" id="meterIndicator"></div>
+                    </div>
+                    <div class="meter-label" id="meterLabel">0 / 100</div>
+                    <div class="score-details" id="scoreDetails"></div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('stylometry')">
+                        <h3>📝 Stylometric Analysis</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="stylometry-content">
+                        <table class="comparison-table" id="stylometryTable"></table>
+                        <div class="chart-container">
+                            <canvas id="stylometryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('tfidf')">
+                        <h3>📈 TF-IDF Analysis</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="tfidf-content">
+                        <p id="tfidfDescription"></p>
+                        <div class="chart-container">
+                            <canvas id="tfidfChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('similarity')">
+                        <h3>🎯 Similarity Scoring</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="similarity-content">
+                        <div class="score-details" id="similarityScores"></div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('highlighted')">
+                        <h3>🔦 Highlighted Anomalies</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="highlighted-content">
+                        <div class="highlighted-text" id="highlightedText"></div>
+                        <div class="legend">
+                            <div class="legend-item">
+                                <div class="legend-color legend-spacing"></div>
+                                <span>Spacing Anomalies</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-punctuation"></div>
+                                <span>Punctuation Patterns</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color legend-synonym"></div>
+                                <span>Suspicious Terms</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="decodedSection"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/suppress.js"></script>
+</body>
+
+</html>

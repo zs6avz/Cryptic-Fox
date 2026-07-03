@@ -112,7 +112,6 @@ function handleFileUpload(file) {
     showError(`File too large (${formatBytes(file.size)}). Maximum size is 500MB.`);
     return;
   }
-  console.log("File uploaded:", file.name, file.size, file.type);
   currentMediaName = (file.name || 'media').replace(/\.[^/.]+$/, '');
 
   // Show file info
@@ -186,8 +185,6 @@ function loadVideoFile(file) {
 
   // Define the metadata handler
   const onLoadedMetadata = () => {
-    console.log("Metadata loaded:", video.videoWidth, "x", video.videoHeight, "Duration:", video.duration);
-    
     if (video.videoWidth === 0 || video.videoHeight === 0) {
       console.warn("Video dimensions are 0. Retrying in 500ms...");
       setTimeout(onLoadedMetadata, 500);
@@ -204,7 +201,6 @@ function loadVideoFile(file) {
     video.pause();
 
     function renderFirstFrame() {
-      console.log("Rendering first frame...");
       const gain = [
         parseFloat(redGain.value || 1),
         parseFloat(greenGain.value || 1),
@@ -294,12 +290,10 @@ if (slider && display) {
   slider.addEventListener('input', function () {
     step = parseFloat(this.value);
     display.textContent = `${step.toFixed(2)}s`;
-    console.log(`Frame interval updated to ${step} seconds`);
   });
   // also capture 'change' for when user releases the slider
   slider.addEventListener('change', function () {
     step = parseFloat(this.value);
-    console.log(`Frame interval updated to ${step} seconds`);
   });
 }
 

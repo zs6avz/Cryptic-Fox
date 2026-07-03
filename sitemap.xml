@@ -50,6 +50,11 @@
         <lastmod>2026-05-08</lastmod>
         <priority>0.6</priority>
     </url>
+    <url>
+        <loc>https://cryptic-fox.com/lovelace-music.html</loc>
+        <lastmod>2026-07-03</lastmod>
+        <priority>0.8</priority>
+    </url>
     <!-- Blog Posts -->
     <url><loc>https://cryptic-fox.com/blog-posts/blog-post-1.html</loc><priority>0.6</priority></url>
     <url><loc>https://cryptic-fox.com/blog-posts/blog-post-5.html</loc><priority>0.6</priority></url>
