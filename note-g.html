@@ -588,8 +588,8 @@
             <p>Experience Ada's algorithm in action! Enter a value of n to compute the nth Bernoulli number as an exact fraction.</p>
 
             <div class="input-group">
-                <label for="n-input">Enter n (0 ≤ n ≤ 50):</label>
-                <input type="number" id="n-input" min="0" max="50" value="8" placeholder="e.g., 8">
+                <label for="n-input">Enter n (0 ≤ n ≤ 110):</label>
+                <input type="number" id="n-input" min="0" max="110" value="8" placeholder="e.g., 8">
             </div>
 
             <button class="calculate-btn" id="calculate-btn">Calculate Bₙ</button>
@@ -693,7 +693,7 @@
             
             <h3>How to Use the Calculator</h3>
             <ol>
-                <li><strong>Enter a Value:</strong> Type a number <code>n</code> (0-60) in the input field</li>
+                <li><strong>Enter a Value:</strong> Type a number <code>n</code> (0-110) in the input field</li>
                 <li><strong>Click Calculate:</strong> The algorithm will compute the nth Bernoulli number</li>
                 <li><strong>View Results:</strong> See both the exact fraction and decimal approximation</li>
                 <li><strong>Explore Computation Steps:</strong> Review the mathematical process used</li>
@@ -731,7 +731,8 @@
             <ul>
                 <li><strong>Lower Values (0-20):</strong> Calculate instantly</li>
                 <li><strong>Medium Values (21-40):</strong> May take a few seconds</li>
-                <li><strong>Higher Values (41-60):</strong> Can take 10-30 seconds due to large number arithmetic</li>
+                <li><strong>Higher Values (41-80):</strong> Can take 10-30 seconds due to large number arithmetic</li>
+                <li><strong>Very High Values (81-110):</strong> May take 30+ seconds or longer due to extremely large number arithmetic</li>
             </ul>
             <p>The calculator preserves exact fractional precision throughout, which requires intensive computation for large values.</p>
 

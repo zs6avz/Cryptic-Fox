@@ -236,8 +236,8 @@ function calculateBernoulli() {
         return;
     }
     
-    if (n > 50) {
-        errorMessage.textContent = 'For performance reasons, n is limited to 50. (Larger values cause extremely large numerators/denominators!)';
+    if (n > 110) {
+        errorMessage.textContent = 'For performance reasons, n is limited to 110. (Larger values cause extremely large numerators/denominators!)';
         errorMessage.style.display = 'block';
         resultBox.classList.remove('show');
         return;
