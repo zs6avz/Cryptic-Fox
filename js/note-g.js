@@ -123,43 +123,45 @@ function bernoulli(n, logSteps = false) {
         return { result: B[0], steps };
     }
     
-    // Base case: B_1 = 1/2 (using positive convention)
-    B[1] = new Fraction(1, 2);
-    if (logSteps) steps.push(`B₁ = 1/2 (base case)`);
+    // Base case: B_1 = -1/2 (modern convention required for correct recursion)
+    // Note: Ada used +1/2, but the recursion formula requires -1/2
+    B[1] = new Fraction(-1, 2);
+    if (logSteps) steps.push(`B₁ = -1/2 (base case for recursion)`);
     
     if (n === 1) {
         return { result: B[1], steps };
     }
     
-    // Compute B_2 through B_n recursively
+    // Compute B_2 through B_n recursively using the correct formula:
+    // B_n = -1/(n+1) * Σ(k=0 to n-1) C(n+1,k) * B_k
     for (let i = 2; i <= n; i++) {
         if (logSteps) steps.push(`\n--- Computing B_${i} ---`);
         
-        // Start with B_i = 0
+        // Start with sum = 0
         let sum = new Fraction(0, 1);
         
-        // Sum over k from 0 to i-1
+        // Sum over k from 0 to i-1: Σ C(i+1, k) * B_k
         for (let k = 0; k <= i - 1; k++) {
-            const C = binomial(i, k);
-            const divisor = i + 1 - k;
+            // Use binomial coefficient C(i+1, k), NOT C(i, k)
+            const C = binomial(i + 1, k);
             
-            // term = C(i,k) * B_k / (i+1-k)
-            let term = B[k].multiply(C).divide(divisor);
+            // term = C(i+1, k) * B_k
+            let term = B[k].multiply(C);
             
             if (logSteps && term.numerator !== 0) {
-                steps.push(`  k=${k}: C(${i},${k})=${C}, B_${k}=${B[k].toString()}, divisor=${divisor}`);
-                steps.push(`       term = ${C} × ${B[k].toString()} ÷ ${divisor} = ${term.toString()}`);
+                steps.push(`  k=${k}: C(${i+1},${k})=${C}, B_${k}=${B[k].toString()}`);
+                steps.push(`       term = ${C} × ${B[k].toString()} = ${term.toString()}`);
             }
             
             sum = sum.add(term);
         }
         
-        // B_i = -sum (according to the formula)
-        B[i] = sum.negate();
+        // B_i = -sum / (i+1)
+        B[i] = sum.negate().divide(i + 1);
         
         if (logSteps) {
             steps.push(`  Sum = ${sum.toString()}`);
-            steps.push(`  B_${i} = -(Sum) = ${B[i].toString()}`);
+            steps.push(`  B_${i} = -(Sum) / ${i + 1} = ${B[i].toString()}`);
         }
     }
     
