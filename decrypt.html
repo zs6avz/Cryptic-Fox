@@ -406,13 +406,31 @@
         <div class="sub-method" style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
             <h3>Musical Cryptography</h3>
             <textarea class="music-input" placeholder="Enter text or notes (C4, D4, E4...)..."></textarea>
-            <div class="button-container">
-                <button onclick="processMusic(true)">To Notes</button>
-                <button onclick="processMusic(false)">From Notes</button>
-                <button onclick="copyToClipboard('.music-output')">📋 Copy</button>
-                <button onclick="swapFields('.music-input', '.music-output')">⇄ Swap</button>
-                <button id="clearMusicFieldsBtn">Clear</button>
-            </div>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                    <label for="music-preset" style="font-size:0.9rem; color:var(--color-text-muted);">Preset</label>
+                    <select class="music-preset" id="music-preset" style="min-width:160px;">
+                        <option value="diatonic">Diatonic (A→C4 mapping)</option>
+                        <option value="bach">Bach (B-A-C-H motif)</option>
+                        <option value="schumann">Schumann (ASCH / Asch motif)</option>
+                        <option value="shostakovich">Shostakovich (DSCH motif)</option>
+                        <option value="custom">Custom motif</option>
+                    </select>
+                    <label for="music-octave" style="font-size:0.9rem; color:var(--color-text-muted);">Base Octave</label>
+                    <select class="music-octave" id="music-octave">
+                        <option value="3">3</option>
+                        <option value="4" selected>4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select>
+                    <input class="music-custom" placeholder="Custom motif notes (comma-separated)" style="min-width:260px; display:none;" />
+                </div>
+                <div class="button-container">
+                    <button onclick="processMusic(true)">To Notes</button>
+                    <button onclick="processMusic(false)">From Notes</button>
+                    <button onclick="copyToClipboard('.music-output')">📋 Copy</button>
+                    <button onclick="swapFields('.music-input', '.music-output')">⇄ Swap</button>
+                    <button id="clearMusicFieldsBtn">Clear</button>
+                </div>
             <p class="music-output"></p>
         </div>
     </div>

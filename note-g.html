@@ -287,7 +287,7 @@
 
         .known-values {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 15px;
             margin: 20px 0;
         }
@@ -298,12 +298,19 @@
             border-radius: var(--radius-md);
             padding: 15px;
             text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .known-value-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 69, 0.2);
         }
 
         .known-value-item .label {
             color: var(--color-text-muted);
             font-size: 0.9rem;
             margin-bottom: 5px;
+            font-weight: 500;
         }
 
         .known-value-item .value {
@@ -334,139 +341,89 @@
             font-size: 0.9rem;
         }
 
-        .help-btn {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--color-primary);
-            border: none;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 15px;
-            vertical-align: middle;
-            transition: var(--transition-base);
+        .mode-selector-group {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
         }
 
-        .help-btn:hover {
-            background: var(--color-text);
-            color: #000;
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
+        .mode-buttons {
             display: flex;
-            opacity: 1;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: var(--color-text-muted);
-            cursor: pointer;
-            transition: color 0.2s ease;
-            padding: 5px;
-            margin: 0;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: var(--color-accent);
-            box-shadow: none;
-            background: none;
-            transform: scale(1.1);
-        }
-
-        .help-modal {
-            background: var(--color-surface-deep);
-            border: 2px solid var(--color-primary);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-glow);
-            width: 90%;
-            max-width: 700px;
-            max-height: 85vh;
-            padding: 40px;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-            text-align: left;
-        }
-
-        .modal-overlay.active .help-modal {
-            transform: translateY(0);
-        }
-
-        .help-modal h2 {
-            color: var(--color-accent);
-            margin-top: 0;
-            font-size: 1.8rem;
-            border-bottom: 2px solid var(--color-primary);
-            padding-bottom: 10px;
-        }
-
-        .help-modal h3 {
-            color: var(--color-primary);
-            margin-top: 25px;
-            font-size: 1.3rem;
-        }
-
-        .help-modal p {
-            line-height: 1.7;
+            gap: 15px;
             margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-md);
             color: var(--color-text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
-        .help-modal ul, .help-modal ol {
-            margin: 15px 0;
-            padding-left: 25px;
+        .mode-btn:hover {
+            border-color: var(--color-primary);
+            background: rgba(139, 69, 69, 0.1);
         }
 
-        .help-modal li {
-            margin-bottom: 10px;
+        .mode-btn.active {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(139, 69, 69, 0.3);
+        }
+
+        .mode-description {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
             line-height: 1.6;
-            color: var(--color-text);
-        }
-
-        .help-modal strong {
-            color: var(--color-accent);
-        }
-
-        .help-modal code {
-            background: rgba(68, 125, 155, 0.2);
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            color: var(--color-primary);
-        }
-
-        .help-section {
-            background: rgba(68, 125, 155, 0.1);
-            border-left: 3px solid var(--color-primary);
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
             border-radius: var(--radius-sm);
+        }
+
+        .bug-toggle-group {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(139, 69, 69, 0.15);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-md);
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            color: var(--color-text);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--color-accent);
+        }
+
+        .bug-description {
+            margin-top: 15px;
+            padding: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--color-text-muted);
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--color-primary);
         }
 
         @media (max-width: 768px) {
@@ -482,16 +439,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .help-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 1rem;
-                margin-left: 10px;
-            }
-            
-            .help-modal {
-                padding: 25px;
-                max-height: 90vh;
+            .mode-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -503,7 +452,18 @@
 
     <div class="note-g-container">
         <div class="hero-section">
-            <h1>Note G: The First Computer Program <button onclick="toggleHelpModal()" class="help-btn" title="Quick Help">?</button></h1>
+            <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                <span>Note G: The First Computer Program</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Note G Calculator</h4>
+                        <div><b>Description:</b> Interactive calculator for Bernoulli numbers using both Ada Lovelace's original 1843 algorithm and modern recursive formula.</div>
+                        <div><b>How-to:</b> Select algorithm mode (Modern or Historical), enter a value n (0-110), and click Calculate to see exact fractional results.</div>
+                        <div><b>Historical Bug:</b> In Historical mode, enable the Operation 13 bug to see Ada's original error from her published diagram.</div>
+                        <div><b>Performance:</b> Lower values (0-20) are instant. Higher values (40+) may take longer due to exact fraction arithmetic.</div>
+                    </div>
+                </span>
+            </h1>
             <p class="subtitle">The Enchantress of Numbers</p>
             <p>In 1843, Ada Lovelace wrote what is considered the world's first computer program — an algorithm to calculate Bernoulli numbers on Charles Babbage's proposed Analytical Engine. Though the machine was never built in her lifetime, her vision transcended hardware limitations and established the foundation of computer programming.</p>
         </div>
@@ -555,43 +515,156 @@
                 <li>All odd Bernoulli numbers (except B₁) equal zero</li>
             </ul>
 
-            <h3>Known Values</h3>
+            <h3 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span>Known Values</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Bernoulli Number Reference</h4>
+                        <div><b>B₀ = 1:</b> Starting value by definition.</div>
+                        <div><b>B₁:</b> Modern convention uses -1/2, Ada used +1/2. Both are valid depending on the definition used.</div>
+                        <div><b>Even indices:</b> Non-zero fractions that grow in complexity (B₂, B₄, B₆, B₈...).</div>
+                        <div><b>Odd indices (shaded):</b> All odd-indexed Bernoulli numbers except B₁ equal zero. This is a fundamental mathematical property!</div>
+                        <div><b>Pattern:</b> Notice alternating signs and how numerators grow much faster than denominators.</div>
+                    </div>
+                </span>
+            </h3>
             <div class="known-values">
                 <div class="known-value-item">
                     <div class="label">B₀</div>
                     <div class="value">1</div>
                 </div>
-                <div class="known-value-item">
-                    <div class="label">B₁</div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.1);">
+                    <div class="label">B₁ (Modern)</div>
                     <div class="value">-1/2</div>
+                </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.1);">
+                    <div class="label">B₁ (Ada's)</div>
+                    <div class="value">+1/2</div>
                 </div>
                 <div class="known-value-item">
                     <div class="label">B₂</div>
                     <div class="value">1/6</div>
                 </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₃</div>
+                    <div class="value">0</div>
+                </div>
                 <div class="known-value-item">
                     <div class="label">B₄</div>
                     <div class="value">-1/30</div>
+                </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₅</div>
+                    <div class="value">0</div>
                 </div>
                 <div class="known-value-item">
                     <div class="label">B₆</div>
                     <div class="value">1/42</div>
                 </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₇</div>
+                    <div class="value">0</div>
+                </div>
                 <div class="known-value-item">
                     <div class="label">B₈</div>
                     <div class="value">-1/30</div>
+                </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₉</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₁₀</div>
+                    <div class="value">5/66</div>
+                </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₁₁</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₁₂</div>
+                    <div class="value">-691/2730</div>
+                </div>
+                <div class="known-value-item" style="background: rgba(139, 69, 69, 0.05);">
+                    <div class="label">B₁₃</div>
+                    <div class="value">0</div>
+                </div>
+                <div class="known-value-item">
+                    <div class="label">B₁₄</div>
+                    <div class="value">7/6</div>
                 </div>
             </div>
             
             <div class="quote-box" style="margin-top: 20px; background: rgba(139, 69, 69, 0.1); border-left: 3px solid var(--color-primary);">
                 <h4 style="margin-top: 0; color: var(--color-primary);">Historical Note on B₁</h4>
-                <p style="margin-bottom: 0;">In Ada Lovelace's era, mathematicians used <strong>B₁ = +1/2</strong>. Modern mathematics standardized on <strong>B₁ = -1/2</strong> to make the generating function and recursion formulas more elegant. This calculator uses the modern convention for computational accuracy, though Ada's original work brilliantly demonstrated the algorithmic principles regardless of convention.</p>
+                <p>In Ada Lovelace's era, mathematicians used <strong>B₁ = +1/2</strong>. Modern mathematics standardized on <strong>B₁ = -1/2</strong> to make the generating function and recursion formulas more elegant. This calculator lets you experience both conventions—use <strong>Historical Mode</strong> to see Ada's original approach, or <strong>Modern Mode</strong> for the current standard.</p>
+                <h4 style="margin-top: 15px; color: var(--color-primary);">Pattern Notice</h4>
+                <p style="margin-bottom: 0;"><strong>Odd indices (shaded):</strong> All Bernoulli numbers with odd index greater than 1 equal zero (B₃ = B₅ = B₇ = B₉ = ... = 0). This is a fundamental mathematical property. Only <strong>B₁</strong> and the <strong>even-indexed</strong> Bernoulli numbers are non-zero.</p>
             </div>
         </div>
 
         <div class="calculator-section">
-            <h2>Bernoulli Number Calculator</h2>
+            <h2 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span>Bernoulli Number Calculator</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Using the Calculator</h4>
+                        <div><b>Step 1:</b> Choose algorithm mode (Modern = standard formula, Historical = Ada's operation-based approach).</div>
+                        <div><b>Step 2:</b> Optionally enable the historical bug in Historical mode to see Ada's original error.</div>
+                        <div><b>Step 3:</b> Enter a value n between 0 and 110.</div>
+                        <div><b>Step 4:</b> Click Calculate to compute the nth Bernoulli number as an exact fraction.</div>
+                        <div><b>Results:</b> View exact fraction, decimal approximation, and detailed computation steps.</div>
+                    </div>
+                </span>
+            </h2>
             <p>Experience Ada's algorithm in action! Enter a value of n to compute the nth Bernoulli number as an exact fraction.</p>
+
+            <!-- Algorithm Mode Selector -->
+            <div class="mode-selector-group">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 1.2rem; margin-bottom: 15px; color: var(--color-text); font-weight: 600; flex-wrap: wrap;">
+                    <span>Algorithm Mode:</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>Algorithm Modes</h4>
+                            <div><b>Modern Mode:</b> Uses standard recursive formula with B₁ = -1/2. This is the mathematically correct high-level approach used in modern computing.</div>
+                            <div><b>Historical Mode:</b> Simulates Ada Lovelace's original operation-based algorithm with B₁ = +1/2. Faithfully recreates the Analytical Engine's Store and Mill operations.</div>
+                            <div><b>Why two modes?</b> Compare Ada's 1843 machine-level instructions with modern mathematical abstraction to see how programming evolved!</div>
+                        </div>
+                    </span>
+                </label>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" id="mode-modern" onclick="setMode('modern')">
+                        Modern (Corrected)
+                    </button>
+                    <button class="mode-btn" id="mode-historical" onclick="setMode('historical')">
+                        Historical (Ada's Note G)
+                    </button>
+                </div>
+                <div class="mode-description" id="mode-description">
+                    Uses modern recursive formula with B₁ = -1/2 (standard mathematical convention)
+                </div>
+            </div>
+
+            <!-- Bug Toggle (only visible in historical mode) -->
+            <div class="bug-toggle-group" id="bug-toggle-group" style="display: none;">
+                <label class="checkbox-label" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="include-bug" onchange="updateBugDescription()">
+                    <span>Include historical B₇ bug (Operation 13 error)</span>
+                    <span class="info-icon">i
+                        <div class="tooltip-content">
+                            <h4>The Historical B₇ Bug</h4>
+                            <div><b>What is it?</b> In Ada's published diagram, Operation 13 was incorrectly printed as subtraction instead of addition.</div>
+                            <div><b>Published error:</b> V₂₁ - V₁₃ → V₁₃</div>
+                            <div><b>Correct operation:</b> V₂₁ + V₁₃ → V₁₃</div>
+                            <div><b>Impact:</b> Produces incorrect B₈ value (the bug occurs during even-index calculations).</div>
+                            <div><b>Significance:</b> Shows Ada was doing real programming work! This bug wasn't discovered until the 1950s.</div>
+                        </div>
+                    </span>
+                </label>
+                <div class="bug-description" id="bug-description">
+                    Bug disabled: All results will be mathematically correct
+                </div>
+            </div>
 
             <div class="input-group">
                 <label for="n-input">Enter n (0 ≤ n ≤ 110):</label>
@@ -614,48 +687,169 @@
         </div>
 
         <div class="info-section">
-            <h2>The Algorithm: How It Works</h2>
+            <h2 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span>Ada's Note G: The Operation-Based Algorithm</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Historical Algorithm</h4>
+                        <div><b>Low-level approach:</b> Sequential operations on named variables (V₁, V₂, etc.), simulating the Analytical Engine's Store and Mill.</div>
+                        <div><b>Store:</b> Memory columns holding variables.</div>
+                        <div><b>Mill:</b> Processor performing arithmetic.</div>
+                        <div><b>Operations:</b> Each step (Op.1, Op.2, etc.) manipulates specific variables, like assembly language for a mechanical computer.</div>
+                        <div><b>B₁ = +1/2:</b> Ada used the historical mathematical convention of her era.</div>
+                    </div>
+                </span>
+            </h2>
             
-            <h3>1. Initialize Storage</h3>
-            <p>Like the Analytical Engine's "store," we maintain an array of all previously computed Bernoulli numbers. Each number is stored as an exact fraction (numerator/denominator).</p>
+            <p>Ada Lovelace's Note G is fundamentally different from modern programming—it's not written as a high-level formula, but as <strong>sequential operations</strong> for a machine that manipulates physical variables. Think of it as assembly language for a mechanical computer.</p>
 
-            <h3>2. Set Base Cases</h3>
-            <p>We begin with the known values:</p>
+            <h3>The Analytical Engine's Architecture</h3>
+            <p>Babbage's Analytical Engine had two key components:</p>
             <ul>
-                <li>B₀ = 1/1</li>
-                <li>B₁ = -1/2</li>
+                <li><strong>The Store:</strong> Memory columns holding variables (V₁, V₂, V₃, etc.)</li>
+                <li><strong>The Mill:</strong> The processor performing arithmetic operations</li>
             </ul>
 
-            <h3>3. Recursive Computation</h3>
-            <p>For each n ≥ 2, we compute Bₙ using the formula: Bₙ = -1/(n+1) × Σ C(n+1,k) × Bₖ</p>
-            <ol>
-                <li>Initialize sum = 0</li>
-                <li>For each k from 0 to n-1:
-                    <ul>
-                        <li>Calculate the binomial coefficient C(n+1, k)</li>
-                        <li>Multiply by the stored value Bₖ</li>
-                        <li>Add to the running sum</li>
-                    </ul>
-                </li>
-                <li>Negate the sum</li>
-                <li>Divide by (n+1)</li>
-                <li>Simplify the fraction using GCD</li>
-                <li>Store Bₙ for future use</li>
-            </ol>
+            <h3>Ada's Algorithm Structure</h3>
+            
+            <h4>Step 1: Initialize Store Variables</h4>
+            <div class="formula-box">
+V₁ ← 1  (constant)
+V₂ ← 2  (constant)
+V₃ ← n  (the index we're computing)
+V₄, V₅, V₆, V₇ ← 0  (working registers)
+            </div>
 
-            <h3>4. Exact Fraction Arithmetic</h3>
-            <p>To preserve precision, we never use floating-point decimals. Instead:</p>
+            <h4>Step 2: Compute Key Ratio</h4>
+            <p>The first three operations compute (n-1)/(n+1):</p>
+            <div class="formula-box">
+Op.1: V₄ = V₃ - V₁  →  V₄ = n - 1
+Op.2: V₅ = V₃ + V₁  →  V₅ = n + 1
+Op.3: V₄ = V₄ / V₅  →  V₄ = (n-1)/(n+1)
+            </div>
+
+            <h4>Step 3: Initial Accumulation</h4>
+            <p>Operations 4-6 begin combining with B₀ and B₁:</p>
+            <div class="formula-box">
+Op.4: V₆ = V₄ × B₀
+Op.5: V₇ = V₄ × B₁
+Op.6: V₆ = V₆ + V₇
+            </div>
+
+            <h4>Step 4: Loop Over Bernoulli Terms</h4>
+            <p>Operations 7-13 repeat in a loop, processing each previous Bernoulli number with appropriate scaling factors. This is where the <strong>control flow</strong> emerges—Ada specified:</p>
             <ul>
-                <li><strong>Addition:</strong> a/b + c/d = (ad + bc) / (bd)</li>
-                <li><strong>Multiplication:</strong> a/b × c/d = (ac) / (bd)</li>
-                <li><strong>Division:</strong> a/b ÷ c/d = (ad) / (bc)</li>
-                <li><strong>Simplification:</strong> Divide numerator and denominator by their GCD</li>
+                <li><strong>Loop condition:</strong> If V₃ > 0, return to Operation 4</li>
+                <li><strong>Loop update:</strong> V₃ = V₃ - V₂ (decrement by 2)</li>
+                <li><strong>Termination:</strong> When V₃ = 0, proceed to final step</li>
+            </ul>
+
+            <h4>Step 5: Final Computation</h4>
+            <div class="formula-box">
+Bₙ = -V₆ / V₅
+HALT
+            </div>
+
+            <h3>The Historical B₇ Bug</h3>
+            <div class="quote-box" style="background: rgba(139, 69, 69, 0.15);">
+                <p><strong>⚠️ Operation 13 Error:</strong> In Ada's published diagram for computing B₇, Operation 13 was printed as:</p>
+                <p style="font-family: 'Courier New', monospace; margin: 10px 0;">V₂₁ - V₁₃ → V₁₃</p>
+                <p>But it should have been:</p>
+                <p style="font-family: 'Courier New', monospace; margin: 10px 0;">V₂₁ + V₁₃ → V₁₃</p>
+                <p style="margin-bottom: 0;">This subtraction instead of addition produces an incorrect result. This is historically significant—it shows Ada was doing engineering work, complete with bugs that needed debugging! Modern computer scientists discovered this error when analyzing her work in the 1950s.</p>
+            </div>
+
+            <h3>Why This Matters</h3>
+            <ul>
+                <li><strong>First Program:</strong> This is the first algorithm designed for a computer</li>
+                <li><strong>Variables & Memory:</strong> Ada defined how to store and retrieve values</li>
+                <li><strong>Control Flow:</strong> She specified loops and conditional halts</li>
+                <li><strong>Operations:</strong> Each step maps to a machine instruction</li>
+                <li><strong>Debugging Reality:</strong> Even the first program had a bug!</li>
             </ul>
 
             <div class="quote-box">
                 <p>"The Analytical Engine has no pretensions whatever to originate anything. It can do whatever we know how to order it to perform."</p>
                 <div class="attribution">— Ada Lovelace</div>
             </div>
+        </div>
+
+        <div class="info-section">
+            <h2 style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span>Modern Algorithm: How It Works</span>
+                <span class="info-icon">i
+                    <div class="tooltip-content">
+                        <h4>Modern Algorithm</h4>
+                        <div><b>High-level approach:</b> Uses standard recursive formula Bₙ = -1/(n+1) × Σ(k=0 to n-1) [C(n+1,k) × Bₖ]</div>
+                        <div><b>B₁ = -1/2:</b> Modern mathematical convention.</div>
+                        <div><b>Advantages:</b> Concise, mathematically elegant, easier to understand and verify.</div>
+                        <div><b>Comparison:</b> This is what modern programmers would write, versus Ada's machine-level operations.</div>
+                    </div>
+                </span>
+            </h2>
+            
+            <p>The modern approach uses a high-level mathematical formula rather than low-level operations:</p>
+
+            <h3>The Recursive Formula</h3>
+            <div class="formula-box">
+Bₙ = -1/(n+1) × Σ(k=0 to n-1) [C(n+1,k) × Bₖ]
+            </div>
+
+            <h3>Algorithm Steps</h3>
+            <ol>
+                <li><strong>Initialize:</strong> B₀ = 1, B₁ = -1/2 (modern convention)</li>
+                <li><strong>For each n ≥ 2:</strong>
+                    <ul>
+                        <li>Initialize sum = 0</li>
+                        <li>For k from 0 to n-1:</li>
+                        <ul>
+                            <li>Compute binomial coefficient C(n+1, k)</li>
+                            <li>Multiply by Bₖ</li>
+                            <li>Add to sum</li>
+                        </ul>
+                        <li>Bₙ = -sum / (n+1)</li>
+                    </ul>
+                </li>
+                <li><strong>Simplify:</strong> Reduce fraction using GCD</li>
+            </ol>
+
+            <h3>Key Differences from Ada's Algorithm</h3>
+            <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+                <tr style="background: rgba(0,0,0,0.3);">
+                    <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Aspect</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Ada's Note G</th>
+                    <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Modern</th>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);"><strong>Approach</strong></td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">Sequential operations (assembly-like)</td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">Mathematical formula (high-level)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);"><strong>B₁ value</strong></td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">+1/2 (historical convention)</td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">-1/2 (modern convention)</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);"><strong>Variables</strong></td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">Named registers (V₁-V₇)</td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">Array indexing (B[k])</td>
+                </tr>
+                <tr>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);"><strong>Abstraction</strong></td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">Low-level machine operations</td>
+                    <td style="padding: 12px; border: 1px solid var(--color-border);">High-level algorithm</td>
+                </tr>
+            </table>
+
+            <h3>Exact Fraction Arithmetic</h3>
+            <p>Both algorithms preserve precision using exact rational arithmetic:</p>
+            <ul>
+                <li><strong>Addition:</strong> a/b + c/d = (ad + bc) / (bd)</li>
+                <li><strong>Multiplication:</strong> a/b × c/d = (ac) / (bd)</li>
+                <li><strong>Division:</strong> a/b ÷ c/d = (ad) / (bc)</li>
+                <li><strong>Simplification:</strong> Reduce by GCD(numerator, denominator)</li>
+            </ul>
         </div>
 
         <div class="info-section">
@@ -690,115 +884,6 @@
             <p>This letter captures Ada's extraordinary confidence in her own abilities and her deep commitment to realizing the potential of the Analytical Engine. Her prophecy that her brain was "something more than merely mortal" proved prescient — her contributions to computing would not be fully appreciated until more than a century after her death.</p>
         </div>
     </div>
-
-    <!-- Help Modal -->
-    <div id="helpModal" class="modal-overlay">
-        <div class="help-modal">
-            <button class="modal-close" onclick="toggleHelpModal()" aria-label="Close help modal">&times;</button>
-            <h2>Quick Help — Bernoulli Calculator</h2>
-            
-            <h3>How to Use the Calculator</h3>
-            <ol>
-                <li><strong>Enter a Value:</strong> Type a number <code>n</code> (0-110) in the input field</li>
-                <li><strong>Click Calculate:</strong> The algorithm will compute the nth Bernoulli number</li>
-                <li><strong>View Results:</strong> See both the exact fraction and decimal approximation</li>
-                <li><strong>Explore Computation Steps:</strong> Review the mathematical process used</li>
-            </ol>
-
-            <div class="help-section">
-                <h3>Understanding the Results</h3>
-                <p><strong>Exact Fraction:</strong> Bernoulli numbers are rational numbers (fractions). The calculator shows the precise fraction form.</p>
-                <p><strong>Decimal Approximation:</strong> For convenience, the decimal equivalent is also displayed (accurate to 15 digits).</p>
-                <p><strong>Pattern Alert:</strong> Notice that odd-indexed Bernoulli numbers (except B₁) are zero! This is a fascinating mathematical property.</p>
-            </div>
-
-            <h3>Known First Bernoulli Numbers</h3>
-            <p>The calculator displays the first few known values for reference:</p>
-            <ul>
-                <li><strong>B₀ = 1</strong> (starting value)</li>
-                <li><strong>B₁ = -1/2</strong> (special case)</li>
-                <li><strong>B₂ = 1/6</strong> (first recursively computed)</li>
-                <li><strong>B₄ = -1/30</strong> (notice B₃ = 0, following the odd-index pattern)</li>
-            </ul>
-
-            <h3>The Recursive Formula</h3>
-            <p>The calculator uses the standard Bernoulli recurrence relation:</p>
-            <div class="help-section">
-                <code style="display: block; margin: 10px 0;">Bₙ = -1/(n+1) × Σ(k=0 to n-1) [C(n+1,k) × Bₖ]</code>
-                <p style="margin-top: 10px;"><strong>Where:</strong></p>
-                <ul style="margin: 5px 0;">
-                    <li><code>C(n+1,k)</code> = binomial coefficient "(n+1) choose k"</li>
-                    <li><code>Σ</code> = summation over all k values</li>
-                    <li>Each new Bₙ depends on all previous B values</li>
-                </ul>
-            </div>
-
-            <h3>Performance Notes</h3>
-            <ul>
-                <li><strong>Lower Values (0-20):</strong> Calculate instantly</li>
-                <li><strong>Medium Values (21-40):</strong> May take a few seconds</li>
-                <li><strong>Higher Values (41-80):</strong> Can take 10-30 seconds due to large number arithmetic</li>
-                <li><strong>Very High Values (81-110):</strong> May take 30+ seconds or longer due to extremely large number arithmetic</li>
-            </ul>
-            <p>The calculator preserves exact fractional precision throughout, which requires intensive computation for large values.</p>
-
-            <h3>Why Bernoulli Numbers Matter</h3>
-            <ul>
-                <li><strong>Number Theory:</strong> Connected to prime numbers and the Riemann zeta function</li>
-                <li><strong>Calculus:</strong> Appear in Taylor series expansions</li>
-                <li><strong>Physics:</strong> Used in quantum field theory and statistical mechanics</li>
-                <li><strong>Computing History:</strong> The first algorithm designed for a computer</li>
-            </ul>
-
-            <h3>Musical Connection</h3>
-            <p>Bernoulli numbers have applications in:</p>
-            <ul>
-                <li><strong>Wave Synthesis:</strong> Fourier series for generating waveforms</li>
-                <li><strong>Harmonic Analysis:</strong> Computing harmonic coefficients</li>
-                <li><strong>Signal Processing:</strong> Approximating periodic functions</li>
-            </ul>
-            <p style="margin-top: 10px;">✨ <strong>Want to hear Bernoulli numbers as music?</strong> Check out <a href="lovelace-music.html" style="color: var(--color-accent);">Lovelace Music</a> to transform these mathematical sequences into sound!</p>
-
-            <div class="help-section">
-                <h3>💡 Tips for Exploration</h3>
-                <ul>
-                    <li>Try computing several consecutive even-indexed values (B₀, B₂, B₄, B₆...)</li>
-                    <li>Notice how the numerators grow quickly while denominators stay relatively small</li>
-                    <li>Observe the alternating signs (positive, negative, positive...)</li>
-                    <li>The computation steps show how each new value builds on previous ones</li>
-                </ul>
-            </div>
-
-            <h3>Historical Context</h3>
-            <p>Ada Lovelace developed this algorithm in 1843 for Charles Babbage's Analytical Engine. Though the machine was never built, her algorithm was complete and correct — the first true computer program, written nearly 200 years ago.</p>
-            <p>Her work wasn't fully recognized until the 1950s, when computer scientists rediscovered her notes and realized she had anticipated modern programming concepts including loops, conditionals, and subroutines.</p>
-        </div>
-    </div>
-
-    <script>
-        function toggleHelpModal() {
-            const modal = document.getElementById('helpModal');
-            modal.classList.toggle('active');
-
-            if (modal.classList.contains('active')) {
-                modal.onclick = (e) => {
-                    if (e.target === modal) toggleHelpModal();
-                };
-                document.addEventListener('keydown', escapeHandler);
-            } else {
-                document.removeEventListener('keydown', escapeHandler);
-            }
-        }
-
-        function escapeHandler(e) {
-            if (e.key === 'Escape') {
-                const modal = document.getElementById('helpModal');
-                if (modal.classList.contains('active')) {
-                    toggleHelpModal();
-                }
-            }
-        }
-    </script>
 
     <footer></footer>
 </body>

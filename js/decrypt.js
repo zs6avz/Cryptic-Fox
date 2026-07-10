@@ -858,24 +858,92 @@ function processBacon(isEncrypt) {
     }
 }
 
-const MUSIC_MAP = {
-    'A': 'C4', 'B': 'D4', 'C': 'E4', 'D': 'F4', 'E': 'G4', 'F': 'A4', 'G': 'B4',
-    'H': 'C5', 'I': 'D5', 'J': 'E5', 'K': 'F5', 'L': 'G5', 'M': 'A5', 'N': 'B5',
-    'O': 'C6', 'P': 'D6', 'Q': 'E6', 'R': 'F6', 'S': 'G6', 'T': 'A6', 'U': 'B6',
-    'V': 'C7', 'W': 'D7', 'X': 'E7', 'Y': 'F7', 'Z': 'G7'
-};
+// Musical mapping presets and motif-based mappings
+function parseCustomMotif(text) {
+    if (!text) return [];
+    // Accept comma or whitespace-separated tokens
+    return text.split(/[,\s]+/).map(t => t.trim()).filter(t => t.length > 0);
+}
+
+function buildMusicMapping(preset, baseOctave, customMotif) {
+    // base diatonic scale (C major)
+    const diatonic = ['C','D','E','F','G','A','B'];
+
+    let motif = [];
+    if (preset === 'diatonic') {
+        // cycle the diatonic scale across letters
+        motif = diatonic.slice();
+    } else if (preset === 'bach') {
+        // B-A-C-H => B-flat, A, C, B-natural (German H)
+        motif = ['Bb','A','C','B'];
+    } else if (preset === 'schumann') {
+        // ASCH => A, Es (E-flat), C, H (B-natural)
+        motif = ['A','Eb','C','B'];
+    } else if (preset === 'shostakovich') {
+        // DSCH => D, Eb, C, B
+        motif = ['D','Eb','C','B'];
+    } else if (preset === 'custom') {
+        motif = parseCustomMotif(customMotif);
+    } else {
+        motif = diatonic.slice();
+    }
+
+    // Build mapping for A-Z by cycling motif notes and assigning octaves
+    const map = {};
+    const A_CODE = 'A'.charCodeAt(0);
+    for (let i = 0; i < 26; i++) {
+        const letter = String.fromCharCode(A_CODE + i);
+        const token = motif[i % motif.length];
+        // If token already contains a digit (octave), use as-is; otherwise attach octave
+        const needsOctave = !(/[0-9]/).test(token);
+        const octave = baseOctave + Math.floor(i / motif.length);
+        map[letter] = needsOctave ? token + octave : token;
+    }
+
+    return map;
+}
+
+function normalizeNoteToken(tok) {
+    return tok.replace(/♭/g, 'b').replace(/♯/g, '#');
+}
 
 function processMusic(isEncrypt) {
-    const input = document.querySelector('.music-input').value.toUpperCase();
+    const input = document.querySelector('.music-input').value.trim();
     const output = document.querySelector('.music-output');
+    const preset = document.querySelector('.music-preset').value;
+    const baseOctave = parseInt(document.querySelector('.music-octave').value, 10) || 4;
+    const custom = document.querySelector('.music-custom').value;
+
+    const map = buildMusicMapping(preset, baseOctave, custom);
 
     if (isEncrypt) {
-        output.textContent = input.split('').map(c => MUSIC_MAP[c] || c).join(' ');
+        // Convert letters to notes; preserve non-letter characters
+        const result = input.split('').map(c => {
+            const up = c.toUpperCase();
+            return map[up] || c;
+        }).join(' ');
+        output.textContent = result;
     } else {
-        const reverseMap = Object.fromEntries(Object.entries(MUSIC_MAP).map(([k, v]) => [v, k]));
-        output.textContent = input.split(' ').map(n => reverseMap[n] || n).join('');
+        // Convert notes (space or comma separated) back to letters
+        const reverseMap = Object.fromEntries(Object.entries(map).map(([k, v]) => [normalizeNoteToken(v.toUpperCase()), k]));
+        const tokens = input.split(/[,\s]+/).filter(t => t.length > 0);
+        const result = tokens.map(t => {
+            const norm = normalizeNoteToken(t.toUpperCase());
+            return reverseMap[norm] || t;
+        }).join('');
+        output.textContent = result;
     }
 }
+
+// Show/hide custom motif input
+document.addEventListener('DOMContentLoaded', () => {
+    const presetEl = document.querySelector('.music-preset');
+    const customEl = document.querySelector('.music-custom');
+    if (!presetEl || !customEl) return;
+    const toggle = () => { customEl.style.display = presetEl.value === 'custom' ? 'inline-block' : 'none'; };
+    presetEl.addEventListener('change', toggle);
+    toggle();
+});
 
 // ── Bind Clear Buttons for new sections ──
 function clearBookFields() {

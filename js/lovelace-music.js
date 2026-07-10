@@ -150,48 +150,21 @@ class LovelaceMusic {
     }
     
     /**
-     * Calculate Bernoulli numbers using the explicit formula
-     * B_n using recursive method with memoization
+     * Calculate Bernoulli numbers using the note-g.js implementation
+     * Uses exact fraction arithmetic and converts to decimal for musical purposes
      */
     calculateBernoulliNumbers(n) {
-        const B = [1]; // B_0 = 1
+        const B = [];
         
-        for (let m = 1; m <= n; m++) {
-            // B_1 = -1/2 (special case)
-            if (m === 1) {
-                B[1] = -0.5;
-                continue;
-            }
-            
-            // B_m for odd m > 1 equals 0
-            if (m > 1 && m % 2 === 1) {
-                B[m] = 0;
-                continue;
-            }
-            
-            // Calculate B_m using the recursive formula
-            let sum = 0;
-            for (let k = 0; k < m; k++) {
-                sum += this.binomial(m + 1, k) * B[k];
-            }
-            B[m] = -sum / (m + 1);
+        // Calculate each Bernoulli number using the modern algorithm from note-g.js
+        for (let i = 0; i <= n; i++) {
+            const result = bernoulliModern(i, false);
+            // Convert Fraction to decimal for musical mapping
+            const decimal = result.result.toDecimal();
+            B[i] = decimal !== null ? decimal : 0;
         }
         
         return B;
-    }
-    
-    /**
-     * Calculate binomial coefficient C(n, k)
-     */
-    binomial(n, k) {
-        if (k < 0 || k > n) return 0;
-        if (k === 0 || k === n) return 1;
-        
-        let result = 1;
-        for (let i = 1; i <= k; i++) {
-            result *= (n - i + 1) / i;
-        }
-        return result;
     }
     
     /**
