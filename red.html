@@ -56,9 +56,9 @@
 <body class="red-page smoke-bg">
   <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
 
-  <h1>Red Fox: Steganalysis Suite</h1>
+  <h1>Red Fox: Steganalysis</h1>
   <img src="images/fennfox.png" class="center-image" alt="Cryptic Fox logo" style="width: 150px; height: auto;">
-  <h3>A professional-grade forensic workbench for deep media analysis. Detect hidden LSB payloads, analyze spectral
+  <h3>A forensic workbench for deep media analysis. Detect hidden LSB payloads, analyze spectral
     audio signatures, and visualize bit-plane distributions.</h3>
 
   <!-- Error Banner -->
@@ -68,8 +68,8 @@
   </div>
 
   <!-- Upload Section with Drag-and-Drop -->
-  <section class="red-upload-section">
-    <h2>Upload Media</h2>
+  <details class="red-section red-upload-section" open>
+    <summary><h2>Upload Media</h2></summary>
     <div id="dropZone" class="red-drop-zone">
       <div class="red-drop-icon">📁</div>
       <p class="red-drop-text">Drag & drop a file here, or click to browse</p>
@@ -80,22 +80,24 @@
       <span id="fileName"></span> · <span id="fileSize"></span>
       <span id="fileType" class="red-file-badge"></span>
     </div>
-  </section>
+  </details>
 
   <!-- Output Preview -->
-  <section>
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Output Preview</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Output Preview</h4>
-          <div><b>Description:</b> A real-time viewport that renders the processed frames after color, contrast, and LSB
-            filters are applied.</div>
-          <div><b>How-to:</b> Use the playback controls to navigate. Observe the canvas for hidden text or patterns
-            revealed by the sliders below.</div>
-        </div>
-      </span>
-    </h2>
+  <details class="red-section" open>
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Output Preview</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Output Preview</h4>
+            <div><b>Description:</b> A real-time viewport that renders the processed frames after color, contrast, and LSB
+              filters are applied.</div>
+            <div><b>How-to:</b> Use the playback controls to navigate. Observe the canvas for hidden text or patterns
+              revealed by the sliders below.</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
     <canvas id="canvas" class="preview-media"></canvas>
     <div id="outputTime" class="output-timer">0.00s</div>
 
@@ -123,73 +125,79 @@
     <div class="red-canvas-actions">
       <button id="savePreviewBtn" class="red-save-btn" title="Save preview as PNG">💾 Save Preview</button>
     </div>
-  </section>
+  </details>
 
   <!-- Hidden video element for processing -->
   <video id="video" playsinline
     style="position: fixed; top: -1000px; left: -1000px; opacity: 0; pointer-events: none; width: 320px; height: 180px;"></video>
 
   <!-- Color & Contrast -->
-  <section id="colorContrast" style="margin-top: 20px;">
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Color & Contrast</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Color & Contrast</h4>
-          <div><b>Description:</b> Adjusts the visual properties of the media to expose data hidden in specific color
-            channels or low-visibility areas.</div>
-          <div><b>How-to:</b> Isolate color channels (Red/Green/Blue) or push Contrast/Brightness to the extremes to
-            reveal faint steganographic "ghosts."</div>
-        </div>
-      </span>
-    </h2>
-    <label>Red
-      <input type="range" id="redGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: red;">
-      <span class="slider-value" id="redGainValue">1.00</span>
-    </label>
-    <label>Green
-      <input type="range" id="greenGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: green;">
-      <span class="slider-value" id="greenGainValue">1.00</span>
-    </label>
-    <label>Blue
-      <input type="range" id="blueGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: blue;">
-      <span class="slider-value" id="blueGainValue">1.00</span>
-    </label>
-    <label>Contrast
-      <input type="range" id="contrast" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: gray;">
-      <span class="slider-value" id="contrastValue">1.00</span>
-    </label>
-    <label>Brightness
-      <input type="range" id="brightness" min="-0.5" max="0.5" step="0.01" value="0"
-        style="width:100%; accent-color: orange;">
-      <span class="slider-value" id="brightnessValue">0.00</span>
-    </label>
-    <label>Brilliance
-      <input type="range" id="brilliance" min="-0.5" max="0.5" step="0.01" value="0"
-        style="width:100%; accent-color: #7bd389;">
-      <span class="slider-value" id="brillianceValue">0.00</span>
-    </label>
-    <label>Saturation
-      <input type="range" id="saturation" min="0" max="2" step="0.01" value="1"
-        style="width:100%; accent-color: purple;">
-      <span class="slider-value" id="saturationValue">1.00</span>
-    </label>
-  </section>
+  <details id="colorContrast" class="red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Color &amp; Contrast</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Color &amp; Contrast</h4>
+            <div><b>Description:</b> Adjusts the visual properties of the media to expose data hidden in specific color
+              channels or low-visibility areas.</div>
+            <div><b>How-to:</b> Isolate color channels (Red/Green/Blue) or push Contrast/Brightness to the extremes to
+              reveal faint steganographic "ghosts."</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 12px; max-width: 600px; margin: 0 auto;">
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Red
+        <input type="range" id="redGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: red;">
+        <span class="slider-value" id="redGainValue">1.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Green
+        <input type="range" id="greenGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: green;">
+        <span class="slider-value" id="greenGainValue">1.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Blue
+        <input type="range" id="blueGain" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: blue;">
+        <span class="slider-value" id="blueGainValue">1.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Contrast
+        <input type="range" id="contrast" min="0" max="2" step="0.01" value="1" style="width:100%; accent-color: gray;">
+        <span class="slider-value" id="contrastValue">1.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Brightness
+        <input type="range" id="brightness" min="-0.5" max="0.5" step="0.01" value="0"
+          style="width:100%; accent-color: orange;">
+        <span class="slider-value" id="brightnessValue">0.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Brilliance
+        <input type="range" id="brilliance" min="-0.5" max="0.5" step="0.01" value="0"
+          style="width:100%; accent-color: #7bd389;">
+        <span class="slider-value" id="brillianceValue">0.00</span>
+      </label>
+      <label style="width: 100%; display: flex; flex-direction: column; align-items: center;">Saturation
+        <input type="range" id="saturation" min="0" max="2" step="0.01" value="1"
+          style="width:100%; accent-color: purple;">
+        <span class="slider-value" id="saturationValue">1.00</span>
+      </label>
+    </div>
+  </details>
 
   <!-- LSB Extraction -->
-  <section>
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>LSB Extraction</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>LSB Extraction</h4>
-          <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text
-            or file signatures.</div>
-          <div><b>How-to:</b> Select the target bits (Bit 0 is most common) and click "Start Analysis" to parse the
-            media for hidden payloads.</div>
-        </div>
-      </span>
-    </h2>
+  <details class="red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>LSB Extraction</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>LSB Extraction</h4>
+            <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text
+              or file signatures.</div>
+            <div><b>How-to:</b> Select the target bits (Bit 0 is most common) and click "Start Analysis" to parse the
+              media for hidden payloads.</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
     <div
       style="display:flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; background: rgba(255,255,255,0.03); padding: 20px; border-radius: var(--radius-md);">
       <div style="text-align: center;">
@@ -271,22 +279,24 @@
       <h4 style="color: #eb3f7b; margin-top:0;">File Signatures Detected:</h4>
       <ul id="magicNumberList" style="margin: 0; padding-left: 20px;"></ul>
     </div>
-  </section>
+  </details>
 
-  <!-- Signal Analysis Panel -->
-  <section id="signalPanel" class="signal-panel" style="margin-top: 20px;">
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Visual Payload Analysis</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Visual Payload</h4>
-          <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within
-            the raw pixel data.</div>
-          <div><b>How-to:</b> Select a bit (0-7) and click "Render Signal." If Bit 0 shows a structured pattern while
-            Bit 7 is a clear image, data is likely hidden.</div>
-        </div>
-      </span>
-    </h2>
+  <!-- Signal Analysis Panel (Visual Payload Analysis) — commented out
+  <details id="signalPanel" class="signal-panel red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Visual Payload Analysis</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Visual Payload</h4>
+            <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within
+              the raw pixel data.</div>
+            <div><b>How-to:</b> Select a bit (0-7) and click "Render Signal." If Bit 0 shows a structured pattern while
+              Bit 7 is a clear image, data is likely hidden.</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
     <div
       style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
       <div style="display: flex; align-items: center; gap: 8px;">
@@ -335,22 +345,25 @@
     <div class="red-canvas-actions">
       <button id="saveSignalBtn" class="red-save-btn">💾 Save Signal Map</button>
     </div>
-  </section>
+  </details>
+  -->
 
-  <!-- Statistical Analysis -->
-  <section style="margin-top: 20px;">
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Statistical Analysis</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Statistical Analysis</h4>
-          <div><b>Description:</b> Provides quantitative evidence of steganographic modifications using histogram
-            distribution and chi-square testing.</div>
-          <div><b>How-to:</b> Click "Run Statistical Analysis" after loading a file. A flat LSB histogram and low
-            chi-square p-value suggest hidden data.</div>
-        </div>
-      </span>
-    </h2>
+  <!-- Statistical Analysis — commented out
+  <details class="red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Statistical Analysis</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Statistical Analysis</h4>
+            <div><b>Description:</b> Provides quantitative evidence of steganographic modifications using histogram
+              distribution and chi-square testing.</div>
+            <div><b>How-to:</b> Click "Run Statistical Analysis" after loading a file. A flat LSB histogram and low
+              chi-square p-value suggest hidden data.</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
     <div class="red-stats-grid">
       <div class="red-stats-panel">
         <h3>LSB Histogram</h3>
@@ -377,21 +390,24 @@
       <button id="runStatsBtn" class="primary-btn" disabled style="padding: 10px 25px;">Run Statistical
         Analysis</button>
     </div>
-  </section>
+  </details>
+  -->
 
-  <!-- Audio Steganography (video only) -->
-  <section id="audioSection" style="margin-top:20px;">
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Audio Spectrogram Visualizer</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Audio Spectrogram</h4>
-          <div><b>Description:</b> A frequency-over-time visualizer for the video's audio track.</div>
-          <div><b>How-to:</b> Watch for shapes or letters appearing in the high-frequency range (15kHz+), often used to
-            hide passwords in audio.</div>
-        </div>
-      </span>
-    </h2>
+  <!-- Audio Steganography (video only) — commented out
+  <details id="audioSection" class="red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Audio Spectrogram Visualizer</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Audio Spectrogram</h4>
+            <div><b>Description:</b> A frequency-over-time visualizer for the video's audio track.</div>
+            <div><b>How-to:</b> Watch for shapes or letters appearing in the high-frequency range (15kHz+), often used to
+              hide passwords in audio.</div>
+          </div>
+        </span>
+      </h2>
+    </summary>
     <p>Detect hidden data in high-frequency audio bands.</p>
     <div
       style="display:flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 15px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: var(--radius-md);">
@@ -418,7 +434,8 @@
     <div class="red-canvas-actions">
       <button id="saveAudioBtn" class="red-save-btn">💾 Save Spectrogram</button>
     </div>
-  </section>
+  </details>
+  -->
 
   <!-- Loading Overlay -->
   <div id="loadingDiv" class="loading-sticky" style="display: none;">
@@ -426,7 +443,7 @@
     <p id="loadingText">Processing frames, please wait...</p>
   </div>
 
-  <!-- Deep Analysis Suite -->
+  <!-- Deep Analysis Suite — commented out
   <section
     style="margin-top: 30px; text-align: center; border: 2px solid #eb3f7b; background: rgba(235, 63, 123, 0.05);">
     <h2>Deep Analysis Suite</h2>
@@ -437,32 +454,36 @@
       🚀 Start Full Deep Scan
     </button>
   </section>
+  -->
 
-  <!-- Extracted Text -->
-  <section>
-    <h2 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-      <span>Extracted Text</span>
-      <span class="info-icon">i
-        <div class="tooltip-content">
-          <h4>Extracted Text</h4>
-          <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).
+  <!-- Extracted Text — commented out
+  <details class="red-section">
+    <summary>
+      <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
+        <span>Extracted Text</span>
+        <span class="info-icon" onclick="event.stopPropagation()">i
+          <div class="tooltip-content">
+            <h4>Extracted Text</h4>
+            <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).
+            </div>
+            <div><b>How-to:</b> Check this section after running an analysis to see decoded strings, URLs, or potential
+              passkeys.</div>
           </div>
-          <div><b>How-to:</b> Check this section after running an analysis to see decoded strings, URLs, or potential
-            passkeys.</div>
-        </div>
-      </span>
-    </h2>
+        </span>
+      </h2>
+    </summary>
     <pre id="decodeOutput"
       style="color: var(--color-text-muted); font-style: italic;">No analysis results yet. Upload a file and run analysis.</pre>
     <pre id="textOutput"></pre>
     <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 15px;">
       <button id="exportReportBtn" class="primary-btn">📄 Export Analysis Report</button>
     </div>
-  </section>
+  </details>
+  -->
 
-  <!-- Keyboard Shortcuts -->
-  <section class="red-shortcuts-section">
-    <h2>Keyboard Shortcuts</h2>
+  <!-- Keyboard Shortcuts — commented out
+  <details class="red-section red-shortcuts-section">
+    <summary><h2>Keyboard Shortcuts</h2></summary>
     <div class="red-shortcuts-grid">
       <div class="red-shortcut"><kbd>Space</kbd> Play / Pause</div>
       <div class="red-shortcut"><kbd>←</kbd> Previous Frame</div>
@@ -471,7 +492,8 @@
       <div class="red-shortcut"><kbd>Enter</kbd> Start Analysis</div>
       <div class="red-shortcut"><kbd>Esc</kbd> Stop Analysis</div>
     </div>
-  </section>
+  </details>
+  -->
 
   <!-- JS Modules -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"

@@ -472,7 +472,7 @@ function seekTo(time) {
   return new Promise(resolve => {
     function handler() {
       video.removeEventListener('seeked', handler);
-      setTimeout(resolve, 100);
+      setTimeout(resolve, 300); // 300ms: safer for H.264 non-keyframe seeks
     }
     video.addEventListener('seeked', handler);
     video.currentTime = time;
@@ -648,6 +648,17 @@ async function processVideoFrames() {
     for (let t = 0; t < sourceDuration; t += step) times.push(t);
   }
 
+  // Warn if frame count is high — many frames can exhaust memory and freeze the tab
+  if (!isImageMode && totalSteps > 60) {
+    const proceed = confirm(`Warning: ${totalSteps} frames will be analyzed (${sourceDuration.toFixed(1)}s video ÷ ${step}s step).\n\nThis may use significant memory and take a long time.\nIncrease the "Time Between Frames" slider to reduce the frame count.\n\nProceed anyway?`);
+    if (!proceed) {
+      if (loadingDiv) loadingDiv.style.display = 'none';
+      if (startAnalysisBtn) startAnalysisBtn.textContent = 'Start Analysis';
+      [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber].forEach(ctrl => { if (ctrl) ctrl.disabled = false; });
+      return;
+    }
+  }
+
   for (let t of times) {
     currentStep++;
     if (analysisAborted) {
@@ -669,9 +680,6 @@ async function processVideoFrames() {
 
     if (!isImageMode && playbackRate) video.playbackRate = parseFloat(playbackRate.value);
     glContext.renderFrame(source, gain, contrastVal, brightnessVal, brillianceVal, saturationVal);
-    
-    // Sync Visual Payload Analysis
-    runSignalAnalysis();
 
     if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
 
@@ -707,6 +715,9 @@ async function processVideoFrames() {
       if (progressBar) progressBar.style.width = `${progress}%`;
       if (progressText) progressText.textContent = `${progress}%`;
     }
+
+    // Small delay to allow UI to update and make each frame visible
+    await new Promise(resolve => setTimeout(resolve, 50));
   }
 
   // Once frames are gathered, send to Worker
@@ -731,6 +742,12 @@ async function processVideoFrames() {
     });
 
     worker.onmessage = function (e) {
+      // Progress update from worker
+      if (e.data.type === 'progress') {
+        if (loadingText) loadingText.textContent = `Processing bits: ${e.data.percent}%...`;
+        if (progressText) progressText.textContent = `${e.data.percent}%`;
+        return;
+      }
       const { textOutput, binaryData, signatures } = e.data;
       if (lsbOutputDisplay) lsbOutputDisplay.textContent = textOutput;
 
@@ -1097,7 +1114,7 @@ window.addEventListener('keydown', e => {
       if (startAnalysisBtn && !startAnalysisBtn.disabled) startAnalysisBtn.click();
       break;
     case 'Escape':
-      // Stop/Abort analysis logic if implemented
+      if (startAnalysisBtn && startAnalysisBtn.textContent.includes('Stop')) startAnalysisBtn.click();
       break;
   }
 });
@@ -1237,11 +1254,8 @@ function startAudioAnalysis() {
       analyser = audioCtx.createAnalyser();
       analyser.fftSize = 2048;
       audioSource.connect(analyser);
-      // Connect through a gain node at zero volume for silent analysis
-      const silentGain = audioCtx.createGain();
-      silentGain.gain.value = 0;
-      analyser.connect(silentGain);
-      silentGain.connect(audioCtx.destination);
+      // Connect analyser to destination so audio is audible
+      analyser.connect(audioCtx.destination);
     } catch (e) {
       console.error("Audio Context Init Failed:", e);
       return;
@@ -1264,14 +1278,6 @@ if (stopAudioAnalysisBtn) {
   stopAudioAnalysisBtn.addEventListener("click", () => {
     if (video) video.pause();
     if (audioAnimId) cancelAnimationFrame(audioAnimId);
-  });
-}
-
-if (masterAnalysisBtn) {
-  masterAnalysisBtn.addEventListener("click", () => {
-    // Scroll to the preview so the user can see the analysis
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    processVideoFrames();
   });
 }
 
@@ -1328,5 +1334,10 @@ function drawSpectrogram() {
 
   audioAnimId = requestAnimationFrame(drawSpectrogram);
 }
+
+  // Prevent info-icon clicks from toggling collapsible section headers
+  document.querySelectorAll('.info-icon').forEach(el => {
+    el.addEventListener('click', e => e.stopPropagation());
+  });
 
 }); // End DOMContentLoaded

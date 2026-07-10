@@ -56,7 +56,14 @@ self.onmessage = function (e) {
         return bits;
     };
 
-    for (let f of framesData) {
+    for (let fi = 0; fi < framesData.length; fi++) {
+        const f = framesData[fi];
+
+        // Report progress every ~10% of frames so the UI can update
+        if (fi % Math.max(1, Math.ceil(framesData.length / 10)) === 0) {
+            self.postMessage({ type: 'progress', percent: Math.round((fi / framesData.length) * 100) });
+        }
+
         let frameStr = `Frame @ ${f.timestamp}:\n`;
         textOutput += frameStr;
         totalTextChars += frameStr.length;
@@ -108,6 +115,7 @@ self.onmessage = function (e) {
     }
 
     self.postMessage({
+        type: 'done',
         textOutput: textOutput,
         binaryData: binaryData,
         signatures: detectedSignatures
