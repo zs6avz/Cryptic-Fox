@@ -43,6 +43,8 @@ const fileType = document.getElementById("fileType");
 const progressContainer = document.getElementById("progressContainer");
 const progressBar = document.getElementById("progressBar");
 const progressText = document.getElementById("progressText");
+const loadingProgressBar = document.getElementById("loadingProgressBar");
+const loadingProgressLabel = document.getElementById("loadingProgressLabel");
 const errorBanner = document.getElementById("errorBanner");
 const errorText = document.getElementById("errorText");
 const errorDismiss = document.getElementById("errorDismiss");
@@ -168,7 +170,13 @@ function loadImageFile(file) {
     if (masterAnalysisBtn) masterAnalysisBtn.disabled = false;
     if (runStatsBtn) runStatsBtn.disabled = false;
     [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, lsbChannel].forEach(c => { if (c) c.disabled = false; });
+    if (analyzeBtn) { analyzeBtn.disabled = false; runSignalAnalysis(); }
     URL.revokeObjectURL(url);
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(url);
+    showError('Could not load image. The file may be corrupted or an unsupported format.');
+    if (fileInfo) fileInfo.style.display = 'none';
   };
   img.src = url;
 }
@@ -234,6 +242,7 @@ function loadVideoFile(file) {
       
       const startBtn = document.getElementById("startAnalysisBtn");
       if (startBtn) startBtn.disabled = false;
+      if (analyzeBtn) { analyzeBtn.disabled = false; runSignalAnalysis(); }
     }
 
     // Use canplay to ensure frame data is decoded before rendering
@@ -270,6 +279,14 @@ function loadVideoFile(file) {
   
   // Attach listener before setting src
   video.onloadedmetadata = onLoadedMetadata;
+  video.onerror = () => {
+    URL.revokeObjectURL(url);
+    video.onerror = null;
+    video.onloadedmetadata = null;
+    showError('Could not load video. The file may be corrupted or an unsupported format.');
+    if (fileInfo) fileInfo.style.display = 'none';
+    [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber].forEach(ctrl => { if (ctrl) ctrl.disabled = false; });
+  };
   video.src = url;
   video.load();
 
@@ -470,7 +487,17 @@ if (scrubber) {
 // Seek helper
 function seekTo(time) {
   return new Promise(resolve => {
+    // If already at the target time the browser won't fire 'seeked', so resolve immediately
+    if (Math.abs(video.currentTime - time) < 0.001) {
+      return resolve();
+    }
+    // Safety timeout: if 'seeked' never fires (e.g. already-at-position, driver issue) don't hang
+    const timeout = setTimeout(() => {
+      video.removeEventListener('seeked', handler);
+      resolve();
+    }, 2500);
     function handler() {
+      clearTimeout(timeout);
       video.removeEventListener('seeked', handler);
       setTimeout(resolve, 300); // 300ms: safer for H.264 non-keyframe seeks
     }
@@ -515,12 +542,20 @@ function getLSBBits(imageData, channel) {
 /* Signal panel wiring*/
 function runSignalAnalysis() {
   if (!glContext || !canvas) return;
+  if (!modeSelect || !channelSelect) return; // signal panel not in DOM
   const mode = modeSelect.value;
   const channel = channelSelect.value;
   let roi = [0, 0, canvas.width, canvas.height];
-  if (roiInput.value) {
-    let parsed = roiInput.value.split(',').map(v => parseInt(v.trim()));
-    if (parsed.length === 4 && !parsed.some(isNaN)) roi = parsed;
+  if (roiInput && roiInput.value) {
+    const parsed = roiInput.value.split(',').map(v => parseInt(v.trim()));
+    if (parsed.length === 4 && !parsed.some(isNaN)) {
+      // Clamp every dimension to valid canvas bounds so negative or oversized values can't crash
+      const cx = Math.max(0, Math.min(parsed[0], canvas.width - 1));
+      const cy = Math.max(0, Math.min(parsed[1], canvas.height - 1));
+      const cw = Math.max(1, Math.min(parsed[2], canvas.width - cx));
+      const ch = Math.max(1, Math.min(parsed[3], canvas.height - cy));
+      roi = [cx, cy, cw, ch];
+    }
   }
 
   const imageData = glContext.extractImageData();
@@ -621,11 +656,6 @@ async function processVideoFrames() {
   if (loadingDiv) loadingDiv.style.display = 'block';
   if (loadingText) loadingText.textContent = "Initializing multi-channel analysis...";
   [redGain, greenGain, blueGain, contrast, brightness, brilliance, saturation, playbackRate, scrubber].forEach(ctrl => ctrl.disabled = true);
-  
-  // Start Audio Analysis automatically if not already running (video only)
-  if (!isImageMode && !audioCtx) {
-    startAudioAnalysis();
-  }
 
   const source = isImageMode ? window._imageSource : video;
   const sourceWidth = isImageMode ? source.width : video.videoWidth;
@@ -637,7 +667,7 @@ async function processVideoFrames() {
   tempCanvas.height = sourceHeight;
   const tempCtx = tempCanvas.getContext('2d');
 
-  textOutput.textContent = "";
+  if (textOutput) textOutput.textContent = "";
   let framesToProcess = [];
   const totalSteps = isImageMode ? 1 : Math.floor(sourceDuration / step);
   let currentStep = 0;
@@ -683,7 +713,21 @@ async function processVideoFrames() {
 
     if (outputTime) outputTime.textContent = `${video.currentTime.toFixed(2)}s`;
 
-    const imageData = glContext.extractImageData();
+    // For LSB extraction in image mode with all sliders at their neutral/default values,
+    // bypass the WebGL pipeline and read pixel data directly from the source canvas.
+    // This eliminates any floating-point rounding introduced by the GPU shader and preserves
+    // exact original pixel values — critical for correct LSB steganalysis.
+    let imageData;
+    const usingNeutralSettings = isImageMode &&
+      gain[0] === 1 && gain[1] === 1 && gain[2] === 1 &&
+      contrastVal === 1 && brightnessVal === 0 && brillianceVal === 0 && saturationVal === 1;
+    if (usingNeutralSettings) {
+      const srcCtx = window._imageSource.getContext('2d');
+      imageData = srcCtx.getImageData(0, 0, sourceWidth, sourceHeight);
+    } else {
+      imageData = glContext.extractImageData();
+    }
+    if (!imageData) break; // WebGL context lost — abort cleanly
     tempCtx.putImageData(imageData, 0, 0);
 
     let text = "";
@@ -696,7 +740,7 @@ async function processVideoFrames() {
       }
     }
 
-    if (text) {
+    if (textOutput && text) {
       textOutput.textContent += `Frame @ ${t.toFixed(2)}s:\n${text}\n\n`;
     }
 
@@ -710,10 +754,12 @@ async function processVideoFrames() {
 
     if (loadingText) {
       const progress = Math.round((currentStep / totalSteps) * 100);
-      loadingText.textContent = `Analyzing: ${progress}% (${currentStep}/${totalSteps} frames processed)`;
+      loadingText.textContent = `Phase 1 — Collecting frames: ${currentStep}/${totalSteps}`;
       if (progressContainer) progressContainer.style.display = 'flex';
       if (progressBar) progressBar.style.width = `${progress}%`;
       if (progressText) progressText.textContent = `${progress}%`;
+      if (loadingProgressBar) loadingProgressBar.style.width = `${progress}%`;
+      if (loadingProgressLabel) loadingProgressLabel.textContent = `${progress}%`;
     }
 
     // Small delay to allow UI to update and make each frame visible
@@ -722,7 +768,9 @@ async function processVideoFrames() {
 
   // Once frames are gathered, send to Worker
   if (!analysisAborted && framesToProcess.length > 0) {
-    if (loadingText) loadingText.textContent = `Processing bits in Web Worker...`;
+    if (loadingText) loadingText.textContent = `Phase 2 — Processing bits...`;
+    if (loadingProgressBar) { loadingProgressBar.style.width = '0%'; }
+    if (loadingProgressLabel) loadingProgressLabel.textContent = '0%';
 
     const channel = lsbChannel ? lsbChannel.value : "all";
     let selectedBits = [];
@@ -735,37 +783,30 @@ async function processVideoFrames() {
     if (currentWorker) { try { currentWorker.terminate(); } catch(e) {} }
     const worker = new Worker('js/lsb-worker.js');
     currentWorker = worker;
+    // Transfer pixel buffer ownership to the worker (zero-copy) instead of structured-cloning.
+    // This avoids doubling memory usage for large videos.
+    const transferList = framesToProcess.map(f => f.data.buffer);
     worker.postMessage({
       framesData: framesToProcess,
       channel: channel,
       selectedBits: selectedBits
-    });
+    }, transferList);
 
     worker.onmessage = function (e) {
       // Progress update from worker
       if (e.data.type === 'progress') {
-        if (loadingText) loadingText.textContent = `Processing bits: ${e.data.percent}%...`;
+        if (loadingText) loadingText.textContent = `Phase 2 — Processing bits: ${e.data.percent}%`;
         if (progressText) progressText.textContent = `${e.data.percent}%`;
+        if (progressBar) progressBar.style.width = `${e.data.percent}%`;
+        if (loadingProgressBar) loadingProgressBar.style.width = `${e.data.percent}%`;
+        if (loadingProgressLabel) loadingProgressLabel.textContent = `${e.data.percent}%`;
         return;
       }
       const { textOutput, binaryData, signatures } = e.data;
       if (lsbOutputDisplay) lsbOutputDisplay.textContent = textOutput;
 
-      // Setup Download
-      if (downloadBinaryBtn) {
-        downloadBinaryBtn.onclick = () => {
-          const blob = new Blob([binaryData], { type: 'application/octet-stream' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = url;
-          a.download = `stego_output_${Date.now()}.bin`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          setTimeout(() => URL.revokeObjectURL(url), 5000);
-        };
-      }
+      // Store binary data globally for download
+      window._currentBinaryData = binaryData;
 
       // Display signatures
       if (magicNumberOutput && magicNumberList) {
@@ -970,6 +1011,7 @@ async function runStatisticalAnalysis() {
   
   // Get raw pixels from current preview
   const imageData = glContext.extractImageData();
+  if (!imageData) return; // WebGL context lost
   const data = imageData.data;
   
   // 1. Calculate Histograms (specifically for LSBs)
@@ -1138,10 +1180,6 @@ if (brilliance) brilliance.addEventListener('input', updateSliderDisplays);
 if (saturation) saturation.addEventListener('input', updateSliderDisplays);
 if (lsbChannel) lsbChannel.addEventListener('change', () => { if(!isImageMode) renderPreviewIfAvailable(); });
 
-// Audio Buttons
-if (startAudioAnalysisBtn) startAudioAnalysisBtn.addEventListener('click', startAudioAnalysis);
-if (stopAudioAnalysisBtn) stopAudioAnalysisBtn.addEventListener('click', stopAudioAnalysis);
-
 // Download Binary
 if (downloadBinaryBtn) {
   downloadBinaryBtn.addEventListener('click', () => {
@@ -1216,7 +1254,7 @@ if (copyLSBBtn) {
     try {
       await navigator.clipboard.writeText(text);
       copyLSBBtn.textContent = "Copied!";
-      setTimeout(() => copyLSBBtn.textContent = "Copy All", 1500);
+      setTimeout(() => copyLSBBtn.textContent = "Copy All Text", 1500);
     } catch (err) {
       // Fallback for older browsers
       try {
@@ -1227,7 +1265,7 @@ if (copyLSBBtn) {
         selection.addRange(range);
         document.execCommand("copy");
         copyLSBBtn.textContent = "Copied!";
-        setTimeout(() => copyLSBBtn.textContent = "Copy All", 1500);
+        setTimeout(() => copyLSBBtn.textContent = "Copy All Text", 1500);
       } catch (fallbackErr) {
         alert("Copy failed. Try manually selecting the text.");
       }
@@ -1244,7 +1282,10 @@ if (lsbChannel) lsbChannel.addEventListener("change", () => {
 let audioCtx, audioSource, analyser, audioAnimId;
 
 function startAudioAnalysis() {
-  if (!video || !video.src) return;
+  if (!video || !video.src) {
+    showError("Upload a video first.");
+    return;
+  }
   // Unmute video so audio data flows to the analyser
   video.muted = false;
   if (!audioCtx) {
@@ -1258,6 +1299,7 @@ function startAudioAnalysis() {
       analyser.connect(audioCtx.destination);
     } catch (e) {
       console.error("Audio Context Init Failed:", e);
+      showError("Failed to initialize audio context.");
       return;
     }
   }
@@ -1265,20 +1307,19 @@ function startAudioAnalysis() {
     audioCtx.resume();
   }
   drawSpectrogram();
+  video.play();
+}
+
+function stopAudioAnalysis() {
+  if (video) video.pause();
+  if (audioAnimId) cancelAnimationFrame(audioAnimId);
 }
 
 if (startAudioAnalysisBtn) {
-  startAudioAnalysisBtn.addEventListener("click", () => {
-    if (!video || !video.src) return alert("Upload a video first.");
-    startAudioAnalysis();
-    video.play();
-  });
+  startAudioAnalysisBtn.addEventListener("click", startAudioAnalysis);
 }
 if (stopAudioAnalysisBtn) {
-  stopAudioAnalysisBtn.addEventListener("click", () => {
-    if (video) video.pause();
-    if (audioAnimId) cancelAnimationFrame(audioAnimId);
-  });
+  stopAudioAnalysisBtn.addEventListener("click", stopAudioAnalysis);
 }
 
 function drawSpectrogram() {

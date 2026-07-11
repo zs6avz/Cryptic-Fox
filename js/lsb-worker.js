@@ -1,17 +1,57 @@
 // lsb-worker.js
 
-// Known magic numbers to look out for
+// Known magic numbers to look out for.
+// All hex strings MUST be lowercase — they are compared against lowercase output from toString(16).
 const MAGIC_NUMBERS = [
-    { name: 'PNG Image', hex: '89504E470d0a1a0a' },
-    { name: 'JPEG Image', hex: 'ffd8ffe0' },
-    { name: 'JPEG Image', hex: 'ffd8ffee' },
-    { name: 'ZIP Archive (or Docx)', hex: '504b0304' },
-    { name: 'PDF Document', hex: '25504446' },
-    { name: 'RAR Archive', hex: '526172211a0700' },
-    { name: 'MP3 Audio', hex: '494433' },
-    { name: 'ELF Executable', hex: '7f454c46' },
-    { name: 'GZIP Archive', hex: '1f8b' }
+    { name: 'PNG Image',             hex: '89504e470d0a1a0a' },
+    { name: 'JPEG Image (JFIF)',      hex: 'ffd8ffe0' },
+    { name: 'JPEG Image (EXIF)',      hex: 'ffd8ffe1' },  // most common modern camera format
+    { name: 'JPEG Image',            hex: 'ffd8ffe2' },
+    { name: 'JPEG Image',            hex: 'ffd8ffdb' },
+    { name: 'JPEG Image (baseline)', hex: 'ffd8ffc0' },
+    { name: 'JPEG Image (progressive)', hex: 'ffd8ffc2' },
+    { name: 'JPEG Image (SPIFF)',     hex: 'ffd8ffee' },
+    { name: 'GIF Image',             hex: '47494638' },
+    { name: 'BMP Image',             hex: '424d' },
+    { name: 'TIFF Image (LE)',        hex: '49492a00' },
+    { name: 'TIFF Image (BE)',        hex: '4d4d002a' },
+    { name: 'ZIP Archive (or DOCX)', hex: '504b0304' },
+    { name: 'PDF Document',          hex: '25504446' },
+    { name: 'RAR Archive',           hex: '526172211a0700' },
+    { name: 'MP3 Audio (ID3)',        hex: '494433' },
+    { name: 'FLAC Audio',            hex: '664c6143' },
+    { name: 'OGG Media',             hex: '4f676753' },
+    { name: 'ELF Executable',        hex: '7f454c46' },
+    { name: 'GZIP Archive',          hex: '1f8b' },
+    { name: '7-Zip Archive',         hex: '377abcaf271c' },
+    { name: 'MP4/MOV (ftyp atom)',    hex: '66747970' }  // ftyp is at offset 4 in valid files
 ];
+
+// Build a hex dump preview (xxd-style) of up to maxBytes of binary data.
+function buildHexDump(data, maxBytes) {
+    const dumpLen = Math.min(data.length, maxBytes);
+    const lines = [];
+    for (let row = 0; row < dumpLen; row += 16) {
+        const end = Math.min(row + 16, dumpLen);
+        const hexPart = [];
+        const asciiPart = [];
+        for (let col = row; col < end; col++) {
+            const byte = data[col];
+            hexPart.push(byte.toString(16).padStart(2, '0'));
+            asciiPart.push(byte >= 32 && byte < 127 ? String.fromCharCode(byte) : '.');
+        }
+        // Pad final row so the ASCII column stays aligned
+        while (hexPart.length < 16) hexPart.push('  ');
+        const offset = row.toString(16).padStart(8, '0');
+        lines.push(
+            `${offset}  ${hexPart.slice(0, 8).join(' ')}  ${hexPart.slice(8).join(' ')}  |${asciiPart.join('')}|`
+        );
+    }
+    if (data.length > maxBytes) {
+        lines.push(`... (${data.length - maxBytes} more bytes — download binary for full data)`);
+    }
+    return lines.join('\n');
+}
 
 self.onmessage = function (e) {
     const { framesData, channel, selectedBits } = e.data;
@@ -101,22 +141,34 @@ self.onmessage = function (e) {
     }
 
     // Magic number detection
-    let detectedSignatures = [];
-    // Convert first few dozen bytes to hex for checking
+    // Build lowercase hex string of the first 256 bytes for signature scanning.
+    // Using 256 bytes catches headers with small amounts of padding/metadata before the signature.
+    const searchLen = Math.min(binaryData.length, 256);
     let hexHeader = "";
-    for (let i = 0; i < Math.min(binaryData.length, 64); i++) {
+    for (let i = 0; i < searchLen; i++) {
         hexHeader += binaryData[i].toString(16).padStart(2, '0');
     }
 
+    let detectedSignatures = [];
     for (let sig of MAGIC_NUMBERS) {
-        if (hexHeader.includes(sig.hex)) {
-            detectedSignatures.push(sig.name);
+        // Both hexHeader and sig.hex are lowercase — safe case-sensitive comparison
+        const needle = sig.hex.toLowerCase();
+        const idx = hexHeader.indexOf(needle);
+        if (idx !== -1) {
+            const byteOffset = idx / 2; // each byte = 2 hex chars
+            detectedSignatures.push(`${sig.name} (at byte offset ${byteOffset})`);
         }
     }
 
+    // Build hex dump preview and prepend to the output
+    const hexDumpPreview = buildHexDump(binaryData, 512);
+    const finalOutput =
+        `=== Hex Dump (first ${Math.min(binaryData.length, 512)} bytes) ===\n${hexDumpPreview}` +
+        `\n\n=== Raw LSB Bit Stream ===\n${textOutput}`;
+
     self.postMessage({
         type: 'done',
-        textOutput: textOutput,
+        textOutput: finalOutput,
         binaryData: binaryData,
         signatures: detectedSignatures
     }, [binaryData.buffer]);

@@ -1069,6 +1069,38 @@ p.morse-output {
     -webkit-text-fill-color: var(--color-primary);
 }
 
+/* Loading overlay inline progress bar */
+.loading-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 220px;
+}
+
+.loading-progress-track {
+    flex: 1;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.loading-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: #eb3f7b;
+    border-radius: 3px;
+    transition: width 0.25s ease;
+}
+
+.loading-progress-wrap span {
+    font-size: 0.82rem;
+    color: #eb3f7b;
+    font-family: 'Courier New', monospace;
+    min-width: 36px;
+    text-align: right;
+}
+
 /* Statistical Analysis */
 .red-stats-grid {
     display: grid;
@@ -1107,6 +1139,8 @@ p.morse-output {
     border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
+.stat-label { color: var(--color-text-muted); }
+.stat-value { font-weight: bold; }
 .stat-pass { color: #7bd389; -webkit-text-fill-color: #7bd389; }
 .stat-fail { color: var(--color-primary); -webkit-text-fill-color: var(--color-primary); }
 .stat-neutral { color: var(--color-primary); -webkit-text-fill-color: var(--color-primary); }

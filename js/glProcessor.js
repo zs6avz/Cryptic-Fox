@@ -23,8 +23,9 @@ function initGL(canvas) {
 
   // Fragment shader: color and contrast manipulation
   // Applies color gain and contrast adjustment
+  // highp float: prevents fp16 rounding from corrupting LSBs during extraction
   const fsSource = `
-    precision mediump float;
+    precision highp float;
     uniform sampler2D uVideo;
     uniform vec3 uGain;
     uniform float uContrast;
@@ -129,6 +130,24 @@ function initGL(canvas) {
 
   gl.uniform1i(uVideoLoc, 0); // TEXTURE0
 
+  // Handle WebGL context loss (GPU sleep, driver crash, memory pressure).
+  // On loss: flag rendering as unavailable and surface an error in the page if possible.
+  // On restore: clear the flag — the caller should re-initialise glContext via initGL().
+  let contextLost = false;
+  canvas.addEventListener('webglcontextlost', (e) => {
+    e.preventDefault(); // required so 'webglcontextrestored' can fire later
+    contextLost = true;
+    const banner = document.getElementById('errorBanner');
+    const bannerText = document.getElementById('errorText');
+    if (banner && bannerText) {
+      bannerText.textContent = 'WebGL context lost (GPU reset or memory pressure). Reload the page to continue.';
+      banner.style.display = 'flex';
+    }
+  });
+  canvas.addEventListener('webglcontextrestored', () => {
+    contextLost = false;
+  });
+
   return {
     setMode() {
       // No-op for color/contrast only
@@ -136,6 +155,7 @@ function initGL(canvas) {
 
     // Render current video frame with given gain, contrast, brightness, brilliance, and saturation
     renderFrame(videoEl, gain, contrast, brightness, brilliance, saturation) {
+      if (contextLost) return;
       const w = canvas.width, h = canvas.height;
       gl.viewport(0, 0, w, h);
       gl.clearColor(0, 0, 0, 1);
@@ -158,6 +178,7 @@ function initGL(canvas) {
 
     // Helper: extract current frame as ImageData for OCR
     extractImageData() {
+      if (contextLost) return null;
       // Draw current canvas to a 2D context and get ImageData
       const w = canvas.width, h = canvas.height;
       const tempCanvas = document.createElement('canvas');
