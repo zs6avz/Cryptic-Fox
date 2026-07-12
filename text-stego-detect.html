@@ -447,6 +447,32 @@
             background: rgba(33, 150, 243, 0.3);
             border: 2px solid #2196F3;
         }
+        .confidence-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-left: 12px;
+            vertical-align: middle;
+        }
+        .confidence-high {
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+            border: 1px solid rgba(244, 67, 54, 0.4);
+        }
+        .confidence-medium {
+            background: rgba(255, 193, 7, 0.2);
+            color: #FFC107;
+            border: 1px solid rgba(255, 193, 7, 0.4);
+        }
+        .confidence-low {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
     </style>
 </head>
 
@@ -582,6 +608,41 @@
                                 <span>Suspicious Terms</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('radar')">
+                        <h3>🎯 Forensic Profile</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="radar-content">
+                        <div class="chart-container">
+                            <canvas id="radarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('entropy')">
+                        <h3>🔥 Entropy Analysis</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="entropy-content">
+                        <div class="score-details" id="entropyScores"></div>
+                        <div class="chart-container">
+                            <canvas id="entropyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expandable-section">
+                    <div class="section-header" onclick="toggleSection('ngram')">
+                        <h3>🧬 N-gram Divergence</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="section-content" id="ngram-content">
+                        <div class="score-details" id="ngramScores"></div>
                     </div>
                 </div>
 

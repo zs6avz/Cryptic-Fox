@@ -8,7 +8,17 @@ const FUNCTION_WORDS = [
     "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
     "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
     "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
-    "or", "an", "will", "my", "one", "all", "would", "there", "their", "what"
+    "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
+    "also", "about", "after", "again", "because", "been", "before", "being", "between", "both",
+    "came", "come", "could", "did", "does", "each", "even", "few", "first", "found",
+    "get", "give", "go", "going", "good", "got", "great", "had", "has", "here",
+    "high", "how", "however", "if", "into", "its", "just", "know", "let", "like",
+    "long", "look", "made", "make", "many", "may", "more", "most", "much", "must",
+    "never", "no", "now", "off", "only", "other", "over", "own", "part", "place",
+    "put", "right", "said", "same", "see", "seem", "should", "show", "since", "so",
+    "some", "still", "such", "take", "tell", "than", "them", "then", "these", "thing",
+    "think", "those", "through", "time", "too", "under", "up", "upon", "us", "very",
+    "want", "well", "were", "which", "while", "who", "why", "work", "year", "yet"
 ];
 
 // Common English words for validation
@@ -81,6 +91,73 @@ function calculateStylometry(text) {
         wordLengths,
         sentenceLengths
     };
+}
+
+// ============================================================================
+// N-GRAM ANALYSIS
+// ============================================================================
+
+function calculateNgrams(text, n) {
+    const ngrams = {};
+    const lowerText = text.toLowerCase();
+    for (let i = 0; i <= lowerText.length - n; i++) {
+        const gram = lowerText.substring(i, i + n);
+        ngrams[gram] = (ngrams[gram] || 0) + 1;
+    }
+    // Normalize
+    const total = lowerText.length - n + 1;
+    if (total > 0) {
+        Object.keys(ngrams).forEach(key => {
+            ngrams[key] = ngrams[key] / total;
+        });
+    }
+    return ngrams;
+}
+
+function compareNgrams(baseline, suspicious, n) {
+    const baseNgrams = calculateNgrams(baseline, n);
+    const suspNgrams = calculateNgrams(suspicious, n);
+    const allGrams = new Set([...Object.keys(baseNgrams), ...Object.keys(suspNgrams)]);
+    
+    let dotProduct = 0;
+    let mag1 = 0;
+    let mag2 = 0;
+    
+    allGrams.forEach(gram => {
+        const v1 = baseNgrams[gram] || 0;
+        const v2 = suspNgrams[gram] || 0;
+        dotProduct += v1 * v2;
+        mag1 += v1 * v1;
+        mag2 += v2 * v2;
+    });
+    
+    const magnitude = Math.sqrt(mag1) * Math.sqrt(mag2);
+    return magnitude === 0 ? 0 : dotProduct / magnitude;
+}
+
+// ============================================================================
+// ENTROPY SCORING
+// ============================================================================
+
+function calculateEntropy(text) {
+    const len = text.length;
+    if (len === 0) return 0;
+    const freqs = {};
+    for (let i = 0; i < len; i++) {
+        const char = text[i];
+        freqs[char] = (freqs[char] || 0) + 1;
+    }
+    let entropy = 0;
+    Object.values(freqs).forEach(count => {
+        const p = count / len;
+        entropy -= p * Math.log2(p);
+    });
+    return entropy;
+}
+
+function calculateSentenceEntropies(text) {
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    return sentences.map(s => calculateEntropy(s));
 }
 
 // ============================================================================
@@ -242,11 +319,13 @@ function percentDeviation(baseline, suspicious) {
 /**
  * Detect anomalies by comparing stylometric metrics
  */
-function detectAnomalies(baselineMetrics, suspiciousMetrics, tfidfResults, similarityScores) {
+function detectAnomalies(baselineMetrics, suspiciousMetrics, tfidfResults, similarityScores, ngramSimilarity, baselineEntropy, suspiciousEntropy) {
     const anomalies = {
         flags: [],
         scores: {},
-        overallScore: 0
+        subScores: {},
+        overallScore: 0,
+        confidence: 'low'
     };
     
     // Stylometric deviations
@@ -348,28 +427,66 @@ function detectAnomalies(baselineMetrics, suspiciousMetrics, tfidfResults, simil
             message: `Low Jaccard coefficient (${similarityScores.jaccard.toFixed(3)}) indicates vocabulary mismatch`
         });
     }
+
+    // N-gram score
+    if (ngramSimilarity < 0.8) {
+        anomalies.flags.push({
+            type: 'ngram',
+            severity: ngramSimilarity < 0.6 ? 'high' : 'medium',
+            message: `Low n-gram similarity (${ngramSimilarity.toFixed(3)}) indicates abnormal character patterns`
+        });
+    }
+
+    // Entropy score
+    const entropyDev = percentDeviation(baselineEntropy, suspiciousEntropy);
+    if (entropyDev > 10) {
+        anomalies.flags.push({
+            type: 'entropy',
+            severity: entropyDev > 20 ? 'high' : 'medium',
+            message: `Entropy deviates by ${entropyDev.toFixed(1)}% indicating abnormal information density`
+        });
+    }
+
+    // Sub-scores
+    anomalies.subScores.stylometric = Math.min((wordLengthDev + sentenceLengthDev + lexicalDivDev + functionWordDev) / 4, 100);
+    
+    // tfidf sub-score
+    let highDiffTerms = 0;
+    const allTerms = new Set([...Object.keys(tfidfResults.baselineTFIDF), ...Object.keys(tfidfResults.suspiciousTFIDF)]);
+    allTerms.forEach(term => {
+        const diff = Math.abs((tfidfResults.suspiciousTFIDF[term] || 0) - (tfidfResults.baselineTFIDF[term] || 0));
+        if (diff > 0.01) highDiffTerms++;
+    });
+    anomalies.subScores.tfidf = Math.min(highDiffTerms * 10, 100);
+
+    anomalies.subScores.similarity = ((1 - similarityScores.cosine) + (1 - similarityScores.jaccard)) / 2 * 100;
+    anomalies.subScores.structural = Math.min((spacingDev + punctuationDev) / 2, 100);
+    anomalies.subScores.entropy = Math.min(entropyDev, 100);
+    anomalies.subScores.ngram = (1 - ngramSimilarity) * 100;
+
+    // Confidence Level
+    const flagCount = anomalies.flags.length;
+    if (flagCount > 4) anomalies.confidence = 'high';
+    else if (flagCount >= 2) anomalies.confidence = 'medium';
+    else anomalies.confidence = 'low';
     
     // Calculate overall anomaly score (0-100)
     const weights = {
-        wordLength: 0.10,
-        sentenceLength: 0.10,
-        lexicalDiversity: 0.15,
-        functionWords: 0.15,
-        spacing: 0.15,
-        punctuation: 0.10,
-        cosine: 0.15,
-        jaccard: 0.10
+        stylometric: 0.20,
+        tfidf: 0.15,
+        similarity: 0.20,
+        structural: 0.20,
+        entropy: 0.10,
+        ngram: 0.15
     };
     
     let weightedScore = 0;
-    weightedScore += Math.min(anomalies.scores.wordLength, 100) * weights.wordLength;
-    weightedScore += Math.min(anomalies.scores.sentenceLength, 100) * weights.sentenceLength;
-    weightedScore += Math.min(anomalies.scores.lexicalDiversity, 100) * weights.lexicalDiversity;
-    weightedScore += Math.min(anomalies.scores.functionWords, 100) * weights.functionWords;
-    weightedScore += Math.min(anomalies.scores.spacing, 100) * weights.spacing;
-    weightedScore += Math.min(anomalies.scores.punctuation, 100) * weights.punctuation;
-    weightedScore += (1 - similarityScores.cosine) * 100 * weights.cosine;
-    weightedScore += (1 - similarityScores.jaccard) * 100 * weights.jaccard;
+    weightedScore += anomalies.subScores.stylometric * weights.stylometric;
+    weightedScore += anomalies.subScores.tfidf * weights.tfidf;
+    weightedScore += anomalies.subScores.similarity * weights.similarity;
+    weightedScore += anomalies.subScores.structural * weights.structural;
+    weightedScore += anomalies.subScores.entropy * weights.entropy;
+    weightedScore += anomalies.subScores.ngram * weights.ngram;
     
     anomalies.overallScore = Math.min(Math.round(weightedScore), 100);
     
@@ -630,9 +747,17 @@ function analyzeText() {
     const cosine = cosineSimilarity(tfidfResults.baselineTFIDF, tfidfResults.suspiciousTFIDF);
     const jaccard = jaccardCoefficient(baselineText, suspiciousText);
     const similarityScores = { cosine, jaccard };
+
+    // Calculate N-gram similarity
+    const ngramSimilarity = (compareNgrams(baselineText, suspiciousText, 2) + compareNgrams(baselineText, suspiciousText, 3)) / 2;
+
+    // Calculate Entropy
+    const baselineEntropy = calculateEntropy(baselineText);
+    const suspiciousEntropy = calculateEntropy(suspiciousText);
+    const sentenceEntropies = calculateSentenceEntropies(suspiciousText);
     
     // Detect anomalies
-    const anomalies = detectAnomalies(baselineMetrics, suspiciousMetrics, tfidfResults, similarityScores);
+    const anomalies = detectAnomalies(baselineMetrics, suspiciousMetrics, tfidfResults, similarityScores, ngramSimilarity, baselineEntropy, suspiciousEntropy);
     
     // Attempt decoding
     const whitespaceDecoded = decodeWhitespace(suspiciousText);
@@ -650,7 +775,11 @@ function analyzeText() {
         whitespaceDecoded,
         punctuationDecoded,
         suspiciousTerms,
-        suspiciousText
+        suspiciousText,
+        ngramSimilarity,
+        baselineEntropy,
+        suspiciousEntropy,
+        sentenceEntropies
     };
     
     // Display results
@@ -678,6 +807,15 @@ function displayResults() {
     
     // Display similarity scores
     displaySimilarity(results.similarityScores);
+
+    // Display radar chart
+    displayRadarChart(results);
+
+    // Display entropy analysis
+    displayEntropy(results);
+
+    // Display N-gram divergence
+    displayNgrams(results);
     
     // Highlight anomalies in text
     displayHighlightedText(results.suspiciousText, results.anomalies, results.topTerms);
@@ -698,7 +836,17 @@ function updateAnomalyMeter(anomalies) {
     const label = document.getElementById('meterLabel');
     
     indicator.style.left = `${score}%`;
-    label.textContent = `${score} / 100`;
+    
+    let confidenceHtml = '';
+    if (anomalies.confidence === 'high') {
+        confidenceHtml = `<span class="confidence-badge confidence-high">High Confidence</span>`;
+    } else if (anomalies.confidence === 'medium') {
+        confidenceHtml = `<span class="confidence-badge confidence-medium">Medium Confidence</span>`;
+    } else {
+        confidenceHtml = `<span class="confidence-badge confidence-low">Low Confidence</span>`;
+    }
+    
+    label.innerHTML = `${score} / 100 ${confidenceHtml}`;
     
     // Color-code label
     if (score < 30) {
@@ -714,19 +862,19 @@ function updateAnomalyMeter(anomalies) {
     scoreDetails.innerHTML = `
         <div class="score-card">
             <h4>Stylometry</h4>
-            <div class="value">${Math.round((anomalies.scores.wordLength + anomalies.scores.sentenceLength + anomalies.scores.lexicalDiversity + anomalies.scores.functionWords) / 4)}%</div>
+            <div class="value">${Math.round(anomalies.subScores.stylometric)}%</div>
         </div>
         <div class="score-card">
-            <h4>Spacing</h4>
-            <div class="value">${Math.round(anomalies.scores.spacing)}%</div>
+            <h4>Structural</h4>
+            <div class="value">${Math.round(anomalies.subScores.structural)}%</div>
         </div>
         <div class="score-card">
-            <h4>Punctuation</h4>
-            <div class="value">${Math.round(anomalies.scores.punctuation)}%</div>
+            <h4>Vocabulary</h4>
+            <div class="value">${Math.round(anomalies.subScores.similarity)}%</div>
         </div>
         <div class="score-card">
-            <h4>Vocabulary Match</h4>
-            <div class="value">${Math.round(analysisResults.similarityScores.cosine * 100)}%</div>
+            <h4>N-gram</h4>
+            <div class="value">${Math.round(anomalies.subScores.ngram)}%</div>
         </div>
     `;
 }
@@ -1044,12 +1192,20 @@ function exportResults() {
     const exportData = {
         timestamp: new Date().toISOString(),
         overallScore: analysisResults.anomalies.overallScore,
+        confidence: analysisResults.anomalies.confidence,
+        subScores: analysisResults.anomalies.subScores,
         anomalies: analysisResults.anomalies.flags,
         stylometry: {
             baseline: analysisResults.baselineMetrics,
             suspicious: analysisResults.suspiciousMetrics
         },
         similarity: analysisResults.similarityScores,
+        ngram: analysisResults.ngramSimilarity,
+        entropy: {
+            baseline: analysisResults.baselineEntropy,
+            suspicious: analysisResults.suspiciousEntropy,
+            sentences: analysisResults.sentenceEntropies
+        },
         decodedMessages: {
             whitespace: analysisResults.whitespaceDecoded,
             punctuation: analysisResults.punctuationDecoded
@@ -1064,6 +1220,130 @@ function exportResults() {
     a.download = `text-stego-analysis-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+}
+
+function displayRadarChart(results) {
+    const canvas = document.getElementById('radarChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    if (charts.radar) charts.radar.destroy();
+    
+    charts.radar = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Stylometric', 'TF-IDF', 'Similarity', 'Structural', 'Entropy', 'N-gram'],
+            datasets: [{
+                label: 'Anomaly Profile',
+                data: [
+                    results.anomalies.subScores.stylometric,
+                    results.anomalies.subScores.tfidf,
+                    results.anomalies.subScores.similarity,
+                    results.anomalies.subScores.structural,
+                    results.anomalies.subScores.entropy,
+                    results.anomalies.subScores.ngram
+                ],
+                backgroundColor: 'rgba(244, 67, 54, 0.4)',
+                borderColor: 'rgba(244, 67, 54, 1)',
+                borderWidth: 2,
+                pointBackgroundColor: 'rgba(244, 67, 54, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255, 255, 255, 0.2)' },
+                    grid: { color: 'rgba(255, 255, 255, 0.2)' },
+                    pointLabels: { color: '#c0c0c0', font: { size: 12 } },
+                    ticks: { display: false, min: 0, max: 100 }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+}
+
+function displayEntropy(results) {
+    const scoresDiv = document.getElementById('entropyScores');
+    const canvas = document.getElementById('entropyChart');
+    if (!scoresDiv || !canvas) return;
+
+    const dev = percentDeviation(results.baselineEntropy, results.suspiciousEntropy);
+    
+    scoresDiv.innerHTML = `
+        <div class="score-card">
+            <h4>Baseline Entropy</h4>
+            <div class="value">${results.baselineEntropy.toFixed(3)}</div>
+        </div>
+        <div class="score-card">
+            <h4>Suspicious Entropy</h4>
+            <div class="value">${results.suspiciousEntropy.toFixed(3)}</div>
+        </div>
+        <div class="score-card">
+            <h4>Deviation</h4>
+            <div class="value deviation ${dev > 20 ? 'high' : dev > 10 ? 'medium' : 'low'}">${dev.toFixed(1)}%</div>
+        </div>
+    `;
+
+    const ctx = canvas.getContext('2d');
+    if (charts.entropy) charts.entropy.destroy();
+    
+    charts.entropy = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: results.sentenceEntropies.map((_, i) => `Sentence ${i+1}`),
+            datasets: [
+                {
+                    label: 'Per-Sentence Entropy',
+                    data: results.sentenceEntropies,
+                    borderColor: 'rgba(33, 150, 243, 1)',
+                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3
+                },
+                {
+                    label: 'Baseline Average',
+                    data: results.sentenceEntropies.map(() => results.baselineEntropy),
+                    borderColor: 'rgba(76, 175, 80, 1)',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    title: { display: true, text: 'Entropy (bits/char)' }
+                }
+            }
+        }
+    });
+}
+
+function displayNgrams(results) {
+    const scoresDiv = document.getElementById('ngramScores');
+    if (!scoresDiv) return;
+
+    const sim = results.ngramSimilarity * 100;
+    
+    scoresDiv.innerHTML = `
+        <div class="score-card" style="width: 100%;">
+            <h4>N-gram Similarity (Bigram + Trigram)</h4>
+            <div class="value deviation ${sim < 60 ? 'high' : sim < 80 ? 'medium' : 'low'}">${sim.toFixed(1)}%</div>
+            <p style="font-size: 12px; margin-top: 8px; color: var(--color-text-secondary);">
+                Compares character sequences. Low similarity suggests spacing or punctuation manipulation.
+            </p>
+        </div>
+    `;
 }
 
 // ============================================================================

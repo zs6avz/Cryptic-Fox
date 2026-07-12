@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a href="${prefix}audio-encrypt.html">Audio Encryption</a>
                 <a href="${prefix}red.html">Steganalysis</a>
                 <a href="${prefix}text-stego-detect.html">Text Stego Detector</a>
+                <a href="${prefix}text-stego-index.html">Forensic Index</a>
                 <a href="${prefix}note-g.html">Note G: Bernoulli Numbers</a>
                 <a href="${prefix}lovelace-music.html">Lovelace Music</a>
                 <!-- <a href="${prefix}puzzles.html">Puzzles</a> -->

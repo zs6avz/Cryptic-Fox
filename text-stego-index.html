@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; worker-src 'self' blob:;">
+    <title>Forensic Index — Cryptic Fox</title>
+    
+    <!-- Anti-clickjacking -->
+    <style id="antiClickjack">body{display:none !important;}</style>
+    <script type="text/javascript">
+        if (self === top) {
+            var antiClickjack = document.getElementById("antiClickjack");
+            antiClickjack.parentNode.removeChild(antiClickjack);
+        } else {
+            top.location = self.location;
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <meta name="description" content="Index and rank multiple text documents for steganographic anomalies using TF-IDF scoring, cosine similarity, Jaccard coefficients, and stylometric profiling.">
+    
+    <!-- Open Graph Data -->
+    <meta property="og:title" content="Forensic Index — Cryptic Fox">
+    <meta property="og:description" content="Index and rank multiple text documents for steganographic anomalies.">
+    <meta property="og:url" content="https://cryptic-fox.com/text-stego-index.html">
+    <meta property="og:type" content="website">
+    
+    <script src="js/components.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/text-stego-index.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/smoke.js" defer></script>
+    <style>
+        .corpus-list {
+            display: grid;
+            gap: 10px;
+        }
+        .corpus-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            padding: 10px;
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .corpus-item button {
+            background: transparent;
+            border: none;
+            color: #F44336;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .tab-content {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+        }
+        .ranking-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--color-primary);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .ranking-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-card .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--color-primary);
+        }
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="dropdown" role="navigation"></div>
+    
+    <section class="hero">
+        <h1>⊞ Forensic Index</h1>
+        <p class="tagline">Multi-document forensic indexing and ranking using TF-IDF, cosine similarity, and Jaccard coefficients</p>
+    </section>
+    
+    <div class="index-container" style="max-width: 1200px; margin: 80px auto 0; padding: 20px;">
+        
+        <!-- Document Corpus Panel -->
+        <div class="panel">
+            <h2>📚 Document Corpus</h2>
+            <div class="corpus-controls" style="display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                    <input type="text" id="docName" placeholder="Document Name" style="padding: 10px; border-radius: var(--radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--color-border); color: var(--color-text);">
+                    <textarea id="docText" placeholder="Paste document content here..." style="min-height: 80px;"></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px; width: 150px;">
+                    <button class="primary-btn" onclick="addDocumentFromPaste()" style="width: 100%;">Add Text</button>
+                    <input type="file" id="batchFiles" accept=".txt" multiple class="hidden-file-input" style="display:none;" onchange="addDocumentsFromBatch()">
+                    <button class="primary-btn" onclick="document.getElementById('batchFiles').click()" style="width: 100%;">📁 Batch Upload</button>
+                    <button class="primary-btn" onclick="clearCorpus()" style="background: rgba(244, 67, 54, 0.2); border-color: #F44336; width: 100%;">Clear All</button>
+                </div>
+            </div>
+            
+            <div class="corpus-list" id="corpusList" style="max-height: 300px; overflow-y: auto;">
+                <!-- Document items injected here -->
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="primary-btn" onclick="buildIndex()" style="font-size: 18px; padding: 15px 40px;">⚙️ Build Index</button>
+            </div>
+        </div>
+
+        <!-- Indexing Engine Stats Panel -->
+        <div class="panel hidden" id="indexStatsPanel" style="margin-top: 20px; display: none;">
+            <h2>📊 Index Statistics</h2>
+            <div id="indexStats" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;"></div>
+        </div>
+
+        <!-- Query & Ranking Panel -->
+        <div class="panel hidden" id="queryPanel" style="margin-top: 20px; display: none;">
+            <h2>🔎 Query & Ranking</h2>
+            
+            <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button class="primary-btn" onclick="switchTab('query')">Search Query</button>
+                <button class="primary-btn" onclick="switchTab('baseline')">Baseline Compare</button>
+                <button class="primary-btn" onclick="switchTab('anomaly')">Anomaly Rank</button>
+                <button class="primary-btn" onclick="switchTab('matrix')">Similarity Matrix</button>
+            </div>
+
+            <div id="tab-query" class="tab-content">
+                <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Find documents matching specific terms. Ranks by TF-IDF vector cosine similarity.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="queryText" placeholder="Enter keywords..." style="flex: 1; padding: 10px; border-radius: var(--radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--color-border); color: var(--color-text);">
+                    <button class="primary-btn" onclick="runQuery()">Rank Documents</button>
+                </div>
+            </div>
+
+            <div id="tab-baseline" class="tab-content hidden" style="display:none;">
+                <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Compare all documents against a single trusted baseline to find the most suspicious (divergent) ones.</p>
+                <div style="display: flex; gap: 10px; align-items: flex-start;">
+                    <textarea id="baselineText" placeholder="Paste baseline text..." style="flex: 1; min-height: 80px;"></textarea>
+                    <button class="primary-btn" onclick="runBaselineCompare()">Compare to Baseline</button>
+                </div>
+            </div>
+
+            <div id="tab-anomaly" class="tab-content hidden" style="display:none;">
+                <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Rank documents based on deviations from the corpus-wide stylometric averages.</p>
+                <button class="primary-btn" onclick="runAnomalyRank()">Rank Anomalies</button>
+            </div>
+
+            <div id="tab-matrix" class="tab-content hidden" style="display:none;">
+                <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Pairwise cosine similarity matrix across the entire corpus. Green indicates high similarity.</p>
+                <div class="chart-container" style="overflow-x: auto; background: white; padding: 10px; border-radius: var(--radius-md);">
+                    <canvas id="similarityMatrixCanvas"></canvas>
+                </div>
+            </div>
+            
+            <div id="rankingResults" style="margin-top: 30px;"></div>
+        </div>
+
+    </div>
+
+    <!-- Document Detail Modal -->
+    <div id="modalOverlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 999;" onclick="closeModal()"></div>
+    <div id="docDetailModal" class="panel" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 80%; max-height: 80vh; overflow-y: auto; margin: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">
+            <h2 id="modalTitle" style="margin: 0;">Document Detail</h2>
+            <button onclick="closeModal()" style="background: transparent; border: none; color: var(--color-text); font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        <div id="modalContent"></div>
+    </div>
+
+    <script src="js/suppress.js"></script>
+</body>
+</html>

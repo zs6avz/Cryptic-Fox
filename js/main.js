@@ -1196,6 +1196,43 @@ if (downloadBinaryBtn) {
     }
   });
 }
+
+// Download Text Bitstream
+const downloadTextBtn = document.getElementById("downloadTextBtn");
+if (downloadTextBtn) {
+  downloadTextBtn.addEventListener('click', () => {
+    if (window._currentBinaryData) {
+      const data = window._currentBinaryData;
+      const chunks = [];
+      let chunk = "";
+      for (let i = 0; i < data.length; i++) {
+        let byte = data[i];
+        chunk += ((byte >> 7) & 1).toString() +
+                 ((byte >> 6) & 1).toString() +
+                 ((byte >> 5) & 1).toString() +
+                 ((byte >> 4) & 1).toString() +
+                 ((byte >> 3) & 1).toString() +
+                 ((byte >> 2) & 1).toString() +
+                 ((byte >> 1) & 1).toString() +
+                 (byte & 1).toString();
+        if (chunk.length > 65536) {
+          chunks.push(chunk);
+          chunk = "";
+        }
+      }
+      if (chunk.length > 0) chunks.push(chunk);
+      const blob = new Blob(chunks, { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${currentMediaName}_bitstream_${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      showError("No bit stream to download. Run analysis first.");
+    }
+  });
+}
 if (playbackRate) {
   const updatePlaybackRate = () => {
     if (playbackRateValue) playbackRateValue.textContent = `${parseFloat(playbackRate.value).toFixed(2)}x`;
