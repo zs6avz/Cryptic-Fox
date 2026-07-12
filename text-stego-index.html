@@ -140,11 +140,11 @@
         <div class="panel hidden" id="queryPanel" style="margin-top: 20px; display: none;">
             <h2>🔎 Query & Ranking</h2>
             
-            <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
                 <button class="primary-btn" onclick="switchTab('query')">Search Query</button>
                 <button class="primary-btn" onclick="switchTab('baseline')">Baseline Compare</button>
                 <button class="primary-btn" onclick="switchTab('anomaly')">Anomaly Rank</button>
-                <button class="primary-btn" onclick="switchTab('matrix')">Similarity Matrix</button>
+                <a href="frequency.html#word-mode" target="_blank" class="primary-btn" style="text-decoration:none; background: rgba(33,150,243,0.15); border-color: #2196F3;">↗ Word Solver</a>
             </div>
 
             <div id="tab-query" class="tab-content">
@@ -168,13 +168,6 @@
                 <button class="primary-btn" onclick="runAnomalyRank()">Rank Anomalies</button>
             </div>
 
-            <div id="tab-matrix" class="tab-content hidden" style="display:none;">
-                <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Pairwise cosine similarity matrix across the entire corpus. Green indicates high similarity.</p>
-                <div class="chart-container" style="overflow-x: auto; background: white; padding: 10px; border-radius: var(--radius-md);">
-                    <canvas id="similarityMatrixCanvas"></canvas>
-                </div>
-            </div>
-            
             <div id="rankingResults" style="margin-top: 30px;"></div>
         </div>
 

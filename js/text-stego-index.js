@@ -532,10 +532,6 @@ function switchTab(tab) {
     if(tabEl) tabEl.style.display = 'block';
     
     document.getElementById('rankingResults').innerHTML = '';
-    
-    if (tab === 'matrix') {
-        renderSimilarityMatrix();
-    }
 }
 
 function runQuery() {
@@ -617,63 +613,52 @@ function runAnomalyRank() {
             </div>
         `;
     });
+
+    // Collect top TF-IDF terms from the 3 most anomalous documents
+    const topTerms = [];
+    results.slice(0, 3).forEach(r => {
+        const vec = corpusIndex.tfidfVectors[r.docId];
+        if (vec) {
+            Object.entries(vec)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .forEach(([term]) => {
+                    if (!topTerms.includes(term)) topTerms.push(term);
+                });
+        }
+    });
+
+    if (topTerms.length > 0) {
+        html += `
+            <div style="margin-top: 20px; padding: 15px; background: rgba(33,150,243,0.08);
+                        border: 1px solid #2196F3; border-radius: var(--radius-md);">
+                <p style="margin: 0 0 8px; color: #90CAF9; font-size: 13px;">
+                    <strong>💡 Top anomaly terms:</strong> ${topTerms.slice(0, 10).join(', ')}
+                </p>
+                <button class="primary-btn" onclick="sendToWordSolver(${JSON.stringify(topTerms.slice(0, 10))})" 
+                        style="background: rgba(33,150,243,0.2); border-color: #2196F3;">
+                    ↗ Send Terms to Word Solver
+                </button>
+            </div>
+        `;
+    }
+
     container.innerHTML = html;
 }
 
-function renderSimilarityMatrix() {
-    const canvas = document.getElementById('similarityMatrixCanvas');
-    if (!canvas || !corpusIndex) return;
-    
-    const ctx = canvas.getContext('2d');
-    const data = corpusIndex.similarityMatrix();
-    if(data.labels.length === 0) return;
-    
-    const n = data.labels.length;
-    
-    // Auto-size canvas based on doc count
-    const cellSize = Math.max(30, Math.min(80, 600 / n));
-    const padding = 100;
-    canvas.width = padding + n * cellSize;
-    canvas.height = padding + n * cellSize;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw matrix
-    for (let i = 0; i < n; i++) {
-        // Draw labels
-        ctx.fillStyle = '#c0c0c0';
-        ctx.font = '12px Space Grotesk';
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'middle';
-        let shortName = data.labels[i];
-        if(shortName.length > 10) shortName = shortName.substring(0, 8) + '..';
-        
-        ctx.fillText(shortName, padding - 10, padding + i * cellSize + cellSize/2);
-        
-        ctx.save();
-        ctx.translate(padding + i * cellSize + cellSize/2, padding - 10);
-        ctx.rotate(-Math.PI/4);
-        ctx.textAlign = 'left';
-        ctx.fillText(shortName, 0, 0);
-        ctx.restore();
-        
-        // Draw cells
-        for (let j = 0; j < n; j++) {
-            const sim = data.matrix[i][j];
-            // Color from red (0) to green (1)
-            const r = Math.floor(255 * (1 - sim));
-            const g = Math.floor(255 * sim);
-            ctx.fillStyle = `rgb(${r}, ${g}, 0)`;
-            ctx.fillRect(padding + j * cellSize, padding + i * cellSize, cellSize - 2, cellSize - 2);
-            
-            // Text value
-            if (cellSize >= 40) {
-                ctx.fillStyle = '#fff';
-                ctx.textAlign = 'center';
-                ctx.fillText(sim.toFixed(2), padding + j * cellSize + cellSize/2, padding + i * cellSize + cellSize/2);
-            }
-        }
+/**
+ * Sends top TF-IDF terms to the Word Solver on frequency.html via localStorage.
+ */
+function sendToWordSolver(terms) {
+    try {
+        localStorage.setItem('crypticfox_word_suggestions', JSON.stringify({
+            terms: terms,
+            timestamp: Date.now()
+        }));
+    } catch (e) {
+        console.warn('Could not write word suggestions to localStorage', e);
     }
+    window.open('frequency.html#word-mode', '_blank');
 }
 
 function showDocumentDetail(id) {
@@ -698,6 +683,12 @@ function showDocumentDetail(id) {
                         .map(e => `<span style="display:inline-block; margin: 2px 5px; padding: 2px 8px; background: var(--color-primary); border-radius: 10px; font-size: 12px;">${e[0]} (${e[1].toFixed(3)})</span>`)
                         .join('')}
                 </div>
+                <button onclick="sendToWordSolver(${JSON.stringify(
+                    Object.entries(corpusIndex.tfidfVectors[id])
+                        .sort((a,b) => b[1] - a[1]).slice(0,10).map(e => e[0])
+                )})" style="margin-top:10px; background: rgba(33,150,243,0.2); border:1px solid #2196F3; color:#90CAF9; padding:6px 14px; border-radius:var(--radius-sm); cursor:pointer; font-size:13px;">
+                    ↗ Send Terms to Word Solver
+                </button>
             </div>
             <div>
                 <h3>Stylometric Profile</h3>

@@ -174,7 +174,11 @@ function addEnglishReference(chart) {
     // I'll add a section in the UI for English frequency reference instead of a cluttered chart.
 }
 
-document.addEventListener("DOMContentLoaded", initGame);
+document.addEventListener("DOMContentLoaded", () => {
+    initGame();
+    initWordMode();          // Eager init so suggestions work before mode is clicked
+    checkForSuggestedWords(); // Pick up terms sent from Forensic Index
+});
 
 // ============================================================================
 // MODE SWITCHING
@@ -364,6 +368,7 @@ let tokenMap = {};
 let cipherInput = '';
 
 function parseTokens() {
+    if (!wordModeInitialized) initWordMode(); // Safety net
     cipherInput = document.getElementById('word-cipher-input').value;
     
     // Extract all [WORDn] tokens
@@ -420,6 +425,7 @@ function renderTokenGrid() {
         
         const patternDisplay = tokenMap[token].pattern || '___';
         
+        const safeId = token.replace(/[\[\]]/g, '_'); // e.g. [WORD1] -> _WORD1_
         card.innerHTML = `
             <div class="token-header">
                 <span class="token-label">${token}</span>
@@ -433,7 +439,7 @@ function renderTokenGrid() {
                        oninput="handleTokenInput('${token}', this.value)"
                        data-token="${token}">
             </div>
-            <div class="suggestions-list" id="suggestions-${token}">
+            <div class="suggestions-list" id="suggestions-${safeId}">
                 <div style="color: var(--color-text-muted); font-size: 0.85rem; font-style: italic;">Calculating suggestions...</div>
             </div>
         `;
@@ -609,7 +615,8 @@ function calculateContextScore(candidate, contextWords) {
 }
 
 function renderSuggestions(token) {
-    const container = document.getElementById(`suggestions-${token}`);
+    const safeId = token.replace(/[\[\]]/g, '_');
+    const container = document.getElementById(`suggestions-${safeId}`);
     if (!container) return;
     
     const suggestions = tokenMap[token].suggestions.slice(0, 5);
@@ -638,11 +645,70 @@ function acceptSuggestion(token, word) {
     tokenMap[token].solution = word.toUpperCase();
     tokenMap[token].pattern = word.toUpperCase();
     
-    // Update input field
-    const input = document.querySelector(`input[data-token="${token}"]`);
+    // Use attribute matching instead of querySelector to avoid CSS selector issues
+    // with brackets in token names like [WORD1]
+    const input = Array.from(document.querySelectorAll('.token-input'))
+        .find(el => el.getAttribute('data-token') === token);
     if (input) {
         input.value = word.toUpperCase();
     }
     
     updateResolvedWordText();
+    updateSuggestions(token); // Refresh suggestions after accepting one
+}
+
+// ============================================================================
+// FORENSIC INDEX INTEGRATION
+// ============================================================================
+
+/**
+ * Check localStorage for terms sent from the Forensic Index page.
+ * Boosts those terms to the top of suggestion lists.
+ */
+function checkForSuggestedWords() {
+    try {
+        const raw = localStorage.getItem('crypticfox_word_suggestions');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.terms) || data.terms.length === 0) return;
+        // Ignore stale data older than 5 minutes
+        if (Date.now() - (data.timestamp || 0) > 300000) {
+            localStorage.removeItem('crypticfox_word_suggestions');
+            return;
+        }
+        localStorage.removeItem('crypticfox_word_suggestions');
+
+        // Boost these terms so they appear first in suggestions
+        data.terms.forEach(term => {
+            const lower = term.toLowerCase();
+            wordFrequency[lower] = (wordFrequency[lower] || 0) + 100000;
+            // Ensure it appears in the length index
+            const len = lower.length;
+            if (!lengthIndex[len]) lengthIndex[len] = [];
+            if (!lengthIndex[len].includes(lower)) lengthIndex[len].push(lower);
+        });
+        // Re-sort length indexes so boosted terms bubble to the top
+        Object.keys(lengthIndex).forEach(len => {
+            lengthIndex[len].sort((a, b) => (wordFrequency[b] || 0) - (wordFrequency[a] || 0));
+        });
+
+        // Switch to word mode and pre-populate the textarea
+        setMode('word');
+        const textarea = document.getElementById('word-cipher-input');
+        if (textarea) {
+            const tokens = data.terms.slice(0, 8).map((_, i) => `[WORD${i + 1}]`).join(' ');
+            textarea.value = `Suspicious terms from Forensic Index:\n${tokens}`;
+            parseTokens();
+        }
+
+        // Show a dismissible notice
+        const notice = document.createElement('div');
+        notice.style.cssText = 'background:rgba(33,150,243,0.12);border:1px solid #2196F3;border-radius:6px;' +
+            'padding:10px 14px;margin-bottom:12px;color:#90CAF9;font-size:0.9rem;';
+        notice.innerHTML = `<strong>📊 Forensic Index:</strong> Boosted terms: ${data.terms.slice(0, 8).join(', ')}`;
+        const inputSection = document.querySelector('#word-mode-content .input-section');
+        if (inputSection) inputSection.prepend(notice);
+    } catch (e) {
+        console.warn('checkForSuggestedWords error:', e);
+    }
 }
