@@ -175,3 +175,474 @@ function addEnglishReference(chart) {
 }
 
 document.addEventListener("DOMContentLoaded", initGame);
+
+// ============================================================================
+// MODE SWITCHING
+// ============================================================================
+
+let currentMode = 'letter';
+
+function setMode(mode) {
+    currentMode = mode;
+    
+    // Update button states
+    document.getElementById('mode-letter').classList.toggle('active', mode === 'letter');
+    document.getElementById('mode-word').classList.toggle('active', mode === 'word');
+    
+    // Update content visibility
+    document.getElementById('letter-mode-content').classList.toggle('active', mode === 'letter');
+    document.getElementById('word-mode-content').classList.toggle('active', mode === 'word');
+    
+    // Update description
+    const descriptions = {
+        letter: 'Break a substitution cipher by mapping scrambled letters to their originals using frequency distribution patterns.',
+        word: 'Solve messages with missing words using corpus-based pattern matching and contextual analysis.'
+    };
+    document.getElementById('mode-description').textContent = descriptions[mode];
+    
+    // Initialize word mode if switching to it
+    if (mode === 'word' && !wordModeInitialized) {
+        initWordMode();
+    }
+}
+
+// ============================================================================
+// WORD-LEVEL SOLVER - CORPUS & DICTIONARY
+// ============================================================================
+
+let wordModeInitialized = false;
+let wordFrequency = {};
+let patternIndex = {};
+let lengthIndex = {};
+let vocabularySize = 0;
+let corpusMode = 'fallback';
+let documentCount = 0;
+
+// Top 5000 most common English words (fallback dictionary)
+const COMMON_WORDS = [
+    "the", "be", "to", "of", "and", "a", "in", "that", "have", "i", "it", "for", "not", "on", "with",
+    "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
+    "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if",
+    "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", "him",
+    "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", "other", "than",
+    "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", "after", "use", "two",
+    "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", "any", "these", "give",
+    "day", "most", "us", "is", "was", "are", "been", "has", "had", "were", "said", "did", "having", "may",
+    "should", "am", "being", "ought", "might", "does", "must", "shall", "doing", "done", "made", "make",
+    "quick", "brown", "fox", "jumps", "over", "lazy", "dog", "hello", "world", "test", "example", "word",
+    "text", "message", "cipher", "code", "secret", "hidden", "mystery", "puzzle", "solve", "find", "search",
+    "through", "under", "where", "before", "between", "same", "each", "feel", "seem", "hand", "eye", "place",
+    "case", "tell", "own", "leave", "ask", "man", "old", "right", "mean", "keep", "let", "begin", "help",
+    "talk", "turn", "start", "show", "hear", "play", "run", "move", "live", "believe", "hold", "bring",
+    "happen", "write", "provide", "sit", "stand", "lose", "pay", "meet", "include", "continue", "set",
+    "learn", "change", "lead", "understand", "watch", "follow", "stop", "create", "speak", "read", "allow",
+    "add", "spend", "grow", "open", "walk", "win", "offer", "remember", "love", "consider", "appear",
+    "buy", "wait", "serve", "die", "send", "expect", "build", "stay", "fall", "cut", "reach", "kill",
+    "remain", "suggest", "raise", "pass", "sell", "require", "report", "decide", "pull", "break", "pick",
+    "wear", "catch", "choose", "fly", "return", "hope", "carry", "draw", "produce", "eat", "force", "throw",
+    "such", "every", "much", "own", "while", "still", "try", "another", "great", "little", "large", "big",
+    "small", "long", "early", "young", "important", "few", "public", "bad", "same", "able", "woman", "here",
+    "national", "human", "both", "far", "present", "next", "social", "past", "possible", "true", "certain",
+    "ever", "real", "full", "available", "whole", "likely", "economic", "hard", "strong", "necessary",
+    "clear", "common", "recent", "simple", "main", "political", "personal", "sure", "ready", "similar",
+    "easy", "serious", "wrong", "fine", "less", "dark", "several", "close", "professional", "special",
+    "free", "dead", "military", "able", "current", "happy", "white", "black", "red", "blue", "green",
+    "room", "house", "home", "family", "door", "water", "food", "book", "paper", "name", "number", "part",
+    "line", "area", "money", "story", "fact", "month", "lot", "study", "business", "issue", "side", "kind",
+    "head", "mother", "father", "power", "country", "able", "top", "whole", "end", "point", "member",
+    "law", "car", "city", "community", "change", "information", "history", "party", "result", "morning",
+    "reason", "research", "girl", "guy", "moment", "air", "teacher", "force", "education", "foot", "boy",
+    "age", "policy", "everything", "love", "process", "music", "including", "art", "company", "president",
+    "until", "record", "million", "ago", "difference", "management", "control", "upon", "although", "within",
+    "during", "without", "toward", "upon", "once", "enough", "almost", "phone", "might", "away", "around",
+    "something", "actually", "nothing", "thought", "perhaps", "rather", "quite", "especially", "else",
+    "ever", "course", "someone", "around", "simply", "itself", "often", "please", "therefore", "whether"
+];
+
+function initWordMode() {
+    wordModeInitialized = true;
+    loadCorpus();
+}
+
+function loadCorpus() {
+    try {
+        const corpusData = localStorage.getItem('crypticfox_corpus');
+        if (corpusData) {
+            const corpus = JSON.parse(corpusData);
+            if (corpus.documents && corpus.documents.length > 0) {
+                buildCorpusIndex(corpus.documents);
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn('Could not load corpus from localStorage:', e);
+    }
+    
+    // Fallback to common words dictionary
+    buildFallbackDictionary();
+}
+
+function buildCorpusIndex(documents) {
+    corpusMode = 'corpus';
+    documentCount = documents.length;
+    wordFrequency = {};
+    
+    // Tokenize all documents and count word frequencies
+    documents.forEach(doc => {
+        const tokens = tokenize(doc.text);
+        tokens.forEach(token => {
+            wordFrequency[token] = (wordFrequency[token] || 0) + 1;
+        });
+    });
+    
+    buildIndexes();
+    updateCorpusStatus();
+}
+
+function buildFallbackDictionary() {
+    corpusMode = 'fallback';
+    documentCount = 0;
+    wordFrequency = {};
+    
+    // Assign decreasing frequency values to common words
+    COMMON_WORDS.forEach((word, index) => {
+        wordFrequency[word.toLowerCase()] = COMMON_WORDS.length - index;
+    });
+    
+    buildIndexes();
+    updateCorpusStatus();
+}
+
+function buildIndexes() {
+    patternIndex = {};
+    lengthIndex = {};
+    vocabularySize = Object.keys(wordFrequency).length;
+    
+    // Build pattern and length indexes
+    Object.keys(wordFrequency).forEach(word => {
+        const len = word.length;
+        
+        // Length index
+        if (!lengthIndex[len]) lengthIndex[len] = [];
+        lengthIndex[len].push(word);
+        
+        // Pattern index (full word pattern)
+        const pattern = '_'.repeat(len);
+        if (!patternIndex[pattern]) patternIndex[pattern] = [];
+        patternIndex[pattern].push(word);
+    });
+    
+    // Sort by frequency
+    Object.keys(lengthIndex).forEach(len => {
+        lengthIndex[len].sort((a, b) => wordFrequency[b] - wordFrequency[a]);
+    });
+}
+
+function tokenize(text) {
+    return text.toLowerCase().match(/\b[a-z]+\b/g) || [];
+}
+
+function updateCorpusStatus() {
+    document.getElementById('corpus-mode').textContent = corpusMode === 'corpus' ? 'Corpus' : 'Fallback';
+    document.getElementById('corpus-vocab').textContent = vocabularySize.toLocaleString();
+    document.getElementById('corpus-docs').textContent = documentCount.toString();
+}
+
+function refreshCorpus() {
+    loadCorpus();
+    if (currentTokens.length > 0) {
+        updateAllSuggestions();
+    }
+}
+
+// ============================================================================
+// TOKEN PARSING & STATE MANAGEMENT
+// ============================================================================
+
+let currentTokens = [];
+let tokenMap = {};
+let cipherInput = '';
+
+function parseTokens() {
+    cipherInput = document.getElementById('word-cipher-input').value;
+    
+    // Extract all [WORDn] tokens
+    const tokenPattern = /\[WORD(\d+)\]/g;
+    const foundTokens = new Set();
+    let match;
+    
+    while ((match = tokenPattern.exec(cipherInput)) !== null) {
+        foundTokens.add(match[0]);
+    }
+    
+    currentTokens = Array.from(foundTokens).sort((a, b) => {
+        const numA = parseInt(a.match(/\d+/)[0]);
+        const numB = parseInt(b.match(/\d+/)[0]);
+        return numA - numB;
+    });
+    
+    // Initialize token map
+    currentTokens.forEach(token => {
+        if (!tokenMap[token]) {
+            tokenMap[token] = {
+                pattern: '',
+                solution: '',
+                suggestions: []
+            };
+        }
+    });
+    
+    // Remove tokens that are no longer in the input
+    Object.keys(tokenMap).forEach(token => {
+        if (!currentTokens.includes(token)) {
+            delete tokenMap[token];
+        }
+    });
+    
+    renderTokenGrid();
+    updateResolvedWordText();
+    updateAllSuggestions();
+}
+
+function renderTokenGrid() {
+    const grid = document.getElementById('token-grid');
+    
+    if (currentTokens.length === 0) {
+        grid.innerHTML = '<div class="no-tokens-message">Enter ciphertext with [WORDn] tokens above to see suggestions.</div>';
+        return;
+    }
+    
+    grid.innerHTML = '';
+    
+    currentTokens.forEach(token => {
+        const card = document.createElement('div');
+        card.className = 'token-card';
+        
+        const patternDisplay = tokenMap[token].pattern || '___';
+        
+        card.innerHTML = `
+            <div class="token-header">
+                <span class="token-label">${token}</span>
+                <span class="token-pattern">Pattern: ${patternDisplay}</span>
+            </div>
+            <div class="token-input-wrapper">
+                <input type="text" 
+                       class="token-input" 
+                       placeholder="Enter word or pattern (e.g., TH_)"
+                       value="${tokenMap[token].solution}"
+                       oninput="handleTokenInput('${token}', this.value)"
+                       data-token="${token}">
+            </div>
+            <div class="suggestions-list" id="suggestions-${token}">
+                <div style="color: var(--color-text-muted); font-size: 0.85rem; font-style: italic;">Calculating suggestions...</div>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+}
+
+function handleTokenInput(token, value) {
+    const normalized = value.trim().toUpperCase();
+    tokenMap[token].solution = normalized;
+    
+    // Detect pattern from input (e.g., "TH_" or "T_E")
+    if (normalized.includes('_')) {
+        tokenMap[token].pattern = normalized;
+    } else if (normalized.length > 0) {
+        tokenMap[token].pattern = normalized;
+    }
+    
+    updateResolvedWordText();
+    updateSuggestions(token);
+}
+
+function updateResolvedWordText() {
+    let resolved = cipherInput;
+    
+    currentTokens.forEach(token => {
+        const solution = tokenMap[token].solution;
+        if (solution && !solution.includes('_')) {
+            resolved = resolved.replace(new RegExp('\\' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), solution);
+        } else {
+            resolved = resolved.replace(new RegExp('\\' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '______');
+        }
+    });
+    
+    document.getElementById('word-resolved-text').textContent = resolved || 'Your decoded message will appear here...';
+}
+
+// ============================================================================
+// PATTERN MATCHING & SUGGESTIONS
+// ============================================================================
+
+function updateAllSuggestions() {
+    currentTokens.forEach(token => updateSuggestions(token));
+}
+
+function updateSuggestions(token) {
+    const data = tokenMap[token];
+    const pattern = data.pattern;
+    
+    // Get candidates based on pattern
+    let candidates = [];
+    
+    if (pattern && pattern !== '') {
+        candidates = getWordsByPattern(pattern);
+    } else {
+        // No pattern - suggest by length or most common words
+        candidates = Object.keys(wordFrequency)
+            .sort((a, b) => wordFrequency[b] - wordFrequency[a])
+            .slice(0, 20);
+    }
+    
+    // Apply context-aware ranking
+    candidates = rankByContext(token, candidates);
+    
+    // Store top suggestions
+    tokenMap[token].suggestions = candidates.slice(0, 20);
+    
+    // Render suggestions
+    renderSuggestions(token);
+}
+
+function getWordsByPattern(pattern) {
+    const patternLower = pattern.toLowerCase();
+    const length = pattern.length;
+    const candidates = [];
+    
+    // Get all words of the same length
+    const wordsOfLength = lengthIndex[length] || [];
+    
+    wordsOfLength.forEach(word => {
+        if (matchesPattern(word, patternLower)) {
+            candidates.push(word);
+        }
+    });
+    
+    // Sort by frequency
+    candidates.sort((a, b) => (wordFrequency[b] || 0) - (wordFrequency[a] || 0));
+    
+    return candidates;
+}
+
+function matchesPattern(word, pattern) {
+    if (word.length !== pattern.length) return false;
+    
+    for (let i = 0; i < word.length; i++) {
+        if (pattern[i] !== '_' && pattern[i] !== word[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function rankByContext(token, candidates) {
+    // Extract context words around the token
+    const context = extractContext(token);
+    
+    if (context.length === 0) {
+        return candidates; // No context available
+    }
+    
+    // Calculate context similarity scores
+    const scored = candidates.map(candidate => {
+        const score = calculateContextScore(candidate, context);
+        return { word: candidate, score: score };
+    });
+    
+    // Sort by context score (higher is better)
+    scored.sort((a, b) => b.score - a.score);
+    
+    return scored.map(s => s.word);
+}
+
+function extractContext(token) {
+    const words = cipherInput.split(/\s+/);
+    const tokenIndex = words.findIndex(w => w.includes(token));
+    
+    if (tokenIndex === -1) return [];
+    
+    const context = [];
+    
+    // Get 2 words before
+    for (let i = Math.max(0, tokenIndex - 2); i < tokenIndex; i++) {
+        const word = words[i].replace(/[^a-zA-Z]/g, '').toLowerCase();
+        if (word && !word.includes('word')) {
+            context.push(word);
+        }
+    }
+    
+    // Get 2 words after
+    for (let i = tokenIndex + 1; i < Math.min(words.length, tokenIndex + 3); i++) {
+        const word = words[i].replace(/[^a-zA-Z]/g, '').toLowerCase();
+        if (word && !word.includes('word')) {
+            context.push(word);
+        }
+    }
+    
+    return context;
+}
+
+function calculateContextScore(candidate, contextWords) {
+    // Simple co-occurrence scoring
+    // In a full implementation, this would use TF-IDF and cosine similarity
+    // For now, we'll use a simplified frequency-based approach
+    
+    let score = wordFrequency[candidate] || 0;
+    
+    // Boost score if candidate appears near context words in our vocabulary
+    // This is a simplified heuristic
+    contextWords.forEach(contextWord => {
+        if (wordFrequency[contextWord]) {
+            // Words with similar frequencies tend to co-occur
+            const freqDiff = Math.abs(wordFrequency[candidate] - wordFrequency[contextWord]);
+            const maxFreq = Math.max(wordFrequency[candidate], wordFrequency[contextWord]);
+            if (maxFreq > 0) {
+                const similarity = 1 - (freqDiff / maxFreq);
+                score += similarity * 100;
+            }
+        }
+    });
+    
+    return score;
+}
+
+function renderSuggestions(token) {
+    const container = document.getElementById(`suggestions-${token}`);
+    if (!container) return;
+    
+    const suggestions = tokenMap[token].suggestions.slice(0, 5);
+    
+    if (suggestions.length === 0) {
+        container.innerHTML = '<div style="color: var(--color-text-muted); font-size: 0.85rem; font-style: italic;">No suggestions found</div>';
+        return;
+    }
+    
+    container.innerHTML = '';
+    
+    suggestions.forEach(word => {
+        const freq = wordFrequency[word] || 0;
+        const btn = document.createElement('button');
+        btn.className = 'suggestion-btn';
+        btn.onclick = () => acceptSuggestion(token, word);
+        btn.innerHTML = `
+            ${word.toUpperCase()}
+            <span class="suggestion-badge">${Math.min(freq, 999)}</span>
+        `;
+        container.appendChild(btn);
+    });
+}
+
+function acceptSuggestion(token, word) {
+    tokenMap[token].solution = word.toUpperCase();
+    tokenMap[token].pattern = word.toUpperCase();
+    
+    // Update input field
+    const input = document.querySelector(`input[data-token="${token}"]`);
+    if (input) {
+        input.value = word.toUpperCase();
+    }
+    
+    updateResolvedWordText();
+}

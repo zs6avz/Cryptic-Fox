@@ -1,0 +1,101 @@
+WORD-LEVEL SUBSTITUTION CIPHER SOLVER - TEST EXAMPLES
+======================================================
+
+EXAMPLE 1: Simple Word Replacement
+-----------------------------------
+Input:
+The quick [WORD1] fox jumps over the lazy [WORD2].
+
+Expected Behavior:
+- WORD1 suggestions: BROWN, SWIFT, SMART (based on "quick" context)
+- WORD2 suggestions: DOG, CAT (based on "lazy" context and common phrases)
+
+EXAMPLE 2: Pattern Matching
+----------------------------
+Input:
+The [WORD1] [WORD2] is a popular programming language.
+
+User enters "P_TH_N" in WORD2:
+- System should suggest: PYTHON (pattern match)
+- WORD1 suggestions should adapt: SNAKE (contextual with python)
+
+EXAMPLE 3: Multiple Tokens
+---------------------------
+Input:
+[WORD1] is the [WORD2] of [WORD3]. Without [WORD1], we cannot [WORD4].
+
+Expected Behavior:
+- System detects 4 unique tokens
+- Each gets independent suggestions based on:
+  * Position in sentence
+  * Surrounding words
+  * Pattern constraints (if any)
+
+EXAMPLE 4: Partial Letter Knowledge
+------------------------------------
+Input:
+The secret [WORD1] is hidden in the [WORD2].
+
+User enters "M_S_A_E" in WORD1:
+- System suggests: MESSAGE (pattern match: M_S_A_E)
+- WORD2 adapts: CODE, TEXT, FILE (contextual with "message")
+
+EXAMPLE 5: Cryptographic Context
+---------------------------------
+Input:
+[WORD1] and [WORD2] are essential for secure [WORD3].
+
+Expected Behavior (with crypto corpus):
+- WORD1: ENCRYPTION, CIPHER, KEY
+- WORD2: DECRYPTION, HASHING, SIGNING
+- WORD3: COMMUNICATION, TRANSMISSION, STORAGE
+
+EXAMPLE 6: Complex Pattern
+---------------------------
+Input:
+The [WORD1] [WORD2] [WORD3] over the [WORD4] [WORD5].
+
+User constraints:
+- WORD1 = "Q____" (5 letters starting with Q)
+- WORD3 = "__M__" (5 letters with M in position 3)
+
+Expected:
+- WORD1: QUICK, QUIET, QUEEN
+- WORD3: JUMPS, BUMPS, LUMPS
+
+TESTING INSTRUCTIONS:
+---------------------
+1. Open frequency.html in browser
+2. Click "Word-Level Solver" tab
+3. Check corpus status (should show "Fallback" mode with ~320 words vocabulary)
+4. Paste Example 1 into input field
+5. Verify tokens WORD1 and WORD2 appear in grid below
+6. Check that suggestions appear for each token
+7. Click a suggestion to accept it
+8. Verify resolved text updates
+
+CORPUS TESTING:
+---------------
+1. Open text-stego-index.html in new tab
+2. Add documents with cryptography-related text
+3. Return to frequency.html
+4. Click "Refresh" button
+5. Verify corpus status shows "Corpus" mode
+6. Test Example 5 - suggestions should favor crypto terms
+7. Click "Manage Corpus" to return to text-stego-index
+
+PATTERN TESTING:
+----------------
+1. Enter Example 2
+2. In WORD2 input, type "P_TH_N"
+3. Verify suggestions filter to words matching pattern
+4. Type "PYTHON" fully
+5. Verify WORD1 suggestions update with context
+
+KNOWN LIMITATIONS:
+------------------
+- Context awareness uses simplified frequency-based heuristic
+- Full TF-IDF cosine similarity requires corpus with multiple documents
+- Fallback dictionary limited to 320 common words (extensible to 5000+)
+- No auto-solve feature yet (planned for Phase 6)
+- No persistent session storage (planned for Phase 6)

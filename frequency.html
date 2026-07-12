@@ -32,7 +32,7 @@
     <link rel="manifest" href="site.webmanifest">
 
     <meta name="description"
-        content="Break a substitution cipher using frequency analysis. Compare letter distributions against standard English to decode the scrambled message.">
+        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching with corpus-based suggestions. Advanced cryptanalysis tools.">
     <link rel="canonical" href="https://cryptic-fox.com/frequency.html">
 
     <!-- Open Graph -->
@@ -40,14 +40,14 @@
     <meta property="og:url" content="https://cryptic-fox.com/frequency.html">
     <meta property="og:title" content="The Frequency Chamber — Cryptic Fox">
     <meta property="og:description"
-        content="Break a substitution cipher using frequency analysis. A cryptographic puzzle challenge.">
+        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching. Advanced cryptanalysis puzzle challenge.">
     <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="The Frequency Chamber — Cryptic Fox">
     <meta name="twitter:description"
-        content="Break a substitution cipher using frequency analysis. A cryptographic puzzle challenge.">
+        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching. Advanced cryptanalysis puzzle challenge.">
     <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
 
     <style>
@@ -154,6 +154,251 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
+
+        /* Mode Selector Styles */
+        .mode-selector-group {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            margin-bottom: 30px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .mode-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--color-accent);
+        }
+
+        .mode-btn.active {
+            background: var(--color-accent);
+            color: #fff;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 15px rgba(107, 53, 53, 0.5);
+        }
+
+        .mode-description {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            line-height: 1.5;
+        }
+
+        .mode-content {
+            display: none;
+        }
+
+        .mode-content.active {
+            display: block;
+        }
+
+        /* Word-Level Solver Styles */
+        .input-section {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .cipher-input {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            color: var(--color-text);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .cipher-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .token-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .token-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+        }
+
+        .token-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .token-label {
+            font-weight: bold;
+            color: var(--color-accent);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .token-pattern {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .token-input-wrapper {
+            margin-bottom: 10px;
+        }
+
+        .token-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .token-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .suggestions-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .suggestion-btn {
+            padding: 5px 10px;
+            background: rgba(139, 69, 69, 0.2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .suggestion-btn:hover {
+            background: var(--color-accent);
+            color: #fff;
+            border-color: var(--color-accent);
+        }
+
+        .suggestion-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .corpus-status {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .corpus-info {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .corpus-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .corpus-stat-label {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+        }
+
+        .corpus-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--color-accent);
+        }
+
+        .corpus-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .small-btn {
+            padding: 8px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .small-btn:hover {
+            background: var(--color-accent);
+            border-color: var(--color-accent);
+            color: #fff;
+        }
+
+        .no-tokens-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--color-text-muted);
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -166,43 +411,112 @@
             <a href="index.html">Home</a>
             <a href="about.html">About</a>
             <a href="decrypt.html">Encrypt/Decrypt</a>
+            <a href="frequency.html">Frequency Analysis</a>
             <a href="image-encrypt.html">Image Encryption</a>
             <a href="audio-encrypt.html">Audio Encryption</a>
             <a href="red.html">Steganalysis</a>
-            <a href="puzzles.html">Puzzles</a>
+            <a href="text-stego-detect.html">Text Stego Detector</a>
+            <a href="text-stego-index.html">Forensic Index</a>
+            <a href="note-g.html">Note G: Bernoulli Numbers</a>
+            <a href="lovelace-music.html">Lovelace Music</a>
             <a href="cryptography.html">Resources</a>
-            <a href="blog.html">Blog</a>
             <a href="tepcipher.html">⌖Ξ⎔ ⚲∷⎔⍥Ξ⎐</a>
         </div>
     </div>
 
     <div class="frequency-container">
         <h1>The Frequency Chamber</h1>
-        <p>A message has been intercepted. The alphabet has been scrambled. Use frequency analysis to reconstruct the
-            original text. Symbols and spaces are untouched.</p>
+        <p>Advanced substitution cipher breaking tools using frequency analysis and corpus-based word matching.</p>
 
-        <div id="successMsg" class="success-message">
-            CONGRATULATIONS! You have successfully decrypted the message. 🔓
-            <br>
-            <button onclick="location.reload()"
-                style="margin-top:10px; cursor:pointer; background: transparent; color: #7bd389; border: 1px solid #7bd389; padding: 5px 15px; border-radius: 5px;">New
-                Challenge</button>
+        <!-- Mode Selector -->
+        <div class="mode-selector-group">
+            <div class="mode-buttons">
+                <button class="mode-btn active" id="mode-letter" onclick="setMode('letter')">Letter-Level Analysis</button>
+                <button class="mode-btn" id="mode-word" onclick="setMode('word')">Word-Level Solver</button>
+            </div>
+            <div class="mode-description" id="mode-description">
+                Break a substitution cipher by mapping scrambled letters to their originals using frequency distribution patterns.
+            </div>
         </div>
 
-        <div class="crypt-box">
-            <div id="ciphertext" class="ciphertext"></div>
-            <div id="resolvedText" class="resolved-text"></div>
+        <!-- Letter-Level Mode (Original) -->
+        <div id="letter-mode-content" class="mode-content active">
+            <div id="successMsg" class="success-message">
+                CONGRATULATIONS! You have successfully decrypted the message. 🔓
+                <br>
+                <button onclick="location.reload()"
+                    style="margin-top:10px; cursor:pointer; background: transparent; color: #7bd389; border: 1px solid #7bd389; padding: 5px 15px; border-radius: 5px;">New
+                    Challenge</button>
+            </div>
+
+            <div class="crypt-box">
+                <div id="ciphertext" class="ciphertext"></div>
+                <div id="resolvedText" class="resolved-text"></div>
+            </div>
+
+            <h3>Substitution Map</h3>
+            <div id="mappingGrid" class="mapping-grid">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>Frequency Analysis (Ciphertext vs. Standard English)</h3>
+                    <canvas id="freqChart"></canvas>
+                </div>
+            </div>
         </div>
 
-        <h3>Substitution Map</h3>
-        <div id="mappingGrid" class="mapping-grid">
-            <!-- Dynamically populated -->
-        </div>
+        <!-- Word-Level Mode (New) -->
+        <div id="word-mode-content" class="mode-content">
+            <!-- Corpus Status -->
+            <div class="corpus-status">
+                <div class="corpus-info">
+                    <div class="corpus-stat">
+                        <span class="corpus-stat-label">Corpus Mode</span>
+                        <span class="corpus-stat-value" id="corpus-mode">Loading...</span>
+                    </div>
+                    <div class="corpus-stat">
+                        <span class="corpus-stat-label">Vocabulary</span>
+                        <span class="corpus-stat-value" id="corpus-vocab">0</span>
+                    </div>
+                    <div class="corpus-stat">
+                        <span class="corpus-stat-label">Documents</span>
+                        <span class="corpus-stat-value" id="corpus-docs">0</span>
+                    </div>
+                </div>
+                <div class="corpus-actions">
+                    <button class="small-btn" onclick="refreshCorpus()">↻ Refresh</button>
+                    <a href="text-stego-index.html" class="small-btn" target="_blank">Manage Corpus</a>
+                </div>
+            </div>
 
-        <div class="charts-container">
-            <div class="chart-box">
-                <h3>Frequency Analysis (Ciphertext vs. Standard English)</h3>
-                <canvas id="freqChart"></canvas>
+            <!-- Input Section -->
+            <div class="input-section">
+                <h3>Ciphertext Input</h3>
+                <p style="margin-bottom: 15px; color: var(--color-text-muted); font-size: 0.9rem;">
+                    Enter text with placeholder tokens like [WORD1], [WORD2], etc. The solver will suggest replacements based on pattern matching and corpus frequency.
+                </p>
+                <textarea 
+                    id="word-cipher-input" 
+                    class="cipher-input" 
+                    placeholder="Example: The quick [WORD1] fox jumps over the lazy [WORD2].&#10;&#10;Use [WORD1], [WORD2], [WORD3] etc. for unknown words."
+                    oninput="parseTokens()"></textarea>
+            </div>
+
+            <!-- Resolved Text Display -->
+            <div class="crypt-box">
+                <div id="word-resolved-text" class="resolved-text">Your decoded message will appear here...</div>
+            </div>
+
+            <!-- Token Mapping Section -->
+            <div class="input-section">
+                <h3>Word Mapping & Suggestions</h3>
+                <div id="token-grid" class="token-grid">
+                    <div class="no-tokens-message">
+                        Enter ciphertext with [WORDn] tokens above to see suggestions.
+                    </div>
+                </div>
             </div>
         </div>
     </div>
