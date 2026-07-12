@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <a href="${prefix}index.html">Home</a>
                 <a href="${prefix}about.html">About</a>
                 <a href="${prefix}decrypt.html">Encrypt/Decrypt</a>
+                <a href="${prefix}frequency.html">Frequency Analysis</a>
                 <a href="${prefix}image-encrypt.html">Image Encryption</a>
                 <a href="${prefix}audio-encrypt.html">Audio Encryption</a>
                 <a href="${prefix}red.html">Steganalysis</a>
