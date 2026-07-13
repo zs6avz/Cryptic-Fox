@@ -98,7 +98,7 @@
         </span>
       </h2>
     </summary>
-    <canvas id="canvas" class="preview-media"></canvas>
+    <canvas id="canvas" class="preview-media" style="cursor:pointer;"></canvas>
     <div id="outputTime" class="output-timer">0.00s</div>
 
     <!-- Playback Controls (video only) -->
@@ -118,7 +118,7 @@
       </label>
     </div>
     <div id="videoScrubber" style="margin-top:8px; display:flex; justify-content:center; gap:8px; align-items:center;">
-      <input type="range" id="scrubber" min="0" max="1" step="0.01" value="0" style="width:70%;">
+      <input type="range" id="scrubber" min="0" max="1" step="0.001" value="0" style="width:90%;">
       <span class="slider-value" id="scrubberValue">0.00s</span>
     </div>
 

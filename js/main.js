@@ -235,7 +235,7 @@ function loadVideoFile(file) {
       
       if (scrubber) {
         scrubber.max = video.duration || 1;
-        scrubber.step = Math.max(0.01, (video.duration || 1) / 1000);
+        scrubber.step = 0.001;
         scrubber.value = video.currentTime;
         if (scrubberValue) scrubberValue.textContent = `${video.currentTime.toFixed(2)}s`;
       }
@@ -1161,12 +1161,25 @@ window.addEventListener('keydown', e => {
   }
 });
 
-// Frame stepping
-if (prevFrameBtn) prevFrameBtn.addEventListener('click', () => {
-  if (video) video.currentTime = Math.max(0, video.currentTime - (1/30)); // approx 1 frame at 30fps
-});
-if (nextFrameBtn) nextFrameBtn.addEventListener('click', () => {
-  if (video) video.currentTime = Math.min(video.duration, video.currentTime + (1/30));
+// Frame stepping (±10ms)
+function stepVideo(delta) {
+  if (!video) return;
+  const target = Math.min(video.duration, Math.max(0, video.currentTime + delta));
+  function onSeeked() {
+    video.removeEventListener('seeked', onSeeked);
+    if (scrubber) scrubber.value = video.currentTime;
+    if (scrubberValue) scrubberValue.textContent = `${video.currentTime.toFixed(3)}s`;
+    renderPreviewIfAvailable();
+  }
+  video.addEventListener('seeked', onSeeked);
+  video.currentTime = target;
+}
+if (prevFrameBtn) prevFrameBtn.addEventListener('click', () => stepVideo(-0.01));
+if (nextFrameBtn) nextFrameBtn.addEventListener('click', () => stepVideo(0.01));
+
+// Click canvas to play/pause
+if (canvas) canvas.addEventListener('click', () => {
+  if (!isImageMode && playPauseBtn) playPauseBtn.click();
 });
 
 
