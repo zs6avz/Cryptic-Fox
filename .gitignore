@@ -7,3 +7,6 @@ Thumbs.db
 
 # Ignore specific large images if not needed (e.g. uncomment line below)
 # a_la_mc3a9moire_de_j-m-_jacquard.jpg
+
+# Local analysis report (do not commit)
+analysis_report.md
