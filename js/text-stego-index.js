@@ -402,12 +402,37 @@ class CorpusIndex {
 // UI LOGIC
 // ============================================================================
 
-let corpus = new DocumentCorpus();
+let corpus = null;
 let corpusIndex = null;
 let currentChart = null;
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize with enhanced corpus if available, fallback to basic
+    if (typeof EnhancedDocumentCorpus !== 'undefined') {
+        corpus = new EnhancedDocumentCorpus();
+        console.log('[Forensic Index] Using Enhanced IR features with Porter Stemmer and TF-IDF');
+    } else {
+        corpus = new DocumentCorpus();
+        console.log('[Forensic Index] Using basic corpus (IR features not loaded)');
+    }
     refreshCorpusUI();
+    // Static button listeners (replaces onclick= in text-stego-index.html)
+    const bsi = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bsi('addDocBtn',       () => typeof addDocumentFromPaste === 'function' && addDocumentFromPaste());
+    bsi('buildIndexBtn',   () => typeof buildIndex           === 'function' && buildIndex());
+    bsi('clearCorpusBtn',  () => typeof clearCorpus          === 'function' && clearCorpus());
+    bsi('closeModalBtn',   () => typeof closeModal           === 'function' && closeModal());
+    bsi('triggerBatchBtn', () => { const el = document.getElementById('batchFiles'); if (el) el.click(); });
+    bsi('runAnomalyBtn',   () => typeof runAnomalyRank       === 'function' && runAnomalyRank());
+    bsi('runBaselineBtn',  () => typeof runBaselineCompare   === 'function' && runBaselineCompare());
+    bsi('runQueryBtn',     () => typeof runQuery             === 'function' && runQuery());
+    // Tab buttons via data-tab attribute
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (typeof switchTab === 'function') switchTab(btn.dataset.tab);
+        });
+    });
+
 });
 
 function addDocumentFromPaste() {
@@ -497,8 +522,15 @@ function buildIndex() {
         return;
     }
     
-    corpusIndex = new CorpusIndex(corpus);
-    corpusIndex.buildIndex();
+    // Use enhanced index if available
+    if (typeof EnhancedCorpusIndex !== 'undefined') {
+        corpusIndex = new EnhancedCorpusIndex(corpus);
+        corpusIndex.buildIndexWithStemming();
+        console.log('[Forensic Index] Index built with Porter Stemmer');
+    } else {
+        corpusIndex = new CorpusIndex(corpus);
+        corpusIndex.buildIndex();
+    }
     
     document.getElementById('indexStatsPanel').style.display = 'block';
     document.getElementById('queryPanel').style.display = 'block';
@@ -531,14 +563,21 @@ function switchTab(tab) {
     const tabEl = document.getElementById('tab-' + tab);
     if(tabEl) tabEl.style.display = 'block';
     
-    document.getElementById('rankingResults').innerHTML = '';
-}
-
-function runQuery() {
-    const text = document.getElementById('queryText').value.trim();
-    if (!text) return;
-    const results = corpusIndex.queryRank(text);
+    // Use enhanced query if available
+    let results;
+    if (typeof EnhancedCorpusIndex !== 'undefined' && corpusIndex instanceof EnhancedCorpusIndex) {
+        results = corpusIndex.queryRankWithStemming(text);
+    } else {
+        results = corpusIndex.queryRank(text);
+    }
     
+    const container = document.getElementById('rankingResults');
+    if (results.length === 0) {
+        container.innerHTML = '<p>No results.</p>';
+        return;
+    }
+    
+    let html = '<h3>Query Ranking (Cosine Similarity with Stemming
     const container = document.getElementById('rankingResults');
     if (results.length === 0) {
         container.innerHTML = '<p>No results.</p>';
@@ -599,7 +638,7 @@ function runAnomalyRank() {
     const results = corpusIndex.anomalyRank();
     
     const container = document.getElementById('rankingResults');
-    let html = '<h3>Corpus Outlier Ranking</h3>';
+    let html = '<h3>Corpus Outlier Ranking (Stylometric)</h3>';
     results.forEach((r, idx) => {
         html += `
             <div class="ranking-item" onclick="showDocumentDetail(${r.docId})">
@@ -613,6 +652,30 @@ function runAnomalyRank() {
             </div>
         `;
     });
+
+    // Add TF-IDF-based anomaly detection if enhanced index is available
+    if (typeof EnhancedCorpusIndex !== 'undefined' && corpusIndex instanceof EnhancedCorpusIndex) {
+        const tfidfAnomalies = corpusIndex.detectTFIDFAnomalies();
+        if (tfidfAnomalies.length > 0) {
+            html += '<h3 style="margin-top: 30px;">TF-IDF Anomaly Detection</h3>';
+            html += '<p style="font-size: 13px; color: var(--color-text-muted); margin-bottom: 15px;">Documents with unusual term distributions (potential steganography indicators)</p>';
+            
+            tfidfAnomalies.forEach((r, idx) => {
+                const topAnomaly = r.topAnomalies[0];
+                html += `
+                    <div class="ranking-item" onclick="showDocumentDetail(${r.docId})" style="border-left-color: ${r.anomalousTermCount > 10 ? '#F44336' : '#FFC107'}">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <strong>#${idx + 1} ${r.name}</strong>
+                            <span style="font-weight: bold; color: #F44336;">${r.anomalousTermCount} anomalous terms</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--color-text-muted);">
+                            Top anomaly: "${topAnomaly.term}" (z-score: ${topAnomaly.zScore.toFixed(2)}, TF-IDF: ${topAnomaly.tfidf.toFixed(4)})
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    }
 
     // Collect top TF-IDF terms from the 3 most anomalous documents
     const topTerms = [];

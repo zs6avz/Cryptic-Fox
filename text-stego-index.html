@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <title>Forensic Index — Cryptic Fox</title>
     
     <!-- Anti-clickjacking -->
@@ -34,8 +34,13 @@
     
     <script src="js/components.js" defer></script>
     <script src="js/script.js" defer></script>
+    <script src="js/porter-stemmer.js"></script>
+    <script src="js/tfidf-calculator.js"></script>
+    <script src="js/enhanced-ir-integration.js"></script>
     <script src="js/text-stego-index.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
+        crossorigin="anonymous"></script>
     <script src="js/smoke.js" defer></script>
     <style>
         .corpus-list {
@@ -114,10 +119,10 @@
                     <textarea id="docText" placeholder="Paste document content here..." style="min-height: 80px;"></textarea>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 10px; width: 150px;">
-                    <button class="primary-btn" onclick="addDocumentFromPaste()" style="width: 100%;">Add Text</button>
+                    <button class="primary-btn" id="addDocBtn" style="width: 100%;">Add Text</button>
                     <input type="file" id="batchFiles" accept=".txt" multiple class="hidden-file-input" style="display:none;" onchange="addDocumentsFromBatch()">
-                    <button class="primary-btn" onclick="document.getElementById('batchFiles').click()" style="width: 100%;">📁 Batch Upload</button>
-                    <button class="primary-btn" onclick="clearCorpus()" style="background: rgba(244, 67, 54, 0.2); border-color: #F44336; width: 100%;">Clear All</button>
+                    <button class="primary-btn" id="triggerBatchBtn" style="width: 100%;">📁 Batch Upload</button>
+                    <button class="primary-btn" id="clearCorpusBtn" style="background: rgba(244, 67, 54, 0.2); border-color: #F44336; width: 100%;">Clear All</button>
                 </div>
             </div>
             
@@ -126,7 +131,7 @@
             </div>
             
             <div style="margin-top: 20px; text-align: center;">
-                <button class="primary-btn" onclick="buildIndex()" style="font-size: 18px; padding: 15px 40px;">⚙️ Build Index</button>
+                <button class="primary-btn" id="buildIndexBtn" style="font-size: 18px; padding: 15px 40px;">⚙️ Build Index</button>
             </div>
         </div>
 
@@ -141,9 +146,9 @@
             <h2>🔎 Query & Ranking</h2>
             
             <div class="tabs" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
-                <button class="primary-btn" onclick="switchTab('query')">Search Query</button>
-                <button class="primary-btn" onclick="switchTab('baseline')">Baseline Compare</button>
-                <button class="primary-btn" onclick="switchTab('anomaly')">Anomaly Rank</button>
+                <button class="primary-btn" id="tabQueryBtn" data-tab="query">Search Query</button>
+                <button class="primary-btn" id="tabBaselineBtn" data-tab="baseline">Baseline Compare</button>
+                <button class="primary-btn" id="tabAnomalyBtn" data-tab="anomaly">Anomaly Rank</button>
                 <a href="frequency.html#word-mode" target="_blank" class="primary-btn" style="text-decoration:none; background: rgba(33,150,243,0.15); border-color: #2196F3;">↗ Word Solver</a>
             </div>
 
@@ -151,7 +156,7 @@
                 <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Find documents matching specific terms. Ranks by TF-IDF vector cosine similarity.</p>
                 <div style="display: flex; gap: 10px;">
                     <input type="text" id="queryText" placeholder="Enter keywords..." style="flex: 1; padding: 10px; border-radius: var(--radius-md); background: rgba(0,0,0,0.5); border: 1px solid var(--color-border); color: var(--color-text);">
-                    <button class="primary-btn" onclick="runQuery()">Rank Documents</button>
+                    <button class="primary-btn" id="runQueryBtn">Rank Documents</button>
                 </div>
             </div>
 
@@ -159,13 +164,13 @@
                 <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Compare all documents against a single trusted baseline to find the most suspicious (divergent) ones.</p>
                 <div style="display: flex; gap: 10px; align-items: flex-start;">
                     <textarea id="baselineText" placeholder="Paste baseline text..." style="flex: 1; min-height: 80px;"></textarea>
-                    <button class="primary-btn" onclick="runBaselineCompare()">Compare to Baseline</button>
+                    <button class="primary-btn" id="runBaselineBtn">Compare to Baseline</button>
                 </div>
             </div>
 
             <div id="tab-anomaly" class="tab-content hidden" style="display:none;">
                 <p style="margin-bottom: 10px; color: var(--color-text-secondary);">Rank documents based on deviations from the corpus-wide stylometric averages.</p>
-                <button class="primary-btn" onclick="runAnomalyRank()">Rank Anomalies</button>
+                <button class="primary-btn" id="runAnomalyBtn">Rank Anomalies</button>
             </div>
 
             <div id="rankingResults" style="margin-top: 30px;"></div>
@@ -174,11 +179,11 @@
     </div>
 
     <!-- Document Detail Modal -->
-    <div id="modalOverlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 999;" onclick="closeModal()"></div>
+    <div id="modalOverlay" style="display:none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 999;" id="closeModalBtn"></div>
     <div id="docDetailModal" class="panel" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; width: 80%; max-height: 80vh; overflow-y: auto; margin: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">
             <h2 id="modalTitle" style="margin: 0;">Document Detail</h2>
-            <button onclick="closeModal()" style="background: transparent; border: none; color: var(--color-text); font-size: 24px; cursor: pointer;">&times;</button>
+            <button id="closeModalBtn" style="background: transparent; border: none; color: var(--color-text); font-size: 24px; cursor: pointer;">&times;</button>
         </div>
         <div id="modalContent"></div>
     </div>

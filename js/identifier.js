@@ -9,7 +9,7 @@ function identifyCipher() {
     const output = document.querySelector('.identifier-output');
     
     if (!input) {
-        output.innerHTML = "<p>Please enter a message to scan.</p>";
+        output.textContent = 'Please enter a message to scan.';
         return;
     }
 
@@ -127,40 +127,63 @@ function containsCommonWords(text) {
 }
 
 function displayIdentifierResults(results, container) {
+    container.textContent = '';
+
     if (results.length === 0) {
-        container.innerHTML = "<p>No clear patterns identified.</p>";
+        const p = document.createElement('p');
+        p.textContent = 'No clear patterns identified.';
+        container.appendChild(p);
         return;
     }
 
-    let html = "<ul style='list-style: none; padding: 0; text-align: left; width: 100%;'>";
-    results.forEach(res => {
-        const color = res.confidence === "High" ? "#7bd389" : (res.confidence === "Moderate" ? "#447D9B" : "#FE7743");
-        
-        // Determine tool type for "Apply" button
-        let toolType = "";
-        let toolValue = "";
-        
-        if (res.type.includes("Caesar")) { toolType = "caesar"; toolValue = res.reason.match(/\d+/)?.[0] || ""; }
-        else if (res.type.includes("Atbash")) { toolType = "atbash"; }
-        else if (res.type.includes("Binary")) { toolType = "binary"; }
-        else if (res.type.includes("Hexadecimal")) { toolType = "hex"; }
-        else if (res.type.includes("Base64")) { toolType = "base64"; }
-        else if (res.type.includes("Base-36")) { toolType = "base-alt"; toolValue = "36"; }
-        else if (res.type.includes("Base-62")) { toolType = "base-alt"; toolValue = "62"; }
-        else if (res.type.includes("Morse")) { toolType = "morse"; }
-        else if (res.type.includes("Hash")) { toolType = "hash"; toolValue = res.type.split(' ')[0]; }
+    const ul = document.createElement('ul');
+    ul.style.cssText = 'list-style:none;padding:0;text-align:left;width:100%;';
 
-        html += `
-            <li style="margin-bottom: 15px; padding: 15px; border-left: 4px solid ${color}; background: rgba(255,255,255,0.05); position: relative;">
-                <strong style="color: ${color}; font-size: 1.1rem;">${res.type}</strong> 
-                <span style="font-size: 0.8rem; opacity: 0.7;">(${res.confidence} Confidence)</span>
-                <p style="margin: 5px 0 0; font-size: 0.9rem; color: var(--color-text-muted);">${res.reason}</p>
-                ${toolType ? `<button onclick="applyCipherTool('${toolType}', '${toolValue}')" style="margin-top: 10px; font-size: 0.8rem; padding: 4px 10px; background: ${color}; color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px;">Apply This Tool</button>` : ''}
-            </li>
-        `;
+    results.forEach(res => {
+        const color = res.confidence === 'High' ? '#7bd389' : (res.confidence === 'Moderate' ? '#447D9B' : '#FE7743');
+
+        let toolType = '';
+        let toolValue = '';
+        if (res.type.includes('Caesar'))     { toolType = 'caesar';   toolValue = res.reason.match(/\d+/)?.[0] || ''; }
+        else if (res.type.includes('Atbash'))     { toolType = 'atbash'; }
+        else if (res.type.includes('Binary'))     { toolType = 'binary'; }
+        else if (res.type.includes('Hexadecimal')){ toolType = 'hex'; }
+        else if (res.type.includes('Base64'))     { toolType = 'base64'; }
+        else if (res.type.includes('Base-36'))    { toolType = 'base-alt'; toolValue = '36'; }
+        else if (res.type.includes('Base-62'))    { toolType = 'base-alt'; toolValue = '62'; }
+        else if (res.type.includes('Morse'))      { toolType = 'morse'; }
+        else if (res.type.includes('Hash'))       { toolType = 'hash'; toolValue = res.type.split(' ')[0]; }
+
+        const li = document.createElement('li');
+        li.style.cssText = `margin-bottom:15px;padding:15px;border-left:4px solid ${color};background:rgba(255,255,255,0.05);`;
+
+        const strong = document.createElement('strong');
+        strong.style.cssText = `color:${color};font-size:1.1rem;`;
+        strong.textContent = res.type;
+        li.appendChild(strong);
+
+        const conf = document.createElement('span');
+        conf.style.cssText = 'font-size:0.8rem;opacity:0.7;margin-left:6px;';
+        conf.textContent = `(${res.confidence} Confidence)`;
+        li.appendChild(conf);
+
+        const p = document.createElement('p');
+        p.style.cssText = 'margin:5px 0 0;font-size:0.9rem;color:var(--color-text-muted);';
+        p.textContent = res.reason;
+        li.appendChild(p);
+
+        if (toolType) {
+            const btn = document.createElement('button');
+            btn.style.cssText = `margin-top:10px;font-size:0.8rem;padding:4px 10px;background:${color};color:#000;border:none;font-weight:bold;cursor:pointer;border-radius:4px;`;
+            btn.textContent = 'Apply This Tool';
+            btn.addEventListener('click', () => applyCipherTool(toolType, toolValue));
+            li.appendChild(btn);
+        }
+
+        ul.appendChild(li);
     });
-    html += "</ul>";
-    container.innerHTML = html;
+
+    container.appendChild(ul);
 }
 
 /**

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">
         body {
@@ -11,7 +11,8 @@
         }
     </style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -39,14 +40,14 @@
     <meta property="og:title" content="Cryptic Fox — Cryptography Toolkit">
     <meta property="og:description"
         content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, analyze video steganography, and explore cryptographic theory.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cryptic Fox — Cryptography Toolkit">
     <meta name="twitter:description"
         content="A cryptography toolkit for puzzle solvers. Encrypt, decrypt, translate ciphers, and analyze video steganography.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <meta name='impact-site-verification' value='8d25abf6-dcf3-4835-a513-e54bc6691c75'>
     <meta name='impact-site-verification' value='4061594e-de09-42c7-8f3c-6c8d02fe8097'>

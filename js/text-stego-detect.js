@@ -739,9 +739,25 @@ function analyzeText() {
     const baselineMetrics = calculateStylometry(baselineText);
     const suspiciousMetrics = calculateStylometry(suspiciousText);
     
-    // Calculate TF-IDF
+    // Calculate TF-IDF (original method)
     const tfidfResults = calculateTFIDF(baselineText, suspiciousText);
     const topTerms = getTopTerms(tfidfResults.baselineTFIDF, tfidfResults.suspiciousTFIDF);
+    
+    // Enhanced TF-IDF analysis with anomaly detection (if available)
+    let enhancedAnomalies = null;
+    if (typeof TFIDFCalculator !== 'undefined') {
+        const tfidfCalc = new TFIDFCalculator(true); // Enable stemming
+        tfidfCalc.addDocument('baseline', baselineText);
+        tfidfCalc.addDocument('suspicious', suspiciousText);
+        
+        // Detect statistical anomalies
+        enhancedAnomalies = {
+            baseline: tfidfCalc.detectAnomalies('baseline', 2.0),
+            suspicious: tfidfCalc.detectAnomalies('suspicious', 2.0)
+        };
+        
+        console.log('[Text Stego Detector] Enhanced TF-IDF anomaly detection enabled');
+    }
     
     // Calculate similarity scores
     const cosine = cosineSimilarity(tfidfResults.baselineTFIDF, tfidfResults.suspiciousTFIDF);
@@ -779,7 +795,8 @@ function analyzeText() {
         ngramSimilarity,
         baselineEntropy,
         suspiciousEntropy,
-        sentenceEntropies
+        sentenceEntropies,
+        enhancedAnomalies // Add enhanced anomalies to results
     };
     
     // Display results
@@ -985,8 +1002,30 @@ function createStylometryChart(metrics) {
  */
 function displayTFIDF(topTerms) {
     const description = document.getElementById('tfidfDescription');
-    description.innerHTML = `<p>Showing top ${topTerms.length} terms with largest TF-IDF divergence between baseline and suspicious texts. Large differences suggest vocabulary manipulation.</p>`;
+    let html = `<p>Showing top ${topTerms.length} terms with largest TF-IDF divergence between baseline and suspicious texts. Large differences suggest vocabulary manipulation.</p>`;
     
+    // Add enhanced anomaly information if available
+    if (analysisResults.enhancedAnomalies) {
+        const suspAnomalies = analysisResults.enhancedAnomalies.suspicious;
+        if (suspAnomalies && suspAnomalies.length > 0) {
+            html += `
+                <div style="margin-top: 15px; padding: 12px; background: rgba(244,67,54,0.08); 
+                            border-left: 3px solid #F44336; border-radius: 4px;">
+                    <strong style="color: #F44336;">⚠️ Statistical Anomalies Detected (Z-Score Based)</strong>
+                    <p style="margin: 8px 0 0 0; font-size: 13px;">
+                        ${suspAnomalies.length} terms with unusual TF-IDF scores in suspicious text:
+                    </p>
+                    <ul style="margin: 8px 0 0 20px; font-size: 12px;">
+                        ${suspAnomalies.slice(0, 5).map(a => 
+                            `<li><strong>${a.term}</strong>: TF-IDF=${a.tfidf.toFixed(4)}, z-score=${a.zScore.toFixed(2)} (${Math.abs(a.zScore) > 3 ? 'High' : 'Medium'} suspicion)</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+    }
+    
+    description.innerHTML = html;
     createTFIDFChart(topTerms);
 }
 
@@ -1378,4 +1417,18 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Please upload a valid .txt file');
         }
     });
+    // Static button listeners (replaces onclick= in text-stego-detect.html)
+    const bsd = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bsd('analyzeTextBtn',    () => typeof analyzeText    === 'function' && analyzeText());
+    bsd('clearAnalysisBtn',  () => typeof clearAnalysis  === 'function' && clearAnalysis());
+    bsd('exportResultsBtn',  () => typeof exportResults  === 'function' && exportResults());
+    bsd('triggerBaselineBtn',   () => { const el = document.getElementById('baselineFile');   if (el) el.click(); });
+    bsd('triggerSuspiciousBtn', () => { const el = document.getElementById('suspiciousFile'); if (el) el.click(); });
+    // toggleSection buttons via data-section attribute
+    document.querySelectorAll('[data-section]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (typeof toggleSection === 'function') toggleSection(btn.dataset.section);
+        });
+    });
+
 });

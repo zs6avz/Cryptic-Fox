@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; worker-src 'self' blob:;">
+    content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com https://i.ytimg.com; connect-src 'self' https://cdn.jsdelivr.net; frame-src https://www.youtube.com; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
   <!-- Clickjacking Defense (Frame-Busting) -->
   <style id="antiClickjack">
     body {
@@ -38,14 +38,14 @@
   <meta property="og:title" content="Red Fox: Advanced Steganalysis — Cryptic Fox">
   <meta property="og:description"
     content="A professional-grade forensic workbench for deep media analysis. Extract hidden data and spectral audio signatures.">
-  <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+  <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Red Fox: Advanced Steganalysis — Cryptic Fox">
   <meta name="twitter:description"
     content="A professional-grade forensic workbench for deep media analysis. Extract hidden data and spectral audio signatures.">
-  <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+  <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
   <script src="js/components.js"></script>
   <script src="js/script.js" defer></script>
@@ -87,7 +87,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Output Preview</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Output Preview</h4>
             <div><b>Description:</b> A real-time viewport that renders the processed frames after color, contrast, and LSB
@@ -136,7 +136,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Color &amp; Contrast</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Color &amp; Contrast</h4>
             <div><b>Description:</b> Adjusts the visual properties of the media to expose data hidden in specific color
@@ -187,7 +187,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>LSB Extraction</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>LSB Extraction</h4>
             <div><b>Description:</b> Scans the "Least Significant Bits" of pixels to find embedded binary data like text
@@ -287,7 +287,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Visual Payload Analysis</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Visual Payload</h4>
             <div><b>Description:</b> Uses Bit-plane analysis and Entropy mapping to visualize data clusters hidden within
@@ -354,7 +354,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Statistical Analysis</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Statistical Analysis</h4>
             <div><b>Description:</b> Provides quantitative evidence of steganographic modifications using histogram
@@ -399,7 +399,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Audio Spectrogram Visualizer</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Audio Spectrogram</h4>
             <div><b>Description:</b> A frequency-over-time visualizer for the video's audio track.</div>
@@ -467,7 +467,7 @@
     <summary>
       <h2 style="display: inline-flex; align-items: center; justify-content: center; gap: 10px;">
         <span>Extracted Text</span>
-        <span class="info-icon" onclick="event.stopPropagation()">i
+        <span class="info-icon" >i
           <div class="tooltip-content">
             <h4>Extracted Text</h4>
             <div><b>Description:</b> Consolidates data found during LSB analysis or frame-by-frame text recognition (OCR).

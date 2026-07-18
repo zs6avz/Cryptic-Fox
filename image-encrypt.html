@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -15,7 +15,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Encryption & Decryption — Cryptic Fox</title>
+    <title>Image Encryption &amp; Decryption — Cryptic Fox</title>
     <link rel="stylesheet" href="style.css">
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
@@ -28,76 +28,70 @@
     <link rel="manifest" href="site.webmanifest">
 
     <meta name="description"
-        content="Encrypt and decrypt images using Base64 encoding and more. Upload images for secure encryption or paste encrypted data to recover the original image.">
+        content="Encrypt and decrypt image files using AES-256-GCM with PBKDF2 key derivation. All processing is done locally in your browser — your files never leave your machine.">
     <link rel="canonical" href="https://cryptic-fox.com/image-encrypt.html">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://cryptic-fox.com/image-encrypt.html">
-    <meta property="og:title" content="Image Encryption & Decryption — Cryptic Fox">
+    <meta property="og:title" content="Image Encryption &amp; Decryption — Cryptic Fox">
     <meta property="og:description"
-        content="Encrypt and decrypt images using Base64 encoding and more. Part of the Cryptic Fox cryptography toolkit.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+        content="Encrypt and decrypt images using AES-256-GCM. Part of the Cryptic Fox cryptography toolkit.">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Image Encryption & Decryption — Cryptic Fox">
+    <meta name="twitter:title" content="Image Encryption &amp; Decryption — Cryptic Fox">
     <meta name="twitter:description"
-        content="Encrypt and decrypt images using Base64 encoding and more. Part of the Cryptic Fox cryptography toolkit.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+        content="Encrypt and decrypt images using AES-256-GCM. Part of the Cryptic Fox cryptography toolkit.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 </head>
 
 <body class="decrypt-page">
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
     <h1>Image Encryption &amp; Decryption</h1>
 
-    <!-- Base64 Image Encryption -->
+    <!-- AES-256-GCM Image Encryption -->
     <div class="method">
-        <h2>Base64 Image Encryption</h2>
+        <h2>AES-256-GCM Image Encryption</h2>
+        <p style="text-align:center;color:var(--color-text-muted);font-size:0.9rem;">
+            Uses AES-256-GCM authenticated encryption with a PBKDF2-derived key (100,000 iterations, SHA-256, random salt).
+            All processing is done locally — your image never leaves your browser.
+        </p>
 
         <div class="sub-method">
             <h3>Encrypt Image</h3>
-            <input type="file" class="base64-image-input">
-            <button onclick="encryptBase64Image()">Encrypt</button>
-            <textarea class="base64-encrypted-output" readonly placeholder="Encrypted Base64 image..."></textarea>
-            
-            <div class="button-group" style="display: flex; gap: 10px; margin: 15px 0; justify-content: center;">
-                <button onclick="copyImageOutput()" class="tool-btn">📋 Copy</button>
-                <button onclick="swapImageFields()" class="tool-btn">⇄ Swap</button>
-                <button onclick="clearImageFields()" class="tool-btn">Clear</button>
+            <label for="image-file-input" style="display:block;margin-bottom:6px;color:var(--color-text-muted);font-size:0.9rem;">Select image file</label>
+            <input type="file" class="base64-image-input" id="image-file-input" accept="image/*">
+            <label for="image-encrypt-pw" style="display:block;margin:12px 0 6px;color:var(--color-text-muted);font-size:0.9rem;">Password</label>
+            <input type="password" class="image-encrypt-password" id="image-encrypt-pw" placeholder="Enter encryption password" style="width:80%;margin-bottom:10px;">
+            <div class="button-container">
+                <button id="encryptImageBtn" class="primary-btn">Encrypt</button>
+            </div>
+            <p id="image-encrypt-status" style="color:var(--color-text-muted);font-size:0.9rem;min-height:1.2em;margin-top:8px;"></p>
+            <textarea class="base64-encrypted-output" readonly placeholder="Encrypted data will appear here…" style="margin-top:10px;"></textarea>
+
+            <div class="button-group" style="display:flex;gap:10px;margin:15px 0;justify-content:center;">
+                <button id="copyImageBtn" class="tool-btn">📋 Copy</button>
+                <button id="swapImageBtn" class="tool-btn">⇄ Swap to Decrypt</button>
+                <button id="clearImageBtn" class="tool-btn">Clear All</button>
             </div>
 
-            <h3>Decrypt Image</h3>
-            <textarea class="base64-decryption-input" placeholder="Enter Base64 encrypted image..."></textarea>
-            <button onclick="decryptBase64Image()">Decrypt</button>
-            <img id="base64-image-output" alt="Decrypted Image" style="display: none;">
-            <a id="base64-download-link" style="display: none;">Download Decrypted Image</a>
+            <h3 style="margin-top:20px;">Decrypt Image</h3>
+            <label for="image-decrypt-input" style="display:block;margin-bottom:6px;color:var(--color-text-muted);font-size:0.9rem;">Paste encrypted data</label>
+            <textarea class="base64-decryption-input" id="image-decrypt-input" placeholder="Paste encrypted image data here…"></textarea>
+            <label for="image-decrypt-pw" style="display:block;margin:12px 0 6px;color:var(--color-text-muted);font-size:0.9rem;">Password</label>
+            <input type="password" class="image-decrypt-password" id="image-decrypt-pw" placeholder="Enter decryption password" style="width:80%;margin-bottom:10px;">
+            <div class="button-container">
+                <button id="decryptImageBtn" class="primary-btn">Decrypt</button>
+            </div>
+            <p id="image-decrypt-status" style="color:var(--color-text-muted);font-size:0.9rem;min-height:1.2em;margin-top:8px;"></p>
+            <img id="base64-image-output" alt="Decrypted Image" style="display:none;max-width:100%;margin-top:12px;">
+            <a id="base64-download-link" style="display:none;margin-top:8px;">⬇ Download Decrypted Image</a>
         </div>
     </div>
 
-    <!--<div class="method">
-        <h2>Canvas-Based Encryption</h2>
-
-        <div class="sub-method">
-            <h3>Encrypt Image</h3>
-            <input type="file" class="canvas-image-input">
-            <button onclick="encryptCanvasImage()">Encrypt</button>
-            <textarea class="canvas-encrypted-output" readonly placeholder="Encrypted image data..."></textarea>
-
-            <h3>Decrypt Image</h3>
-            <button onclick="decryptCanvasImage()">Decrypt</button>
-            <canvas id="canvas-image-output"></canvas>
-            <a id="canvas-download-link" style="display: none;">Download Decrypted Image</a>
-        </div>
-    </div>-->
-
-    <!-- Footer and Navigation -->
-    <!-- Ad Placement Scaffolding 
-    <div class="ad-scaffold">
-        <span class="ad-label">Sponsored Placement</span>
-    </div>-->
     <footer></footer>
-
 </body>
 
 </html>

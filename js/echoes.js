@@ -133,3 +133,11 @@ function resetGame() {
   clear("deduction");
   clear("actualHolder"); // safe if present
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    b('askAdaBtn',      () => typeof askAda     === 'function' && askAda());
+    b('askB25YBtn',     () => typeof askB25Y    === 'function' && askB25Y());
+    b('askCharlesBtn',  () => typeof askCharles === 'function' && askCharles());
+    b('resetEchoesBtn', () => typeof resetGame  === 'function' && resetGame());
+});

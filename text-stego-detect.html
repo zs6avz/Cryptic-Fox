@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -19,9 +20,13 @@
     <link rel="stylesheet" href="style.css">
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
+    <script src="js/porter-stemmer.js"></script>
+    <script src="js/tfidf-calculator.js"></script>
     <script src="js/text-stego-detect.js" defer></script>
     <script src="js/smoke.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+        integrity="sha384-vsrfeLOOY6KuIYKDlmVH5UiBmgIdB1oEf7p01YgWHuqmOHfZr374+odEv96n9tNC"
+        crossorigin="anonymous"></script>
 
     <!-- Favicon Links -->
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
@@ -39,14 +44,14 @@
     <meta property="og:title" content="Text Stego Detector — Cryptic Fox">
     <meta property="og:description"
         content="Advanced text steganography detection through linguistic analysis and pattern recognition.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Text Stego Detector — Cryptic Fox">
     <meta name="twitter:description"
         content="Advanced text steganography detection through linguistic analysis and pattern recognition.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <style>
         .hero {
@@ -515,7 +520,7 @@
                     </label>
                     <textarea id="suspiciousText" placeholder="Paste text to analyze for steganographic manipulation..."></textarea>
                     <input type="file" id="suspiciousFile" accept=".txt" class="hidden-file-input">
-                    <button class="file-upload-btn" onclick="document.getElementById('suspiciousFile').click()">📁 Upload .txt File</button>
+                    <button class="file-upload-btn" id="triggerSuspiciousBtn">📁 Upload .txt File</button>
                 </div>
 
                 <div class="text-input-box">
@@ -531,14 +536,14 @@
                     </label>
                     <textarea id="baselineText" placeholder="Paste reference text representing normal writing patterns..."></textarea>
                     <input type="file" id="baselineFile" accept=".txt" class="hidden-file-input">
-                    <button class="file-upload-btn" onclick="document.getElementById('baselineFile').click()">📁 Upload .txt File</button>
+                    <button class="file-upload-btn" id="triggerBaselineBtn">📁 Upload .txt File</button>
                 </div>
             </div>
 
             <div class="button-container">
-                <button class="primary-btn" onclick="analyzeText()">Analyze Text</button>
-                <button class="primary-btn" onclick="clearAnalysis()">Clear</button>
-                <button class="primary-btn hidden-btn" id="exportBtn" onclick="exportResults()">💾 Export Results</button>
+                <button class="primary-btn" id="analyzeTextBtn">Analyze Text</button>
+                <button class="primary-btn" id="clearAnalysisBtn">Clear</button>
+                <button class="primary-btn hidden-btn" id="exportBtn" id="exportResultsBtn">💾 Export Results</button>
             </div>
 
             <div class="results-section" id="resultsSection">
@@ -552,7 +557,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('stylometry')">
+                    <div class="section-header" id="toggleStyleBtn" data-section="stylometry">
                         <h3>📝 Stylometric Analysis</h3>
                         <span>▼</span>
                     </div>
@@ -565,7 +570,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('tfidf')">
+                    <div class="section-header" id="toggleTfidfBtn" data-section="tfidf">
                         <h3>📈 TF-IDF Analysis</h3>
                         <span>▼</span>
                     </div>
@@ -578,7 +583,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('similarity')">
+                    <div class="section-header" id="toggleSimilarityBtn" data-section="similarity">
                         <h3>🎯 Similarity Scoring</h3>
                         <span>▼</span>
                     </div>
@@ -588,7 +593,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('highlighted')">
+                    <div class="section-header" id="toggleHighlightedBtn" data-section="highlighted">
                         <h3>🔦 Highlighted Anomalies</h3>
                         <span>▼</span>
                     </div>
@@ -612,7 +617,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('radar')">
+                    <div class="section-header" id="toggleRadarBtn" data-section="radar">
                         <h3>🎯 Forensic Profile</h3>
                         <span>▼</span>
                     </div>
@@ -624,7 +629,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('entropy')">
+                    <div class="section-header" id="toggleEntropyBtn" data-section="entropy">
                         <h3>🔥 Entropy Analysis</h3>
                         <span>▼</span>
                     </div>
@@ -637,7 +642,7 @@
                 </div>
 
                 <div class="expandable-section">
-                    <div class="section-header" onclick="toggleSection('ngram')">
+                    <div class="section-header" id="toggleNgramBtn" data-section="ngram">
                         <h3>🧬 N-gram Divergence</h3>
                         <span>▼</span>
                     </div>

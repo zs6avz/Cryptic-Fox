@@ -216,94 +216,130 @@ function copyToClipboard(elementId) {
         alert("Copied to clipboard!");
     });
 }
-// --- AES Audio Encryption Logic ---
-function encryptAESAudio() {
-    const fileInput = document.querySelector('.aes-audio-input');
-    const keyInput = document.querySelector('.aes-audio-key');
+// --- AES-256-GCM Audio Encryption (Web Crypto API with PBKDF2) ---
+
+async function aesAudioDeriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+        'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+        keyMaterial,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['encrypt', 'decrypt']
+    );
+}
+
+async function encryptAESAudio() {
+    const fileInput   = document.querySelector('.aes-audio-input');
+    const keyInput    = document.querySelector('.aes-audio-key');
     const outputField = document.querySelector('.aes-encrypted-output');
 
-    if (!fileInput.files[0] || !keyInput.value) {
+    if (!fileInput?.files[0] || !keyInput?.value) {
         alert("Please select an audio file and enter an encryption key.");
         return;
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const wordArray = CryptoJS.lib.WordArray.create(e.target.result);
-            const encrypted = CryptoJS.AES.encrypt(wordArray, keyInput.value).toString();
-            outputField.value = encrypted;
-            alert("Audio encrypted successfully with AES!");
-        } catch (err) {
-            console.error(err);
-            alert("Encryption failed.");
-        }
-    };
-    reader.readAsArrayBuffer(fileInput.files[0]);
+    try {
+        const salt      = crypto.getRandomValues(new Uint8Array(16));
+        const iv        = crypto.getRandomValues(new Uint8Array(12));
+        const key       = await aesAudioDeriveKey(keyInput.value, salt);
+        const plaintext = await fileInput.files[0].arrayBuffer();
+        const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, plaintext);
+
+        // Package: [salt 16B][iv 12B][ciphertext]
+        const pkg = new Uint8Array(16 + 12 + ciphertext.byteLength);
+        pkg.set(salt, 0);
+        pkg.set(iv, 16);
+        pkg.set(new Uint8Array(ciphertext), 28);
+
+        outputField.value = arrayBufferToBase64(pkg.buffer);
+        alert("Audio encrypted successfully with AES-256-GCM!");
+    } catch (err) {
+        console.error(err);
+        alert("Encryption failed: " + err.message);
+    }
 }
 
-function decryptAESAudio() {
+async function decryptAESAudio() {
     const encryptedInput = document.querySelector('.aes-audio-input-decrypt');
-    const keyInput = document.querySelector('.aes-audio-key-decrypt');
-    const audioPlayer = document.getElementById('aes-audio-output');
-    const downloadLink = document.getElementById('aes-audio-download-link');
+    const keyInput       = document.querySelector('.aes-audio-key-decrypt');
+    const audioPlayer    = document.getElementById('aes-audio-output');
+    const downloadLink   = document.getElementById('aes-audio-download-link');
 
-    if (!encryptedInput.value || !keyInput.value) {
+    if (!encryptedInput?.value || !keyInput?.value) {
         alert("Please enter encrypted data and the decryption key.");
         return;
     }
 
     try {
-        const decrypted = CryptoJS.AES.decrypt(encryptedInput.value, keyInput.value);
-        
-        // Convert CryptoJS WordArray to Uint8Array
-        const typedArray = new Uint8Array(decrypted.sigBytes);
-        for (let i = 0; i < decrypted.sigBytes; i++) {
-            typedArray[i] = (decrypted.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
-        }
+        const pkg    = new Uint8Array(base64ToArrayBuffer(encryptedInput.value));
+        const salt   = pkg.slice(0, 16);
+        const iv     = pkg.slice(16, 28);
+        const cipher = pkg.slice(28);
 
-        const blob = new Blob([typedArray], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
-        audioPlayer.src = url;
-        downloadLink.href = url;
-        downloadLink.download = "decrypted_audio.mp3";
-        downloadLink.style.display = "inline-block";
+        const key   = await aesAudioDeriveKey(keyInput.value, salt);
+        const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, cipher);
+
+        const blob = new Blob([plain], { type: 'audio/mpeg' });
+        const url  = URL.createObjectURL(blob);
+        if (audioPlayer)  audioPlayer.src = url;
+        if (downloadLink) { downloadLink.href = url; downloadLink.download = "decrypted_audio.mp3"; downloadLink.style.display = "inline-block"; }
         alert("Audio decrypted successfully!");
     } catch (e) {
         console.error(e);
-        alert("Decryption failed. Please check your key.");
+        alert("Decryption failed — wrong key or corrupted data.");
     }
 }
 
 // Workflow Helpers for Audio
 function copyAudioOutput() {
     const output = document.querySelector('.aes-encrypted-output');
-    if (!output.value) return alert("Nothing to copy!");
-    output.select();
-    navigator.clipboard.writeText(output.value);
-    alert("AES output copied!");
+    if (!output?.value) return;
+    navigator.clipboard.writeText(output.value).then(() => {
+        const btn = document.getElementById('copyAudioBtn');
+        if (btn) { const orig = btn.textContent; btn.textContent = '✔ Copied!'; setTimeout(() => { btn.textContent = orig; }, 1500); }
+    });
 }
 
 function swapAudioFields() {
-    const output = document.querySelector('.aes-encrypted-output').value;
-    const input = document.querySelector('.aes-audio-input-decrypt');
-    const keyEncrypt = document.querySelector('.aes-audio-key').value;
+    const output     = document.querySelector('.aes-encrypted-output');
+    const input      = document.querySelector('.aes-audio-input-decrypt');
+    const keyEncrypt = document.querySelector('.aes-audio-key');
     const keyDecrypt = document.querySelector('.aes-audio-key-decrypt');
-    if (output) {
-        input.value = output;
-        keyDecrypt.value = keyEncrypt;
-        alert("Moved encrypted data and key to decryption section.");
+    if (output?.value && input) {
+        input.value = output.value;
+        if (keyDecrypt && keyEncrypt) keyDecrypt.value = keyEncrypt.value;
     }
 }
 
 function clearAudioFields() {
-    document.querySelector('.aes-audio-input').value = "";
-    document.querySelector('.aes-audio-key').value = "";
-    document.querySelector('.aes-encrypted-output').value = "";
-    document.querySelector('.aes-audio-input-decrypt').value = "";
-    document.querySelector('.aes-audio-key-decrypt').value = "";
-    const audio = document.getElementById('aes-audio-output');
-    if (audio) audio.src = "";
+    ['.aes-audio-input', '.aes-audio-key', '.aes-encrypted-output',
+     '.aes-audio-input-decrypt', '.aes-audio-key-decrypt'].forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.value = '';
+    });
+    const audio    = document.getElementById('aes-audio-output');
     const download = document.getElementById('aes-audio-download-link');
-    if (download) download.style.display = "none";
+    if (audio)    audio.src = '';
+    if (download) download.style.display = 'none';
 }
+
+// ── Event listeners (replaces all onclick= in audio-encrypt.html) ────
+
+document.addEventListener('DOMContentLoaded', () => {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    b('aesEncryptBtn',    encryptAESAudio);
+    b('aesDecryptBtn',    decryptAESAudio);
+    b('copyAudioBtn',     copyAudioOutput);
+    b('swapAudioBtn',     swapAudioFields);
+    b('clearAudioBtn',    clearAudioFields);
+    b('generateRSABtn',   generateRSAKeyPair);
+    b('copyPublicKeyBtn', () => copyToClipboard('rsa-public-key-display'));
+    b('copyPrivKeyBtn',   () => copyToClipboard('rsa-private-key-display'));
+    b('rsaEncryptBtn',    encryptRSAAudio);
+    b('copyRSAOutputBtn', () => copyToClipboard('rsa-encrypted-output'));
+    b('rsaDecryptBtn',    decryptRSAAudio);
+});

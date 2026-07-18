@@ -250,3 +250,32 @@ function clearFields() {
     if (out1) out1.value = "";
     if (out2) out2.value = "";
 }
+
+// ── Contact Modal (about.html) ─────────────────────────────────────────
+function toggleContactModal() {
+    const modal = document.getElementById('contactModal');
+    if (!modal) return;
+    modal.classList.toggle('active');
+    if (modal.classList.contains('active')) {
+        modal.addEventListener('click', (e) => { if (e.target === modal) toggleContactModal(); }, { once: true });
+    }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    b('openContactModalBtn',  toggleContactModal);
+    b('closeContactModalBtn', toggleContactModal);
+
+    // red.html info-icon stopPropagation (event delegation)
+    document.querySelectorAll('.info-icon').forEach(el => {
+        el.addEventListener('click', e => e.stopPropagation());
+    });
+});
+
+// ── TEP Cipher page buttons ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const bt = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bt('submitFox',     () => typeof checkFox          === 'function' && checkFox());
+    bt('clearTepBtn',  () => typeof clearFields       === 'function' && clearFields());
+    bt('toAlphaBtn',   () => typeof translateToAlphabet === 'function' && translateToAlphabet());
+    bt('toCipherBtn',  () => typeof translateToCipher === 'function' && translateToCipher());
+});

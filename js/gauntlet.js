@@ -124,3 +124,9 @@ function endGame() {
 
     document.getElementById("rankText").textContent = rank;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    b('startGameBtn',  () => typeof startGame === 'function' && startGame());
+    b('reloadGameBtn', () => location.reload());
+});

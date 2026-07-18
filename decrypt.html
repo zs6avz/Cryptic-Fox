@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -29,7 +30,7 @@
     <link rel="manifest" href="site.webmanifest">
 
     <meta name="description"
-        content="Identify, translate, and crack unknown ciphers. A comprehensive suite of cryptographic tools including a Magic Scanner, hash cracker, and multi-base encoders.">
+        content="Identify, translate, and crack unknown ciphers. A comprehensive suite of cryptographic tools including a Magic Scanner, hash identifier, and multi-base encoders.">
     <link rel="canonical" href="https://cryptic-fox.com/decrypt.html">
 
     <!-- Open Graph -->
@@ -38,14 +39,14 @@
     <meta property="og:title" content="The Decoder's Sanctum — Cryptic Fox">
     <meta property="og:description"
         content="Identify and crack unknown ciphers with the Magic Scanner and hash toolkit. Part of the Cryptic Fox puzzle suite.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="The Decoder's Sanctum — Cryptic Fox">
     <meta name="twitter:description"
         content="Identify and crack unknown ciphers with the Magic Scanner and hash toolkit. Part of the Cryptic Fox puzzle suite.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
     <script src="js/identifier.js" defer></script>
@@ -72,7 +73,7 @@
         <p style="margin-bottom: 15px; font-size: 0.9rem; color: var(--color-text-muted);">Paste an unknown message below and I'll try to identify the encryption or encoding used.</p>
         <textarea class="identifier-input" placeholder="Paste unknown message..."></textarea>
         <div class="button-container">
-            <button onclick="identifyCipher()" class="primary-btn" style="background-color: var(--color-accent);">Identify Cipher</button>
+            <button id="identifyCipherBtn" class="primary-btn" style="background-color: var(--color-accent);">Identify Cipher</button>
             <button id="clearIdentifierFieldsBtn">Clear</button>
         </div>
         <div class="identifier-output" style="margin-top: 15px; width: 80%;"></div>
@@ -99,10 +100,10 @@
             <option value="16">Hexadecimal (Base 16)</option>
         </select>
         <div class="button-container">
-            <button onclick="encryptBinary(getSelectedBase())">Encrypt</button>
-            <button onclick="decryptBinary(getSelectedBase())">Decrypt</button>
-            <button onclick="copyToClipboard('.binary-output')">📋 Copy</button>
-            <button onclick="swapFields('.binary-input', '.binary-output')">⇄ Swap</button>
+            <button id="encryptBinaryBtn">Encrypt</button>
+            <button id="decryptBinaryBtn">Decrypt</button>
+            <button id="copyBinaryBtn">📋 Copy</button>
+            <button id="swapBinaryBtn">⇄ Swap</button>
             <button id="clearBinaryFieldsBtn">Clear</button>
         </div>
         <p class="binary-output"></p>
@@ -123,10 +124,10 @@
     </h2>
     <textarea class="jacquard-input" placeholder="Enter text or space-separated Jacquard codes..."></textarea>
     <div class="button-container">
-        <button onclick="encryptJacquard()">Encrypt</button>
-        <button onclick="decryptJacquard()">Decrypt</button>
-        <button onclick="copyToClipboard('.jacquard-output')">📋 Copy</button>
-        <button onclick="swapFields('.jacquard-input', '.jacquard-output')">⇄ Swap</button>
+        <button id="encryptJacquardBtn">Encrypt</button>
+        <button id="decryptJacquardBtn">Decrypt</button>
+        <button id="copyJacquardBtn">📋 Copy</button>
+        <button id="swapJacquardBtn">⇄ Swap</button>
         <button id="clearJacquardFieldsBtn">Clear</button>
     </div>
     <p class="jacquard-output"></p>
@@ -148,10 +149,10 @@
         <textarea class="caesar-input" placeholder="Enter text..."></textarea>
         <input type="number" class="caesar-shift" value="3" min="1" max="25">
         <div class="button-container">
-            <button onclick="encryptCaesar(getShiftValue())">Encrypt</button>
-            <button onclick="decryptCaesar(getShiftValue())">Decrypt</button>
-            <button onclick="copyToClipboard('.caesar-output')">📋 Copy</button>
-            <button onclick="swapFields('.caesar-input', '.caesar-output')">⇄ Swap</button>
+            <button id="encryptCaesarBtn">Encrypt</button>
+            <button id="decryptCaesarBtn">Decrypt</button>
+            <button id="copyCaesarBtn">📋 Copy</button>
+            <button id="swapCaesarBtn">⇄ Swap</button>
             <button id="clearCaesarFieldsBtn">Clear</button>
         </div>
         <p class="caesar-output"></p>
@@ -175,8 +176,8 @@
         <div class="button-container">
             <button class="encrypt-btn">Encrypt</button>
             <button class="decrypt-btn">Decrypt</button>
-            <button onclick="copyToClipboard('.vigenere-output')">📋 Copy</button>
-            <button onclick="swapFields('.vigenere-input', '.vigenere-output')">⇄ Swap</button>
+            <button id="copyVigenereBtn">📋 Copy</button>
+            <button id="swapVigenereBtn">⇄ Swap</button>
             <button id="clearVigenereFieldsBtn">Clear</button>
         </div>
         <p class="vigenere-output"></p>
@@ -197,10 +198,10 @@
         </h2>
         <textarea class="atbash-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
-            <button onclick="encryptAtbash()">Encrypt</button>
-            <button onclick="decryptAtbash()">Decrypt</button>
-            <button onclick="copyToClipboard('.atbash-output')">📋 Copy</button>
-            <button onclick="swapFields('.atbash-input', '.atbash-output')">⇄ Swap</button>
+            <button id="encryptAtbashBtn">Encrypt</button>
+            <button id="decryptAtbashBtn">Decrypt</button>
+            <button id="copyAtbashBtn">📋 Copy</button>
+            <button id="swapAtbashBtn">⇄ Swap</button>
             <button id="clearAtbashFieldsBtn">Clear</button>
         </div>
         <p class="atbash-output"></p>
@@ -221,10 +222,10 @@
         </h2>
         <textarea class="hex-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
-            <button onclick="encryptHex()">Encrypt</button>
-            <button onclick="decryptHex()">Decrypt</button>
-            <button onclick="copyToClipboard('.hex-output')">📋 Copy</button>
-            <button onclick="swapFields('.hex-input', '.hex-output')">⇄ Swap</button>
+            <button id="encryptHexBtn">Encrypt</button>
+            <button id="decryptHexBtn">Decrypt</button>
+            <button id="copyHexBtn">📋 Copy</button>
+            <button id="swapHexBtn">⇄ Swap</button>
             <button id="clearHexFieldsBtn">Clear</button>
         </div>
         <p class="hex-output"></p>
@@ -245,10 +246,10 @@
         </h2>
         <textarea class="base64-input" placeholder="Enter text..."></textarea>
         <div class="button-container">
-            <button onclick="encryptBase64()">Encrypt</button>
-            <button onclick="decryptBase64()">Decrypt</button>
-            <button onclick="copyToClipboard('.base64-output')">📋 Copy</button>
-            <button onclick="swapFields('.base64-input', '.base64-output')">⇄ Swap</button>
+            <button id="encryptBase64Btn">Encrypt</button>
+            <button id="decryptBase64Btn">Decrypt</button>
+            <button id="copyBase64Btn">📋 Copy</button>
+            <button id="swapBase64Btn">⇄ Swap</button>
             <button id="clearBase64FieldsBtn">Clear</button>
         </div>
         <p class="base64-output"></p>
@@ -273,10 +274,10 @@
             <option value="62">Base-62</option>
         </select>
         <div class="button-container">
-            <button onclick="encryptBaseAlt()">Encode</button>
-            <button onclick="decryptBaseAlt()">Decode</button>
-            <button onclick="copyToClipboard('.base-alt-output')">📋 Copy</button>
-            <button onclick="swapFields('.base-alt-input', '.base-alt-output')">⇄ Swap</button>
+            <button id="encryptBaseAltBtn">Encode</button>
+            <button id="decryptBaseAltBtn">Decode</button>
+            <button id="copyBaseAltBtn">📋 Copy</button>
+            <button id="swapBaseAltBtn">⇄ Swap</button>
             <button id="clearBaseAltFieldsBtn">Clear</button>
         </div>
         <p class="base-alt-output"></p>
@@ -288,10 +289,10 @@
             <span>Cryptographic Hashes</span>
             <span class="info-icon">i
                 <div class="tooltip-content">
-                    <h4>Hashes & Cracker</h4>
+                    <h4>Hash Generator & Lookup</h4>
                     <div><b>Description:</b> One-way functions that generate a unique signature (fingerprint) for any input.</div>
                     <div><b>History:</b> MD5 (1991) and SHA (1995) are the backbone of digital integrity and password security.</div>
-                    <div><b>How-to:</b> Generate a hash for security, or use the "Crack" button to check a hash against common passwords.</div>
+                    <div><b>How-to:</b> Generate a hash for security, or use the "Lookup" button to check a hash against a local dictionary.</div>
                 </div>
             </span>
         </h2>
@@ -308,9 +309,9 @@
             <option value="SHA256">SHA-256</option>
         </select>
         <div class="button-container">
-            <button onclick="generateHash()">Generate Hash</button>
-            <button onclick="crackHash()">Crack / Lookup</button>
-            <button onclick="copyToClipboard('.hash-output')">📋 Copy</button>
+            <button id="generateHashBtn">Generate Hash</button>
+            <button id="lookupHashBtn">Lookup / Identify</button>
+            <button id="copyHashBtn">📋 Copy</button>
             <button id="clearHashFieldsBtn">Clear</button>
         </div>
         <p class="hash-output"></p>
@@ -336,10 +337,10 @@
             <option value="-">Dash Separator</option>
         </select>
         <div class="button-container">
-            <button onclick="encryptMorse(document.querySelector('.morse-separator').value)">Encrypt</button>
-            <button onclick="decryptMorse(document.querySelector('.morse-separator').value)">Decrypt</button>
-            <button onclick="copyToClipboard('.morse-output')">📋 Copy</button>
-            <button onclick="swapFields('.morse-input', '.morse-output')">⇄ Swap</button>
+            <button id="encryptMorseBtn">Encrypt</button>
+            <button id="decryptMorseBtn">Decrypt</button>
+            <button id="copyMorseBtn">📋 Copy</button>
+            <button id="swapMorseBtn">⇄ Swap</button>
             <button id="clearMorseFieldsBtn">Clear</button>
         </div>
         <p class="morse-output"></p>
@@ -365,10 +366,10 @@
             <textarea class="book-input" placeholder="Enter message..."></textarea>
             <textarea class="book-key" placeholder="Enter key text (The 'Book' or Running Key)..."></textarea>
             <div class="button-container">
-                <button onclick="processBookCipher(true)">Encrypt</button>
-                <button onclick="processBookCipher(false)">Decrypt</button>
-                <button onclick="copyToClipboard('.book-output')">📋 Copy</button>
-                <button onclick="swapFields('.book-input', '.book-output')">⇄ Swap</button>
+                <button id="encryptBookBtn">Encrypt</button>
+                <button id="decryptBookBtn">Decrypt</button>
+                <button id="copyBookBtn">📋 Copy</button>
+                <button id="swapBookBtn">⇄ Swap</button>
                 <button id="clearBookFieldsBtn">Clear</button>
             </div>
             <p class="book-output"></p>
@@ -383,8 +384,8 @@
                 <option value="telestich">Telestich (Last letters)</option>
             </select>
             <div class="button-container">
-                <button onclick="processExtraction()">Extract</button>
-                <button onclick="copyToClipboard('.extraction-output')">📋 Copy</button>
+                <button id="processExtractionBtn">Extract</button>
+                <button id="copyExtractionBtn">📋 Copy</button>
                 <button id="clearExtractionFieldsBtn">Clear</button>
             </div>
             <p class="extraction-output"></p>
@@ -394,10 +395,10 @@
             <h3>Baconian Cipher</h3>
             <textarea class="bacon-input" placeholder="Enter text (A/B or letters)..."></textarea>
             <div class="button-container">
-                <button onclick="processBacon(true)">Encrypt</button>
-                <button onclick="processBacon(false)">Decrypt</button>
-                <button onclick="copyToClipboard('.bacon-output')">📋 Copy</button>
-                <button onclick="swapFields('.bacon-input', '.bacon-output')">⇄ Swap</button>
+                <button id="encryptBaconBtn">Encrypt</button>
+                <button id="decryptBaconBtn">Decrypt</button>
+                <button id="copyBaconBtn">📋 Copy</button>
+                <button id="swapBaconBtn">⇄ Swap</button>
                 <button id="clearBaconFieldsBtn">Clear</button>
             </div>
             <p class="bacon-output"></p>
@@ -425,10 +426,10 @@
                     <input class="music-custom" placeholder="Custom motif notes (comma-separated)" style="min-width:260px; display:none;" />
                 </div>
                 <div class="button-container">
-                    <button onclick="processMusic(true)">To Notes</button>
-                    <button onclick="processMusic(false)">From Notes</button>
-                    <button onclick="copyToClipboard('.music-output')">📋 Copy</button>
-                    <button onclick="swapFields('.music-input', '.music-output')">⇄ Swap</button>
+                    <button id="toNotesBtn">To Notes</button>
+                    <button id="fromNotesBtn">From Notes</button>
+                    <button id="copyMusicBtn">📋 Copy</button>
+                    <button id="swapMusicBtn">⇄ Swap</button>
                     <button id="clearMusicFieldsBtn">Clear</button>
                 </div>
             <p class="music-output"></p>

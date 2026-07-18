@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IR Enhancements Test Suite</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        h1 { color: #eb3f7b; }
+        h2 { color: #90CAF9; border-bottom: 2px solid #2196F3; padding-bottom: 5px; }
+        .test-section {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .test-pass {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+        }
+        .test-fail {
+            background: rgba(244, 67, 54, 0.2);
+            border-left: 4px solid #F44336;
+        }
+        .test-info {
+            background: rgba(33, 150, 243, 0.2);
+            border-left: 4px solid #2196F3;
+        }
+        button {
+            background: #eb3f7b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #d12f6b;
+        }
+        pre {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 IR Enhancements Test Suite</h1>
+    <p>Comprehensive tests for Porter Stemmer, TF-IDF Calculator, and Enhanced Integration</p>
+
+    <div class="test-section">
+        <h2>Test Controls</h2>
+        <button onclick="runAllTests()">▶️ Run All Tests</button>
+        <button onclick="runPorterTests()">🔤 Porter Stemmer Tests</button>
+        <button onclick="runTFIDFTests()">📊 TF-IDF Tests</button>
+        <button onclick="runIntegrationTests()">🔗 Integration Tests</button>
+        <button onclick="clearResults()">🗑️ Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <!-- Load the IR enhancement scripts -->
+    <script src="js/porter-stemmer.js"></script>
+    <script src="js/tfidf-calculator.js"></script>
+    <script src="js/enhanced-ir-integration.js"></script>
+
+    <script>
+        let testsPassed = 0;
+        let testsFailed = 0;
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            testsPassed = 0;
+            testsFailed = 0;
+        }
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result test-${type}`;
+            div.textContent = message;
+            document.getElementById('results').appendChild(div);
+            
+            if (type === 'pass') testsPassed++;
+            if (type === 'fail') testsFailed++;
+        }
+
+        function addSection(title) {
+            const section = document.createElement('div');
+            section.className = 'test-section';
+            section.innerHTML = `<h2>${title}</h2>`;
+            document.getElementById('results').appendChild(section);
+            return section;
+        }
+
+        function assert(condition, message) {
+            if (condition) {
+                addResult(`✅ PASS: ${message}`, 'pass');
+            } else {
+                addResult(`❌ FAIL: ${message}`, 'fail');
+            }
+        }
+
+        function assertEqual(actual, expected, testName) {
+            if (actual === expected) {
+                addResult(`✅ PASS: ${testName} (${actual})`, 'pass');
+            } else {
+                addResult(`❌ FAIL: ${testName} - Expected: ${expected}, Got: ${actual}`, 'fail');
+            }
+        }
+
+        // ============================================================================
+        // PORTER STEMMER TESTS
+        // ============================================================================
+
+        function runPorterTests() {
+            const section = addSection('Porter Stemmer Tests');
+            
+            addResult('Testing Porter Stemmer availability...', 'info');
+            assert(typeof PorterStemmer !== 'undefined', 'PorterStemmer class is loaded');
+
+            if (typeof PorterStemmer === 'undefined') {
+                addResult('⚠️ PorterStemmer not loaded - skipping tests', 'fail');
+                return;
+            }
+
+            const stemmer = new PorterStemmer();
+
+            // Test basic stemming
+            assertEqual(stemmer.stem('encryption'), 'encrypt', 'encryption → encrypt');
+            assertEqual(stemmer.stem('encrypted'), 'encrypt', 'encrypted → encrypt');
+            assertEqual(stemmer.stem('encrypting'), 'encrypt', 'encrypting → encrypt');
+            assertEqual(stemmer.stem('analysis'), 'analysi', 'analysis → analysi');
+            assertEqual(stemmer.stem('analyzed'), 'analyz', 'analyzed → analyz');
+            assertEqual(stemmer.stem('analyzing'), 'analyz', 'analyzing → analyz');
+
+            // Test plurals
+            assertEqual(stemmer.stem('cats'), 'cat', 'cats → cat');
+            assertEqual(stemmer.stem('matrices'), 'matric', 'matrices → matric');
+            
+            // Test -ed/-ing removal
+            assertEqual(stemmer.stem('running'), 'run', 'running → run');
+            assertEqual(stemmer.stem('jumped'), 'jump', 'jumped → jump');
+            
+            // Test no change for short words
+            assertEqual(stemmer.stem('cat'), 'cat', 'cat → cat (no change)');
+            assertEqual(stemmer.stem('is'), 'is', 'is → is (too short)');
+
+            // Test edge cases
+            assertEqual(stemmer.stem(''), '', 'empty string → empty string');
+            assertEqual(stemmer.stem('a'), 'a', 'single char → no change');
+
+            addResult(`Porter Stemmer: ${testsPassed} passed, ${testsFailed} failed`, 'info');
+        }
+
+        // ============================================================================
+        // TF-IDF CALCULATOR TESTS
+        // ============================================================================
+
+        function runTFIDFTests() {
+            const section = addSection('TF-IDF Calculator Tests');
+            
+            addResult('Testing TFIDFCalculator availability...', 'info');
+            assert(typeof TFIDFCalculator !== 'undefined', 'TFIDFCalculator class is loaded');
+
+            if (typeof TFIDFCalculator === 'undefined') {
+                addResult('⚠️ TFIDFCalculator not loaded - skipping tests', 'fail');
+                return;
+            }
+
+            // Test without stemming
+            const calc = new TFIDFCalculator(false);
+            
+            calc.addDocument('doc1', 'the cat sat on the mat');
+            calc.addDocument('doc2', 'the dog sat on the log');
+            calc.addDocument('doc3', 'cats and dogs are friends');
+
+            // Test basic functionality
+            assert(calc.docs.length === 3, 'Three documents added');
+            assert(calc.docs[0].id === 'doc1', 'First document ID is doc1');
+
+            // Test TF-IDF calculation
+            const tfidfCat = calc.tfidf('cat', 'doc1');
+            assert(tfidfCat > 0, 'TF-IDF for "cat" in doc1 is positive');
+
+            const tfidfThe = calc.tfidf('the', 'doc1');
+            assert(tfidfThe < tfidfCat, 'Common word "the" has lower TF-IDF than "cat"');
+
+            // Test search
+            const results = calc.search('cat dog', 5);
+            assert(results.length > 0, 'Search returns results');
+            assert(results[0].score >= results[1].score, 'Results are ranked by score');
+
+            // Test anomaly detection
+            calc.addDocument('anomaly', 'xyzqw xyzqw xyzqw unusual term here');
+            const anomalies = calc.detectAnomalies('anomaly', 2.0);
+            assert(anomalies.length > 0, 'Anomalies detected in unusual document');
+            assert(anomalies.some(a => a.term === 'xyzqw'), 'Unusual term "xyzqw" detected as anomaly');
+
+            // Test with stemming
+            const calcStem = new TFIDFCalculator(true);
+            calcStem.addDocument('s1', 'encryption encrypting encrypted');
+            calcStem.addDocument('s2', 'encrypt encryptor');
+            
+            const searchResults = calcStem.search('encrypt', 5);
+            assert(searchResults.length === 2, 'Stemming matches all variants of "encrypt"');
+
+            // Test statistics
+            const stats = calc.getStats();
+            assert(stats.documentCount === 4, 'Correct document count in stats');
+            assert(stats.vocabularySize > 0, 'Vocabulary size is positive');
+
+            // Test export/import
+            const exported = calc.export();
+            const calcNew = new TFIDFCalculator(false);
+            calcNew.import(exported);
+            assert(calcNew.docs.length === calc.docs.length, 'Exported and imported doc count matches');
+
+            addResult(`TF-IDF Calculator: ${testsPassed} passed, ${testsFailed} failed`, 'info');
+        }
+
+        // ============================================================================
+        // INTEGRATION TESTS
+        // ============================================================================
+
+        function runIntegrationTests() {
+            const section = addSection('Enhanced Integration Tests');
+            
+            addResult('Testing Enhanced classes availability...', 'info');
+            
+            if (typeof EnhancedDocumentCorpus === 'undefined') {
+                addResult('⚠️ Enhanced classes not loaded - this is OK if not using enhanced-ir-integration.js', 'info');
+                return;
+            }
+
+            // Test EnhancedDocumentCorpus
+            const corpus = new EnhancedDocumentCorpus();
+            
+            const doc1 = corpus.addDocument('Test 1', 'This is a test document about encryption');
+            assert(doc1 !== null, 'Document added to enhanced corpus');
+            
+            const doc2 = corpus.addDocument('Test 2', 'Another document discussing cryptography');
+            assert(corpus.documents.length === 2, 'Two documents in corpus');
+
+            // Test search
+            const searchResults = corpus.searchDocuments('encryption', 5);
+            assert(searchResults.length > 0, 'Enhanced search returns results');
+            assert(searchResults[0].doc !== undefined, 'Search result includes document');
+
+            // Test anomaly detection
+            corpus.addDocument('Anomaly', 'xyzqw xyzqw xyzqw weird unusual odd');
+            const anomalies = corpus.detectDocumentAnomalies(3, 2.0);
+            assert(anomalies.length > 0, 'Anomalies detected via enhanced corpus');
+
+            // Test stats
+            const stats = corpus.getTFIDFStats();
+            assert(stats.documentCount === 3, 'Correct document count in TF-IDF stats');
+
+            addResult(`Enhanced Integration: ${testsPassed} passed, ${testsFailed} failed`, 'info');
+        }
+
+        // ============================================================================
+        // RUN ALL TESTS
+        // ============================================================================
+
+        function runAllTests() {
+            clearResults();
+            addResult('🚀 Starting comprehensive test suite...', 'info');
+            
+            runPorterTests();
+            runTFIDFTests();
+            runIntegrationTests();
+            
+            // Summary
+            const section = addSection('Test Summary');
+            const total = testsPassed + testsFailed;
+            const passRate = total > 0 ? ((testsPassed / total) * 100).toFixed(1) : 0;
+            
+            addResult(`Total Tests: ${total}`, 'info');
+            addResult(`Passed: ${testsPassed} ✅`, 'pass');
+            addResult(`Failed: ${testsFailed} ❌`, testsFailed > 0 ? 'fail' : 'pass');
+            addResult(`Pass Rate: ${passRate}%`, passRate >= 90 ? 'pass' : 'fail');
+            
+            if (testsFailed === 0) {
+                addResult('🎉 ALL TESTS PASSED! IR enhancements are working correctly.', 'pass');
+            } else {
+                addResult('⚠️ Some tests failed. Check the results above for details.', 'fail');
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            addResult('Test suite loaded. Click "Run All Tests" to begin.', 'info');
+        });
+    </script>
+</body>
+</html>

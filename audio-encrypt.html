@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob:; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -39,14 +40,14 @@
     <meta property="og:title" content="Audio Encryption & Decryption — Cryptic Fox">
     <meta property="og:description"
         content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Audio Encryption & Decryption — Cryptic Fox">
     <meta name="twitter:description"
         content="Encrypt and decrypt audio files using AES and RSA encryption. Part of the Cryptic Fox cryptography toolkit.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
     <script src="js/components.js"></script>
 </head>
 
@@ -56,24 +57,24 @@
 
     <!-- AES Audio Encryption -->
     <div class="method">
-        <h2>AES Audio Encryption</h2>
+        <h2>AES-256-GCM Audio Encryption</h2>
         <div class="sub-method">
             <h3>Encrypt Audio</h3>
             <input type="file" class="aes-audio-input">
-            <input type="text" class="aes-audio-key" placeholder="Enter key">
-            <button onclick="encryptAESAudio()">Encrypt</button>
+            <input type="password" class="aes-audio-key" placeholder="Enter password (AES-256-GCM + PBKDF2)">
+            <button id="aesEncryptBtn">Encrypt</button>
             <textarea class="aes-encrypted-output" readonly placeholder="Encrypted audio data..."></textarea>
 
             <div class="button-group" style="display: flex; gap: 10px; margin: 15px 0; justify-content: center;">
-                <button onclick="copyAudioOutput()" class="tool-btn">📋 Copy</button>
-                <button onclick="swapAudioFields()" class="tool-btn">⇄ Swap</button>
-                <button onclick="clearAudioFields()" class="tool-btn">Clear</button>
+                <button id="copyAudioBtn" class="tool-btn">📋 Copy</button>
+                <button id="swapAudioBtn" class="tool-btn">⇄ Swap</button>
+                <button id="clearAudioBtn" class="tool-btn">Clear</button>
             </div>
 
             <h3>Decrypt Audio</h3>
             <textarea class="aes-audio-input-decrypt" placeholder="Enter AES encrypted audio data..."></textarea>
-            <input type="text" class="aes-audio-key-decrypt" placeholder="Enter key">
-            <button onclick="decryptAESAudio()">Decrypt</button>
+            <input type="password" class="aes-audio-key-decrypt" placeholder="Enter password">
+            <button id="aesDecryptBtn">Decrypt</button>
             <audio id="aes-audio-output" controls></audio>
             <a id="aes-audio-download-link" style="display: none;">Download Decrypted Audio</a>
         </div>
@@ -87,18 +88,18 @@
         <div class="sub-method">
             <h3>1. RSA Key Management</h3>
             <div class="button-group">
-                <button onclick="generateRSAKeyPair()">Generate New Key Pair</button>
+                <button id="generateRSABtn">Generate New Key Pair</button>
             </div>
             <div class="key-display">
                 <div class="key-box">
                     <label>Your Public Key (Share this)</label>
                     <textarea id="rsa-public-key-display" placeholder="Public Key will appear here..." readonly></textarea>
-                    <button class="small-btn" onclick="copyToClipboard('rsa-public-key-display')">Copy Public Key</button>
+                    <button id="copyPublicKeyBtn" class="small-btn">Copy Public Key</button>
                 </div>
                 <div class="key-box">
                     <label>Your Private Key (KEEP SECRET)</label>
                     <textarea id="rsa-private-key-display" placeholder="Private Key will appear here..." readonly></textarea>
-                    <button class="small-btn" onclick="copyToClipboard('rsa-private-key-display')">Copy Private Key</button>
+                    <button id="copyPrivKeyBtn" class="small-btn">Copy Private Key</button>
                 </div>
             </div>
         </div>
@@ -108,9 +109,9 @@
             <h3>2. Encrypt Audio (Using Recipient's Public Key)</h3>
             <input type="file" id="rsa-audio-input">
             <textarea id="rsa-recipient-public-key" placeholder="Paste Recipient's Public Key here..."></textarea>
-            <button onclick="encryptRSAAudio()">Encrypt with RSA</button>
+            <button id="rsaEncryptBtn">Encrypt with RSA</button>
             <textarea id="rsa-encrypted-output" readonly placeholder="RSA Encrypted data will appear here..."></textarea>
-            <button class="small-btn" onclick="copyToClipboard('rsa-encrypted-output')">Copy Encrypted Data</button>
+            <button id="copyRSAOutputBtn" class="small-btn">Copy Encrypted Data</button>
         </div>
 
         <!-- Decryption -->
@@ -118,7 +119,7 @@
             <h3>3. Decrypt Audio (Using Your Private Key)</h3>
             <textarea id="rsa-audio-input-decrypt" placeholder="Paste RSA encrypted audio data here..."></textarea>
             <textarea id="rsa-my-private-key" placeholder="Paste Your Private Key here..."></textarea>
-            <button onclick="decryptRSAAudio()">Decrypt with RSA</button>
+            <button id="rsaDecryptBtn">Decrypt with RSA</button>
             <div id="rsa-decrypt-status" style="margin-top: 10px; font-size: 0.9rem;"></div>
             <audio id="rsa-audio-output" controls></audio>
             <a id="rsa-audio-download-link" style="display: none;" class="primary-btn">Download Decrypted Audio</a>

@@ -34,7 +34,7 @@
     /* Surfaces */
     --color-bg: #0a0a0a;
     --color-surface: #1a1a1a;
-    --color-surface-hover: #252525;
+    --color-surface-hover: #2a3042;
     --color-surface-deep: #000000;
     --color-surface-alt: #0f0f0f;
 
@@ -50,7 +50,7 @@
     --gradient-brand: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
 
     /* Shadows */
-    --shadow-card: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 2px 4px rgba(50, 46, 61, 0.3);
     --shadow-card-hover: 0 2px 6px rgba(var(--color-primary-rgb), 0.2);
     --shadow-glow: 0 4px 12px rgba(var(--color-primary-rgb), 0.15);
 

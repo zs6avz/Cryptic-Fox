@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -33,13 +34,13 @@
     <meta property="og:url" content="https://cryptic-fox.com/tepcipher.html">
     <meta property="og:title" content="Cipher Translator — Cryptic Fox">
     <meta property="og:description" content="Translate between the alphabet and the TEP Cipher.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Cipher Translator — Cryptic Fox">
     <meta name="twitter:description" content="Translate between the alphabet and the TEP Cipher.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
@@ -48,7 +49,7 @@
 
 <body class="tep-page smoke-bg">
     <div class="dropdown" role="navigation" aria-label="Site navigation"></div>
-    <!-- Foxy Input Screen -->
+    <!-- Fox Input Screen -->
     <div id="foxScreen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                 display: flex; flex-direction: column; justify-content: center; align-items: center;
                 background: radial-gradient(circle at center, #2b2e33 0%, #0f1115 100%);
@@ -61,7 +62,7 @@
                       background: rgba(20, 20, 20, 0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
                       border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 8px; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
 
-        <button id="submitFox" onclick="checkFox()"
+        <button id="submitFox" type="button"
             style="width: 120px; z-index: 1; position: relative; margin-top: 10px;">
             Submit
         </button>
@@ -71,15 +72,15 @@
 
     <!-- Quick Translator Section -->
     <section class="quick-translator" id="translator">
-        <img src="images/fennfox.png" class="hero-logo" alt="AEON LOGIC">
+        <img src="images/fennfox.png" class="hero-logo" alt="CRYPTIC-FOX">
         <h1 class="section-title">⏁⋑∷⚲Ϟ ⌖⎐⟒〄Ϩ⌇⟒⌖◎⎐</h1>
         <div class="translator-container">
             <textarea id="inputText" placeholder="Enter text here..."></textarea>
             <div id="keyboardPanel"></div>
             <div class="translator-buttons">
-                <button onclick="translateToAlphabet()">⟶ To Alphabet</button>
-                <button onclick="translateToCipher()">⟶ To Cipher</button>
-                <button onclick="clearFields()">Clear</button>
+                <button id="toAlphaBtn">⟶ To Alphabet</button>
+                <button id="toCipherBtn">⟶ To Cipher</button>
+                <button id="clearTepBtn">Clear</button>
             </div>
             <textarea id="outputText" readonly placeholder="Translation..."></textarea>
             <textarea id="alternativeOutputText" readonly placeholder="Alternative Translation..."></textarea>

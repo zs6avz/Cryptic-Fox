@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -22,6 +23,8 @@
         crossorigin="anonymous"></script>
     <script src="js/components.js"></script>
     <script src="js/script.js" defer></script>
+    <script src="js/porter-stemmer.js"></script>
+    <script src="js/tfidf-calculator.js"></script>
     <script src="js/frequency.js" defer></script>
     <script src="js/smoke.js" defer></script>
 
@@ -32,7 +35,7 @@
     <link rel="manifest" href="site.webmanifest">
 
     <meta name="description"
-        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching with corpus-based suggestions. Advanced cryptanalysis tools.">
+        content="Break substitution ciphers using letter-level frequency analysis and corpus-based word matching. Enter your own ciphertext for advanced cryptanalysis.">
     <link rel="canonical" href="https://cryptic-fox.com/frequency.html">
 
     <!-- Open Graph -->
@@ -40,15 +43,15 @@
     <meta property="og:url" content="https://cryptic-fox.com/frequency.html">
     <meta property="og:title" content="The Frequency Chamber — Cryptic Fox">
     <meta property="og:description"
-        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching. Advanced cryptanalysis puzzle challenge.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+        content="Break substitution ciphers using analysis and word-level pattern matching.">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="The Frequency Chamber — Cryptic Fox">
     <meta name="twitter:description"
-        content="Break substitution ciphers using letter-level frequency analysis and word-level pattern matching. Advanced cryptanalysis puzzle challenge.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+        content="Break substitution ciphers using frequency analysis and word-level pattern matching.">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <style>
         .frequency-container {
@@ -143,16 +146,26 @@
             padding: 15px;
         }
 
-        .success-message {
-            display: none;
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid green;
-            color: #7bd389;
-            padding: 15px;
+        .analyze-btn {
+            padding: 10px 20px;
+            background: var(--color-accent);
+            border: 1px solid var(--color-accent);
             border-radius: var(--radius-md);
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .analyze-btn:hover {
+            background: rgba(235, 63, 123, 0.8);
+            box-shadow: 0 0 15px rgba(235, 63, 123, 0.5);
+        }
+
+        .empty-state {
+            color: var(--color-text-muted);
+            font-style: italic;
         }
 
         /* Mode Selector Styles */
@@ -236,6 +249,7 @@
             font-size: 1rem;
             resize: vertical;
             line-height: 1.6;
+            box-sizing: border-box;
         }
 
         .cipher-input:focus {
@@ -426,32 +440,40 @@
 
     <div class="frequency-container">
         <h1>The Frequency Chamber</h1>
-        <p>Advanced substitution cipher breaking tools using frequency analysis and corpus-based word matching.</p>
+        <p>Substitution cipher breaking tools using frequency analysis and corpus-based word matching.</p>
 
         <!-- Mode Selector -->
         <div class="mode-selector-group">
             <div class="mode-buttons">
-                <button class="mode-btn active" id="mode-letter" onclick="setMode('letter')">Letter-Level Analysis</button>
-                <button class="mode-btn" id="mode-word" onclick="setMode('word')">Word-Level Solver</button>
+                <button class="mode-btn active" id="mode-letter" id="mode-letter">Letter-Level Analysis</button>
+                <button class="mode-btn" id="mode-word" id="mode-word">Word-Level Solver</button>
             </div>
             <div class="mode-description" id="mode-description">
-                Break a substitution cipher by mapping scrambled letters to their originals using frequency distribution patterns.
+                Analyze substitution ciphers by mapping encrypted letters to their plaintext equivalents using frequency distribution and corpus-based word hints.
             </div>
         </div>
 
         <!-- Letter-Level Mode (Original) -->
         <div id="letter-mode-content" class="mode-content active">
-            <div id="successMsg" class="success-message">
-                CONGRATULATIONS! You have successfully decrypted the message. 🔓
-                <br>
-                <button onclick="location.reload()"
-                    style="margin-top:10px; cursor:pointer; background: transparent; color: #7bd389; border: 1px solid #7bd389; padding: 5px 15px; border-radius: 5px;">New
-                    Challenge</button>
+            <!-- Input Section -->
+            <div class="input-section">
+                <h3>Ciphertext Input</h3>
+                <p style="margin-bottom: 15px; color: var(--color-text-muted); font-size: 0.9rem;">
+                    Enter a substitution cipher below. Each letter in the ciphertext represents a different letter in the plaintext. Use the frequency analysis and mapping grid to crack the code.
+                </p>
+                <textarea 
+                    id="letter-cipher-input" 
+                    class="cipher-input" 
+                    placeholder="Example: KHOOR ZRUOG (encrypted text)&#10;&#10;Enter your substitution cipher here, then click Analyze to begin.">
+                </textarea>
+                <button class="analyze-btn" id="processInputBtn">
+                    🔍 Analyze Ciphertext
+                </button>
             </div>
 
             <div class="crypt-box">
-                <div id="ciphertext" class="ciphertext"></div>
-                <div id="resolvedText" class="resolved-text"></div>
+                <div id="ciphertext" class="ciphertext empty-state">Your ciphertext will appear here...</div>
+                <div id="resolvedText" class="resolved-text empty-state">Decoded message will appear here as you map letters...</div>
             </div>
 
             <h3>Substitution Map</h3>
@@ -486,7 +508,7 @@
                     </div>
                 </div>
                 <div class="corpus-actions">
-                    <button class="small-btn" onclick="refreshCorpus()">↻ Refresh</button>
+                    <button class="small-btn" id="refreshCorpusBtn">↻ Refresh</button>
                     <a href="text-stego-index.html" class="small-btn" target="_blank">Manage Corpus</a>
                 </div>
             </div>

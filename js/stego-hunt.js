@@ -149,3 +149,10 @@ function showHint() {
 }
 
 document.addEventListener("DOMContentLoaded", initChallenge);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const b = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    b('checkFlagBtn',  () => typeof checkFlag === 'function' && checkFlag());
+    b('showHintBtn',   () => typeof showHint  === 'function' && showHint());
+    b('reloadHuntBtn', () => location.reload());
+});

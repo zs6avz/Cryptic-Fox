@@ -1,12 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://storage.ko-fi.com; connect-src 'self' https://cdn.jsdelivr.net; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';">
     <!-- Clickjacking Defense (Frame-Busting) -->
     <style id="antiClickjack">body{display:none !important;}</style>
     <script type="text/javascript">
-        if (self === top) {
+        // Allow same-origin iframes (for VS Code preview) but block cross-origin
+        if (self === top || self.origin === top.origin) {
             var antiClickjack = document.getElementById("antiClickjack");
             if (antiClickjack) antiClickjack.parentNode.removeChild(antiClickjack);
         } else {
@@ -34,13 +35,13 @@
     <meta property="og:url" content="https://cryptic-fox.com/about.html">
     <meta property="og:title" content="About — Cryptic Fox">
     <meta property="og:description" content="Learn about Cryptic-Fox, a web tool for cryptography puzzle solvers.">
-    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta property="og:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="About — Cryptic Fox">
     <meta name="twitter:description" content="Learn about Cryptic-Fox, a web tool for cryptography puzzle solvers.">
-    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.png">
+    <meta name="twitter:image" content="https://cryptic-fox.com/images/Fox-Thumbnail.jpg">
     <script src="js/components.js"></script>
 </head>
 
@@ -58,14 +59,13 @@
 
         <h2>The Mission</h2>
         <p>
-            Our mission is simple: to provide puzzle solvers, enthusiasts, and cryptographic explorers with the tools
-            they need to peel back the layers of digital mysteries. Whether you're decoding an ancient cipher, analyzing
-            steganographic artifacts in images, or hunting for hidden frequencies in audio, Cryptic-Fox is designed to
+            Our mission is to provide puzzle solvers, enthusiasts, and cryptographic explorers with the tools
+            they need to peel back the layers of digital mysteries. Cryptic-Fox is designed to
             be your digital laboratory.
         </p>
 
         <div style="text-align: center; margin-top: 40px;">
-            <button onclick="toggleContactModal()" class="primary-btn" style="text-decoration: none;">Get in
+            <button id="openContactModalBtn" class="primary-btn" style="text-decoration: none;">Get in
                 Touch</button>
         </div>
     </div>
@@ -73,7 +73,7 @@
     <!-- Contact Modal -->
     <div id="contactModal" class="modal-overlay">
         <div class="contact-modal">
-            <button class="modal-close" onclick="toggleContactModal()" aria-label="Close modal">&times;</button>
+            <button class="modal-close" id="closeContactModalBtn" aria-label="Close modal">&times;</button>
             <h2>Contact Me</h2>
             <p style="text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">Have a question, or a
                 suggestion? Send me a message.</p>
@@ -100,19 +100,7 @@
         </div>
     </div>
 
-    <script>
-        function toggleContactModal() {
-            const modal = document.getElementById('contactModal');
-            modal.classList.toggle('active');
-
-            // Close on click outside
-            if (modal.classList.contains('active')) {
-                modal.onclick = (e) => {
-                    if (e.target === modal) toggleContactModal();
-                };
-            }
-        }
-    </script>
+    
     <br>
 
     <!-- Ad Placement Scaffolding 

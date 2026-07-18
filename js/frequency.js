@@ -1,14 +1,5 @@
 // frequency.js
 
-const MESSAGES = [
-    "THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG. CRYPTOGRAPHY IS THE ART OF SECRET WRITING. PROTECT YOUR DATA AT ALL COSTS.",
-    "INFORMATION IS THE MOST VALUABLE CURRENCY IN THE DIGITAL AGE. ENCRYPTION IS THE ONLY DEFENSE AGAINST SURVEILLANCE.",
-    "LOGIC IS THE BEGINNING OF WISDOM, NOT THE END. SOLVE THE PUZZLE TO FIND THE HIDDEN TRUTH WITHIN THE CODE.",
-    "A FOX IN THE WILD IS A MASTER OF DISGUISE. SIMILARLY, A WELL ENCRYPTED MESSAGE HIDES IN PLAIN SIGHT.",
-    "NOTHING IS AS IT SEEMS. THE TRUTH IS OFTEN HIDDEN BENEATH LAYERS OF OBSCURITY AND COMPLEX SYMBOLS.",
-    "THE END PROJECT IS CONTEMPLATING THE NATURE OF REALITY AND COMPUTATION THROUGH THE LENS OF LOGIC."
-];
-
 const ENGLISH_FREQ = {
     'A': 8.17, 'B': 1.49, 'C': 2.78, 'D': 4.25, 'E': 12.70, 'F': 2.23, 'G': 2.02, 'H': 6.09, 'I': 6.97,
     'J': 0.15, 'K': 0.77, 'L': 4.03, 'M': 2.41, 'N': 6.75, 'O': 7.51, 'P': 1.93, 'Q': 0.10, 'R': 5.99,
@@ -16,41 +7,51 @@ const ENGLISH_FREQ = {
 };
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-let currentMessage = "";
 let ciphertext = "";
 let currentMap = {}; // CipherChar -> UserInput
-let solutionMap = {}; // CipherChar -> RealChar
 let chart = null;
+let letterModeCorpusHints = {}; // Store word suggestions for resolved text
 
-function initGame() {
-    // 1. Pick a random message
-    currentMessage = MESSAGES[Math.floor(Math.random() * MESSAGES.length)].toUpperCase();
-
-    // 2. Generate a random substitution cipher
-    let shuffled = [...alphabet].sort(() => Math.random() - 0.5);
-    let cipherMap = {}; // Real -> Cipher
-    alphabet.forEach((char, i) => {
-        cipherMap[char] = shuffled[i];
-        solutionMap[shuffled[i]] = char;
-        currentMap[shuffled[i]] = ""; // Initialize map
-    });
-
-    // 3. Encrypt the message
-    ciphertext = currentMessage.split("").map(char => {
-        return cipherMap[char] || char; // Encrypt if in alphabet, else keep (spaces, dots, etc)
-    }).join("");
-
-    document.getElementById("ciphertext").textContent = ciphertext;
-
-    // 4. Populate mapping grid
+function processUserInput() {
+    // Get user input from textarea
+    const input = document.getElementById("letter-cipher-input");
+    if (!input) return;
+    
+    ciphertext = input.value.toUpperCase().trim();
+    
+    if (!ciphertext) {
+        alert("Please enter ciphertext to analyze.");
+        return;
+    }
+    
+    // Reset current mapping
+    currentMap = {};
+    
+    // Display ciphertext
+    const ciphertextElement = document.getElementById("ciphertext");
+    ciphertextElement.textContent = ciphertext;
+    ciphertextElement.classList.remove("empty-state");
+    
+    // Update resolved text placeholder
+    const resolvedElement = document.getElementById("resolvedText");
+    resolvedElement.classList.remove("empty-state");
+    
+    // Populate mapping grid
     const grid = document.getElementById("mappingGrid");
     grid.innerHTML = "";
-
-    // Sort ciphertext chars by frequency to make it more useful? 
-    // Or just alphabetically by ciphertext char.
-    const presentChars = [...new Set(ciphertext.split(""))].filter(c => alphabet.includes(c)).sort();
-
+    
+    // Get unique characters from ciphertext and sort by frequency
+    const charCounts = {};
+    ciphertext.split("").forEach(char => {
+        if (alphabet.includes(char)) {
+            charCounts[char] = (charCounts[char] || 0) + 1;
+        }
+    });
+    
+    const presentChars = Object.keys(charCounts).sort((a, b) => charCounts[b] - charCounts[a]);
+    
     presentChars.forEach(char => {
+        currentMap[char] = ""; // Initialize map
         const card = document.createElement("div");
         card.className = "map-card";
         card.innerHTML = `
@@ -59,7 +60,7 @@ function initGame() {
         `;
         grid.appendChild(card);
     });
-
+    
     updateResolvedText();
     initChart(presentChars);
 }
@@ -70,7 +71,7 @@ function handleMapInput(input) {
     input.value = val;
     currentMap[cipherChar] = val;
     updateResolvedText();
-    checkWinCondition();
+    updateCorpusHints(); // Update word suggestions
 }
 
 function updateResolvedText() {
@@ -80,14 +81,12 @@ function updateResolvedText() {
         return userChar ? userChar : "_";
     }).join("");
 
-    document.getElementById("resolvedText").textContent = resolved;
-}
-
-function checkWinCondition() {
-    const resolved = document.getElementById("resolvedText").textContent;
-    if (resolved === currentMessage) {
-        document.getElementById("successMsg").style.display = "block";
-        document.querySelectorAll(".map-card input").forEach(input => input.disabled = true);
+    const resolvedElement = document.getElementById("resolvedText");
+    resolvedElement.textContent = resolved;
+    
+    // Add corpus highlighting if words are recognized
+    if (wordModeInitialized) {
+        highlightRecognizedWords(resolvedElement, resolved);
     }
 }
 
@@ -175,9 +174,21 @@ function addEnglishReference(chart) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    initGame();
+    // Don't auto-initialize letter mode - wait for user input
     initWordMode();          // Eager init so suggestions work before mode is clicked
     checkForSuggestedWords(); // Pick up terms sent from Forensic Index
+    // Mode buttons and actions (replaces onclick= in frequency.html)
+    const bnd = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bnd('processInputBtn', () => typeof processUserInput === 'function' && processUserInput());
+    bnd('refreshCorpusBtn', () => typeof refreshCorpus  === 'function' && refreshCorpus());
+    // mode-letter / mode-word IDs replace the onclick=setMode('letter'/'word') already on those elements,
+    // but setMode may already be called by existing id-based code — only add if not already wired
+    if (document.getElementById('mode-letter') && !document.getElementById('mode-letter')._modeWired) {
+        bnd('mode-letter', () => typeof setMode === 'function' && setMode('letter'));
+        bnd('mode-word',   () => typeof setMode === 'function' && setMode('word'));
+        const ml = document.getElementById('mode-letter'); if (ml) ml._modeWired = true;
+    }
+
 });
 
 // ============================================================================
@@ -199,7 +210,7 @@ function setMode(mode) {
     
     // Update description
     const descriptions = {
-        letter: 'Break a substitution cipher by mapping scrambled letters to their originals using frequency distribution patterns.',
+        letter: 'Analyze substitution ciphers by mapping encrypted letters to their plaintext equivalents using frequency distribution and corpus-based word hints.',
         word: 'Solve messages with missing words using corpus-based pattern matching and contextual analysis.'
     };
     document.getElementById('mode-description').textContent = descriptions[mode];
@@ -291,11 +302,29 @@ function buildCorpusIndex(documents) {
     documentCount = documents.length;
     wordFrequency = {};
     
+    // Check if Porter Stemmer is available
+    const useStemming = typeof PorterStemmer !== 'undefined';
+    let stemmer = null;
+    if (useStemming) {
+        stemmer = new PorterStemmer();
+        console.log('[Word Solver] Building index with Porter Stemmer');
+    }
+    
     // Tokenize all documents and count word frequencies
     documents.forEach(doc => {
         const tokens = tokenize(doc.text);
         tokens.forEach(token => {
+            // Store both original and stemmed versions for better matching
             wordFrequency[token] = (wordFrequency[token] || 0) + 1;
+            
+            // Also index stemmed version if available
+            if (useStemming && stemmer) {
+                const stemmed = stemmer.stem(token);
+                if (stemmed !== token) {
+                    // Create a link between stemmed and original forms
+                    wordFrequency[stemmed] = (wordFrequency[stemmed] || 0) + 1;
+                }
+            }
         });
     });
     
@@ -711,4 +740,60 @@ function checkForSuggestedWords() {
     } catch (e) {
         console.warn('checkForSuggestedWords error:', e);
     }
+}
+
+// ============================================================================
+// LETTER-LEVEL CORPUS INTEGRATION
+// ============================================================================
+
+function updateCorpusHints() {
+    if (!wordModeInitialized) return;
+    
+    const resolved = document.getElementById("resolvedText").textContent;
+    if (!resolved || resolved.trim() === "") return;
+    
+    // Extract partial words from resolved text
+    const words = resolved.split(/\s+/);
+    letterModeCorpusHints = {};
+    
+    words.forEach(word => {
+        const cleanWord = word.replace(/[^A-Z_]/g, '');
+        if (cleanWord.length > 0 && cleanWord.includes('_')) {
+            // This is a partial word - find suggestions
+            const pattern = cleanWord.toLowerCase();
+            const suggestions = getWordsByPattern(pattern).slice(0, 5);
+            if (suggestions.length > 0) {
+                letterModeCorpusHints[cleanWord] = suggestions;
+            }
+        }
+    });
+}
+
+function highlightRecognizedWords(element, resolved) {
+    // Split into words and wrap recognized ones with styling
+    const words = resolved.split(/\s+/);
+    const highlighted = words.map(word => {
+        const cleanWord = word.replace(/[^A-Z_]/g, '').toLowerCase();
+        
+        // Check if it's a complete word (no underscores)
+        if (!cleanWord.includes('_') && cleanWord.length > 0) {
+            // Check if word exists in corpus
+            if (wordFrequency[cleanWord]) {
+                return `<span style="color: #7bd389; font-weight: bold;" title="Recognized word">${word}</span>`;
+            } else if (cleanWord.length > 2) {
+                return `<span style="color: #ffa726; opacity: 0.8;" title="Unknown word">${word}</span>`;
+            }
+        } else if (cleanWord.includes('_') && cleanWord.length > 0) {
+            // Partial word - show tooltip with suggestions if available
+            const suggestions = letterModeCorpusHints[cleanWord.toUpperCase()];
+            if (suggestions && suggestions.length > 0) {
+                const suggestionText = suggestions.slice(0, 3).join(', ');
+                return `<span style="border-bottom: 1px dotted #eb3f7b; cursor: help;" title="Suggestions: ${suggestionText}">${word}</span>`;
+            }
+        }
+        
+        return word;
+    });
+    
+    element.innerHTML = highlighted.join(' ');
 }

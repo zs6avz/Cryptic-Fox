@@ -578,4 +578,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate default value on load
         calculateBernoulli();
     }
+    // Mode buttons (replaces onclick= in note-g.html)
+    const bm = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+    bm('mode-modern',     () => typeof setMode === 'function' && setMode('modern'));
+    bm('mode-historical', () => typeof setMode === 'function' && setMode('historical'));
+
 });

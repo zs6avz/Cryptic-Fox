@@ -617,14 +617,14 @@ function generateHash() {
  * Attempts to "decode" (crack) a hash by checking against common words
  * or providing an external lookup link.
  */
-function crackHash() {
+function lookupHash() {
     const input = document.querySelector('.hash-input').value.trim().toLowerCase();
     const salt = document.querySelector('.hash-salt').value || "";
     const outputElement = document.querySelector('.hash-output');
     const type = document.querySelector('.hash-type').value;
 
     if (!input) {
-        outputElement.textContent = "Error: Please enter a hash to crack.";
+        outputElement.textContent = "Error: Please enter a hash to look up.";
         return;
     }
 
@@ -637,14 +637,35 @@ function crackHash() {
         else if (type === "SHA256") hash = CryptoJS.SHA256(dataToHash).toString();
 
         if (hash === input) {
-            outputElement.innerHTML = `Success! Decoded value: <strong style="color: #7bd389;">${word}</strong>`;
+            // Safe DOM construction — no user input reaches innerHTML
+            outputElement.textContent = '';
+            const span = document.createElement('span');
+            span.textContent = 'Match found: ';
+            const strong = document.createElement('strong');
+            strong.style.color = '#7bd389';
+            strong.textContent = word;
+            span.appendChild(strong);
+            outputElement.appendChild(span);
             return;
         }
     }
 
-    // 2. If not found, suggest online lookup
-    const crackStationUrl = `https://crackstation.net/?q=${input}`;
-    outputElement.innerHTML = `Value not found in local dictionary. <a href="${crackStationUrl}" target="_blank" rel="noopener noreferrer" style="color: var(--color-accent); font-weight: bold;">Try External Lookup (CrackStation) ⟶</a>`;
+    // 2. If not found, offer external lookup link using safe DOM construction
+    // Sanitise the hash for use in a URL — only allow hex chars (and '=') that appear in real hashes
+    const safeHash = input.replace(/[^a-f0-9]/g, '');
+    const crackStationUrl = 'https://crackstation.net/?q=' + safeHash;
+    outputElement.textContent = '';
+    const msg = document.createElement('span');
+    msg.textContent = 'Not found in local dictionary. ';
+    const link = document.createElement('a');
+    link.href = crackStationUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.color = 'var(--color-accent)';
+    link.style.fontWeight = 'bold';
+    link.textContent = 'Try External Lookup (CrackStation) ⟶';
+    msg.appendChild(link);
+    outputElement.appendChild(msg);
 }
 
 function clearHashFields() {
@@ -721,20 +742,103 @@ document.addEventListener('DOMContentLoaded', () => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('click', fn);
     };
-    bind('clearBinaryFieldsBtn', clearBinaryFields);
-    bind('clearHexFieldsBtn', clearHexFields);
-    bind('clearJacquardFieldsBtn', clearJacquardFields);
-    bind('clearCaesarFieldsBtn', clearCaesarFields);
-    bind('clearVigenereFieldsBtn', clearVigenereFields);
-    bind('clearAtbashFieldsBtn', clearAtbashFields);
-    bind('clearBase64FieldsBtn', clearBase64Fields);
-    bind('clearBaseAltFieldsBtn', clearBaseAltFields);
-    bind('clearHashFieldsBtn', clearHashFields);
-    bind('clearMorseFieldsBtn', clearMorseFields);
-    bind('clearBookFieldsBtn', clearBookFields);
+    // Clear buttons (already existed)
+    bind('clearBinaryFieldsBtn',     clearBinaryFields);
+    bind('clearHexFieldsBtn',        clearHexFields);
+    bind('clearJacquardFieldsBtn',   clearJacquardFields);
+    bind('clearCaesarFieldsBtn',     clearCaesarFields);
+    bind('clearVigenereFieldsBtn',   clearVigenereFields);
+    bind('clearAtbashFieldsBtn',     clearAtbashFields);
+    bind('clearBase64FieldsBtn',     clearBase64Fields);
+    bind('clearBaseAltFieldsBtn',    clearBaseAltFields);
+    bind('clearHashFieldsBtn',       clearHashFields);
+    bind('clearMorseFieldsBtn',      clearMorseFields);
+    bind('clearBookFieldsBtn',       clearBookFields);
     bind('clearExtractionFieldsBtn', clearExtractionFields);
-    bind('clearBaconFieldsBtn', clearBaconFields);
-    bind('clearMusicFieldsBtn', clearMusicFields);
+    bind('clearBaconFieldsBtn',      clearBaconFields);
+    bind('clearMusicFieldsBtn',      clearMusicFields);
+
+    // Cipher Identifier
+    bind('identifyCipherBtn',   identifyCipher);
+
+    // Binary / Base
+    bind('encryptBinaryBtn',    () => encryptBinary(getSelectedBase()));
+    bind('decryptBinaryBtn',    () => decryptBinary(getSelectedBase()));
+    bind('copyBinaryBtn',       () => copyToClipboard('.binary-output'));
+    bind('swapBinaryBtn',       () => swapFields('.binary-input', '.binary-output'));
+
+    // Jacquard
+    bind('encryptJacquardBtn',  encryptJacquard);
+    bind('decryptJacquardBtn',  decryptJacquard);
+    bind('copyJacquardBtn',     () => copyToClipboard('.jacquard-output'));
+    bind('swapJacquardBtn',     () => swapFields('.jacquard-input', '.jacquard-output'));
+
+    // Caesar
+    bind('encryptCaesarBtn',    () => encryptCaesar(getShiftValue()));
+    bind('decryptCaesarBtn',    () => decryptCaesar(getShiftValue()));
+    bind('copyCaesarBtn',       () => copyToClipboard('.caesar-output'));
+    bind('swapCaesarBtn',       () => swapFields('.caesar-input', '.caesar-output'));
+
+    // Vigenère copy/swap (encrypt/decrypt already bound via .encrypt-btn/.decrypt-btn class)
+    bind('copyVigenereBtn',     () => copyToClipboard('.vigenere-output'));
+    bind('swapVigenereBtn',     () => swapFields('.vigenere-input', '.vigenere-output'));
+
+    // Atbash
+    bind('encryptAtbashBtn',    encryptAtbash);
+    bind('decryptAtbashBtn',    decryptAtbash);
+    bind('copyAtbashBtn',       () => copyToClipboard('.atbash-output'));
+    bind('swapAtbashBtn',       () => swapFields('.atbash-input', '.atbash-output'));
+
+    // Hex
+    bind('encryptHexBtn',       encryptHex);
+    bind('decryptHexBtn',       decryptHex);
+    bind('copyHexBtn',          () => copyToClipboard('.hex-output'));
+    bind('swapHexBtn',          () => swapFields('.hex-input', '.hex-output'));
+
+    // Base64
+    bind('encryptBase64Btn',    encryptBase64);
+    bind('decryptBase64Btn',    decryptBase64);
+    bind('copyBase64Btn',       () => copyToClipboard('.base64-output'));
+    bind('swapBase64Btn',       () => swapFields('.base64-input', '.base64-output'));
+
+    // Base-36 / Base-62
+    bind('encryptBaseAltBtn',   encryptBaseAlt);
+    bind('decryptBaseAltBtn',   decryptBaseAlt);
+    bind('copyBaseAltBtn',      () => copyToClipboard('.base-alt-output'));
+    bind('swapBaseAltBtn',      () => swapFields('.base-alt-input', '.base-alt-output'));
+
+    // Hash Generator & Lookup
+    bind('generateHashBtn',     generateHash);
+    bind('lookupHashBtn',       lookupHash);
+    bind('copyHashBtn',         () => copyToClipboard('.hash-output'));
+
+    // Morse Code
+    bind('encryptMorseBtn',     () => encryptMorse(document.querySelector('.morse-separator')?.value));
+    bind('decryptMorseBtn',     () => decryptMorse(document.querySelector('.morse-separator')?.value));
+    bind('copyMorseBtn',        () => copyToClipboard('.morse-output'));
+    bind('swapMorseBtn',        () => swapFields('.morse-input', '.morse-output'));
+
+    // Book / Running Key Cipher
+    bind('encryptBookBtn',      () => processBookCipher(true));
+    bind('decryptBookBtn',      () => processBookCipher(false));
+    bind('copyBookBtn',         () => copyToClipboard('.book-output'));
+    bind('swapBookBtn',         () => swapFields('.book-input', '.book-output'));
+
+    // Acrostic / Mesostic / Telestich
+    bind('processExtractionBtn', processExtraction);
+    bind('copyExtractionBtn',    () => copyToClipboard('.extraction-output'));
+
+    // Bacon
+    bind('encryptBaconBtn',     () => processBacon(true));
+    bind('decryptBaconBtn',     () => processBacon(false));
+    bind('copyBaconBtn',        () => copyToClipboard('.bacon-output'));
+    bind('swapBaconBtn',        () => swapFields('.bacon-input', '.bacon-output'));
+
+    // Musical Cryptography
+    bind('toNotesBtn',          () => processMusic(true));
+    bind('fromNotesBtn',        () => processMusic(false));
+    bind('copyMusicBtn',        () => copyToClipboard('.music-output'));
+    bind('swapMusicBtn',        () => swapFields('.music-input', '.music-output'));
 });
 // ── Vigenère Key Solver ──────────────────────────────────────────────
 
@@ -769,8 +873,8 @@ function guessVigenereKeyLength() {
     // Sort by proximity to English IoC (approx 0.0667)
     iocs.sort((a, b) => Math.abs(a.ioc - 0.0667) - Math.abs(b.ioc - 0.0667));
 
-    const top = iocs.slice(0, 3);
-    output.innerHTML = "Likely key lengths: " + top.map(t => `<strong>${t.length}</strong> (IoC: ${t.ioc.toFixed(4)})`).join(", ");
+    const top3 = iocs.slice(0, 3);
+    output.textContent = 'Likely key lengths: ' + top3.map(t => `${t.length} (IoC: ${t.ioc.toFixed(4)})`).join(', ');
 }
 
 function calculateIoC(text) {
