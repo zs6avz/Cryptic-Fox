@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(backBtn);
 
         backBtn.addEventListener('click', () => {
-            if (window.history.length > 1) {
+            if (document.referrer && document.referrer.includes(window.location.hostname)) {
                 window.history.back();
             } else {
                 const homePath = window.location.pathname.includes('blog-post') ? '../index.html' : 'index.html';

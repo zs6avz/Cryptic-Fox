@@ -161,8 +161,17 @@ function loadImageFile(file) {
     window._imageSource = tmpCanvas;
     // Render with current slider values
     if (glContext) {
-      const gain = [parseFloat(redGain.value), parseFloat(greenGain.value), parseFloat(blueGain.value)];
-      glContext.renderFrame(tmpCanvas, gain, parseFloat(contrast.value), parseFloat(brightness.value), parseFloat(brilliance.value), parseFloat(saturation.value));
+      const gain = [
+        parseFloat(redGain ? redGain.value : 1), 
+        parseFloat(greenGain ? greenGain.value : 1), 
+        parseFloat(blueGain ? blueGain.value : 1)
+      ];
+      glContext.renderFrame(tmpCanvas, gain, 
+        parseFloat(contrast ? contrast.value : 1), 
+        parseFloat(brightness ? brightness.value : 0), 
+        parseFloat(brilliance ? brilliance.value : 0), 
+        parseFloat(saturation ? saturation.value : 1)
+      );
     }
     // Enable controls
     const startBtn = document.getElementById('startAnalysisBtn');
@@ -434,8 +443,12 @@ function resetAll() {
         }
         if (outputTime) outputTime.textContent = `${(video.currentTime || 0).toFixed(2)}s`;
       }
-      video.addEventListener('seeked', handler);
-      try { video.currentTime = 0; } catch (e) { handler(); }
+      if (video.currentTime === 0) {
+        handler();
+      } else {
+        video.addEventListener('seeked', handler);
+        try { video.currentTime = 0; } catch (e) { handler(); }
+      }
     } else {
       const ctx2d = canvas.getContext && canvas.getContext('2d');
       if (ctx2d) ctx2d.clearRect(0, 0, canvas.width, canvas.height);

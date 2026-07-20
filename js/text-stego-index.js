@@ -406,7 +406,7 @@ let corpus = null;
 let corpusIndex = null;
 let currentChart = null;
 
-document.addEventListener('DOMContentLoaded', () => {
+function initializeForensicIndex() {
     // Initialize with enhanced corpus if available, fallback to basic
     if (typeof EnhancedDocumentCorpus !== 'undefined') {
         corpus = new EnhancedDocumentCorpus();
@@ -432,8 +432,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof switchTab === 'function') switchTab(btn.dataset.tab);
         });
     });
+}
 
-});
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeForensicIndex);
+} else {
+    // DOM is already loaded
+    initializeForensicIndex();
+}
 
 function addDocumentFromPaste() {
     const nameInput = document.getElementById('docName');
@@ -562,6 +569,19 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
     const tabEl = document.getElementById('tab-' + tab);
     if(tabEl) tabEl.style.display = 'block';
+}
+
+function runQuery() {
+    const text = document.getElementById('queryText').value.trim();
+    if (!text) {
+        alert('Please enter a search query.');
+        return;
+    }
+    
+    if (!corpusIndex || !corpusIndex.isBuilt) {
+        alert('Please build the index first.');
+        return;
+    }
     
     // Use enhanced query if available
     let results;
@@ -573,14 +593,7 @@ function switchTab(tab) {
     
     const container = document.getElementById('rankingResults');
     if (results.length === 0) {
-        container.innerHTML = '<p>No results.</p>';
-        return;
-    }
-    
-    let html = '<h3>Query Ranking (Cosine Similarity with Stemming
-    const container = document.getElementById('rankingResults');
-    if (results.length === 0) {
-        container.innerHTML = '<p>No results.</p>';
+        container.innerHTML = '<p>No matching documents found.</p>';
         return;
     }
     
@@ -695,13 +708,9 @@ function runAnomalyRank() {
         html += `
             <div style="margin-top: 20px; padding: 15px; background: rgba(33,150,243,0.08);
                         border: 1px solid #2196F3; border-radius: var(--radius-md);">
-                <p style="margin: 0 0 8px; color: #90CAF9; font-size: 13px;">
+                <p style="margin: 0; color: #90CAF9; font-size: 13px;">
                     <strong>💡 Top anomaly terms:</strong> ${topTerms.slice(0, 10).join(', ')}
                 </p>
-                <button class="primary-btn" onclick="sendToWordSolver(${JSON.stringify(topTerms.slice(0, 10))})" 
-                        style="background: rgba(33,150,243,0.2); border-color: #2196F3;">
-                    ↗ Send Terms to Word Solver
-                </button>
             </div>
         `;
     }
@@ -709,20 +718,7 @@ function runAnomalyRank() {
     container.innerHTML = html;
 }
 
-/**
- * Sends top TF-IDF terms to the Word Solver on frequency.html via localStorage.
- */
-function sendToWordSolver(terms) {
-    try {
-        localStorage.setItem('crypticfox_word_suggestions', JSON.stringify({
-            terms: terms,
-            timestamp: Date.now()
-        }));
-    } catch (e) {
-        console.warn('Could not write word suggestions to localStorage', e);
-    }
-    window.open('frequency.html#word-mode', '_blank');
-}
+
 
 function showDocumentDetail(id) {
     const doc = corpus.getDocument(id);
@@ -746,12 +742,6 @@ function showDocumentDetail(id) {
                         .map(e => `<span style="display:inline-block; margin: 2px 5px; padding: 2px 8px; background: var(--color-primary); border-radius: 10px; font-size: 12px;">${e[0]} (${e[1].toFixed(3)})</span>`)
                         .join('')}
                 </div>
-                <button onclick="sendToWordSolver(${JSON.stringify(
-                    Object.entries(corpusIndex.tfidfVectors[id])
-                        .sort((a,b) => b[1] - a[1]).slice(0,10).map(e => e[0])
-                )})" style="margin-top:10px; background: rgba(33,150,243,0.2); border:1px solid #2196F3; color:#90CAF9; padding:6px 14px; border-radius:var(--radius-sm); cursor:pointer; font-size:13px;">
-                    ↗ Send Terms to Word Solver
-                </button>
             </div>
             <div>
                 <h3>Stylometric Profile</h3>
@@ -785,3 +775,8 @@ function closeModal() {
     document.getElementById('modalOverlay').style.display = 'none';
     document.getElementById('docDetailModal').style.display = 'none';
 }
+
+// Expose functions to global scope for onclick handlers in dynamically generated HTML
+window.removeDocument = removeDocument;
+window.showDocumentDetail = showDocumentDetail;
+window.closeModal = closeModal;

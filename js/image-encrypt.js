@@ -1,7 +1,13 @@
-﻿// ── Utility helpers ──────────────────────────────────────────────────
+// ── Utility helpers ──────────────────────────────────────────────────
 
 function bufToBase64(buf) {
-    return btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const bytes = new Uint8Array(buf);
+    let binary = '';
+    const chunk = 8192;
+    for (let i = 0; i < bytes.length; i += chunk) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
 }
 
 function base64ToBuf(b64) {

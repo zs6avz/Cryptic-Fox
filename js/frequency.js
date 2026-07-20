@@ -118,6 +118,10 @@ function initChart(presentChars) {
         return ENGLISH_FREQ[char] || 0;
     });
 
+    if (chart) {
+        chart.destroy();
+    }
+    
     chart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -132,11 +136,7 @@ function initChart(presentChars) {
                 },
                 {
                     label: 'English Standard (%)',
-                    data: alphabet.map(c => ENGLISH_FREQ[c]).sort((a, b) => b - a), // Sorted for reference? 
-                    // No, let's just use the Alphabet order for the second set to let them compare shapes if they want
-                    // but it's better to show them side-by-side.
-                    // Actually, a separate "Reference" dataset is better.
-                    data: presentChars.map(() => 0), // Placeholder
+                    data: presentChars.map(c => ENGLISH_FREQ[c] || 0),
                     hidden: true
                 }
             ]
@@ -498,9 +498,9 @@ function updateResolvedWordText() {
     currentTokens.forEach(token => {
         const solution = tokenMap[token].solution;
         if (solution && !solution.includes('_')) {
-            resolved = resolved.replace(new RegExp('\\' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), solution);
+            resolved = resolved.replace(new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), solution);
         } else {
-            resolved = resolved.replace(new RegExp('\\' + token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '______');
+            resolved = resolved.replace(new RegExp(token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '______');
         }
     });
     

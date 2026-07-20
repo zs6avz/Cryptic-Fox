@@ -1421,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const bsd = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
     bsd('analyzeTextBtn',    () => typeof analyzeText    === 'function' && analyzeText());
     bsd('clearAnalysisBtn',  () => typeof clearAnalysis  === 'function' && clearAnalysis());
-    bsd('exportResultsBtn',  () => typeof exportResults  === 'function' && exportResults());
+    bsd('exportBtn',  () => typeof exportResults  === 'function' && exportResults());
     bsd('triggerBaselineBtn',   () => { const el = document.getElementById('baselineFile');   if (el) el.click(); });
     bsd('triggerSuspiciousBtn', () => { const el = document.getElementById('suspiciousFile'); if (el) el.click(); });
     // toggleSection buttons via data-section attribute

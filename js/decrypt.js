@@ -212,12 +212,20 @@ function clearCaesarFields() {
 // Vigenère Cipher Encryption & Decryption
 document.querySelector('.encrypt-btn').addEventListener('click', function () {
     const key = document.querySelector('.vigenere-key').value.trim();
+    if (!key) {
+        document.querySelector('.vigenere-output').textContent = 'Error: Key cannot be empty';
+        return;
+    }
     const text = document.querySelector('.vigenere-input').value.trim();
     document.querySelector('.vigenere-output').textContent = vigenereEncrypt(text, key);
 });
 
 document.querySelector('.decrypt-btn').addEventListener('click', function () {
     const key = document.querySelector('.vigenere-key').value.trim();
+    if (!key) {
+        document.querySelector('.vigenere-output').textContent = 'Error: Key cannot be empty';
+        return;
+    }
     const cipherText = document.querySelector('.vigenere-input').value.trim();
     document.querySelector('.vigenere-output').textContent = vigenereDecrypt(cipherText, key);
 });
@@ -780,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bind('swapCaesarBtn',       () => swapFields('.caesar-input', '.caesar-output'));
 
     // Vigenère copy/swap (encrypt/decrypt already bound via .encrypt-btn/.decrypt-btn class)
+    bind('guessVigenereBtn',    guessVigenereKeyLength);
     bind('copyVigenereBtn',     () => copyToClipboard('.vigenere-output'));
     bind('swapVigenereBtn',     () => swapFields('.vigenere-input', '.vigenere-output'));
 
